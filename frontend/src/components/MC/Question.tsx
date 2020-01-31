@@ -1,16 +1,18 @@
 import React from 'react';
-import AnswerOption from './AnswerOption';
 import { Answer } from '../../model/Answer';
+import Checkbox from '@material-ui/core/Checkbox';
+import { FormControlLabel, FormControl } from '@material-ui/core';
 
 interface QuestionProps {
-  questionId: number;
+  key: number;
   questionContent: string;
   answerChoices: Array<Answer>;
-  answer: string;
+  answer: (value: number) => void;
 }
 
 interface QuestionState {
   answered: boolean;
+  checked: boolean[];
 }
 
 class Question extends React.Component<QuestionProps, QuestionState> {
@@ -18,32 +20,42 @@ class Question extends React.Component<QuestionProps, QuestionState> {
     super(props);
     this.state = {
       answered: false,
+      checked: [false, false, false, false],
     };
+    this.getSelection = this.getSelection.bind(this);
+    this.handleOnclick = this.handleOnclick.bind(this);
   }
 
-  renderChoices(key: Answer) {
-    let newID = 1;
-    if (key.type === 'B') {
-      newID = 2;
-    } else if (key.type === 'C') {
-      newID = 3;
-    }
-    return (
-      <AnswerOption
-        key={newID}
-        mark={key.type}
-        content={key.text}
-      />
-    );
+  getSelection = (value: number) => {
+    console.log(value);
+  }
+
+  handleOnclick(key: Answer, i: number) {
+    const myClonedArray = [...this.state.checked];
+    myClonedArray[i] = !this.state.checked[i];
+    this.setState(prevState => ({
+      checked: myClonedArray
+    }));
+    this.props.answer(i+1);
   }
 
   render() {
     return (
       <div className="element">
         <h2 className="question">{this.props.questionContent}</h2>
-        <ul className="options">
-          {this.props.answerChoices.map(this.renderChoices)}
-        </ul>
+        <FormControl>
+          {this.props.answerChoices.map((key, i) => (
+            <FormControlLabel
+              control={<Checkbox
+                key={key.id}
+                value={key.type}
+                checked={this.state.checked[i] || false}
+                onChange={() => this.handleOnclick(key, i)}
+              />}
+              label={key.text}
+            />
+          ))}
+        </FormControl>
       </div>
     );
   }

@@ -8,12 +8,13 @@ interface State {
     counter: number,
     questionId: number,
     questionContent: string,
-    answerOptions: Array<Answer>,
-    answerKey: string,
     questionPoints: number,
-    score: number,
+    answerOptions: Array<Answer>,
+    answerKey: number,
+    myAnswer: number,
+    myScore: number,
     totalPoints: number,
-    end: boolean
+    end: boolean,
 }
 
 interface Props {
@@ -27,13 +28,16 @@ class Quiz extends React.Component<Props, State> {
             counter: 0,
             questionId: 0,
             questionContent: '',
-            answerOptions: [],
-            answerKey: '',
             questionPoints: 0,
-            score: 0,
+            answerOptions: [],
+            answerKey: 0,
+            myAnswer: 0,
+            myScore: 0,
             totalPoints: 0,
             end: false,
         };
+        this.nextQuestion = this.nextQuestion.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     public componentDidMount() {
@@ -41,71 +45,68 @@ class Quiz extends React.Component<Props, State> {
             .then((exampleQuestions) => {
                 this.setState({
                     questionContent: exampleQuestions[this.state.questionId].questionContent,
+                    questionPoints: exampleQuestions[this.state.questionId].score,
                     answerOptions: exampleQuestions[this.state.questionId].answerChoices,
                     answerKey: exampleQuestions[this.state.questionId].correctAnswer,
-                    questionPoints: exampleQuestions[this.state.questionId].score,
                     totalPoints: exampleQuestions[this.state.questionId].score,
                 });
             })
     }
 
-    // captureUserSelection(event: MouseEvent) {
-    //     this.setUserAnswer(event.currentTarget);
-    //     if (this.state.counter >= exampleQuestions.length) {
-    //         setTimeout(() => this.endQuiz(), 200);
-    //     } else {
-    //         setTimeout(() => this.nextQuestion(), 200);
-    //     }
-    // }
-
-
-    // setUserAnswer(answer: string) {
-    //     const currScore = this.state.score;
-    //     this.setState((state, props) => {
-    //         if (answer === this.state.answerKey) {
-    //             score: currScore + this.state.questionPoints;
-    //         } else {
-    //             score: currScore
-    //         }
-    //     })
-    // }
-
-    nextQuestion() {
-        const nextCount = this.state.counter + 1;
-        const nextQuestion = this.state.questionId + 1;
-        const currScore = this.state.score;
+    handleClick(value: number) {
+        console.log(value);
         this.setState({
-            counter: nextCount,
-            questionId: nextQuestion,
-            questionContent: exampleQuestions[nextCount].questionContent,
-            answerOptions: exampleQuestions[nextCount].answerChoices,
-            answerKey: exampleQuestions[nextCount].correctAnswer,
-            totalPoints: currScore + exampleQuestions[nextCount].score,
+            myAnswer: value
         });
     }
 
-    endQuiz() {
-        this.setState({
-            end: true
-        });
+    nextQuestion() {
+        let newScore = this.state.myScore;
+        if (this.state.myAnswer === this.state.answerKey) {
+            newScore += this.state.questionPoints
+        }
+        console.log(newScore);
+
+        const nextCount = this.state.counter + 1;
+        const nextQuestion = this.state.questionId + 1;
+        if (nextCount >= exampleQuestions.length) {
+            this.setState({
+                myScore: newScore,
+                end: true
+            });
+        } else {
+            this.setState({
+                counter: nextCount,
+                questionId: nextQuestion,
+                questionContent: exampleQuestions[nextCount].questionContent,
+                questionPoints: exampleQuestions[nextCount].score,
+                answerOptions: exampleQuestions[nextCount].answerChoices,
+                answerKey: exampleQuestions[nextCount].correctAnswer,
+                myScore: newScore,
+                totalPoints: this.state.totalPoints + exampleQuestions[nextCount].score,
+            });
+        }
     }
 
     showResults() {
         return (
             <div>
-                You got {this.state.score} out of {this.state.totalPoints}!
+                You got {this.state.myScore} out of {this.state.totalPoints}!
             </div>
         );
     }
 
     renderQuestions() {
         return (
-            <Question
-                questionId={this.state.questionId}
-                questionContent={this.state.questionContent}
-                answerChoices={this.state.answerOptions}
-                answer={this.state.answerKey}
-            />
+            <div>
+                <Question
+                    key={this.state.questionId}
+                    questionContent={this.state.questionContent}
+                    answerChoices={this.state.answerOptions}
+                    answer={this.handleClick}
+                />
+                <button onClick={this.nextQuestion}>Next</button>
+            </div>
         );
     };
 
