@@ -29,3 +29,49 @@ input {
 li {
   list-style-type: none;
 }
+
+.header {
+  height: 50px;
+  font-size: 30px;
+  background-color: #73C2FB;
+  padding: 10px;
+}
+
+.title {
+  float: left;
+  padding: 10px;
+  font-size: 30px;
+}
+
+#flp, #courseIcon, #reviewIcon, #profileIcon{
+  float: left;
+  width: 25%;
+}
+
+.class {
+    grid-template-columns: 100px 50px 100px;
+    grid-template-rows: 80px auto 80px; 
+    grid-column-gap: 10px;
+    grid-row-gap: 15px;
+    width: 150px;
+    height: 100px;
+    padding: 20px;
+}
+
+#courseName, #percentage {
+  display: flex;
+  align-items: center;
+  border: solid 2px black;
+  padding: 10px;
+  width: 150px;
+}
+
+#courseName {
+  border-bottom: none;
+}
+
+button {
+  width: 80px;
+  height: 40px;
+  background-color: #73C2FB;
+}

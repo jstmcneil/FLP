@@ -10,7 +10,7 @@ interface EmailTextState {
 
 const sendEmail = (recipient: string, emailBody: string) => {
     // send email here - for now just alert
-    alert("email sent to " + recipient + " with body "+ emailBody);
+    alert("email sent to " + recipient + " with body " + emailBody);
 }
 
 export class EmailTextComponent extends React.Component<EmailTextProps, EmailTextState> {
@@ -27,9 +27,9 @@ export class EmailTextComponent extends React.Component<EmailTextProps, EmailTex
         }
         const professor = this.props.professor;
         return (
-            <div id = "emailTextBoxContainer" className="verticalContainer">
-                <textarea id="emailBody" onInput={(event) => this.setState({ text: event.currentTarget.value})}></textarea>
-                <button onClick={() => sendEmail(professor, this.state.text)}></button>
+            <div id="emailTextBoxContainer" className="verticalContainer">
+                <textarea id="emailBody" onInput={(event) => this.setState({ text: event.currentTarget.value })}></textarea>
+                <button onClick={() => sendEmail(professor, this.state.text)}>Send</button>
             </div>
         );
     };
