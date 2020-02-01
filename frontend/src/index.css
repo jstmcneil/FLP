@@ -45,6 +45,7 @@ li {
 
 #flp, #courseIcon, #reviewIcon, #profileIcon{
   float: left;
+  text-align: left;
   width: 25%;
 }
 

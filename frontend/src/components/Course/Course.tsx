@@ -15,8 +15,8 @@ class Course extends React.Component {
             <div>
                 <Router>
                     <div className="title">My Courses</div>
-                    <Link to="course1"><Class courseName="Personal Finance" percent={10} /></Link>
-                    <Link to="course2"><Class courseName="Offer Letter" percent={30} /></Link>
+                    <Link to="course1"><Class courseName="Personal Finance" percent={10} color="yellow"/></Link>
+                    <Link to="course2"><Class courseName="Offer Letter" percent={30} color="pink"/></Link>
                     <Switch>
                         <Route exact path="/course1">
                             <Quiz />
