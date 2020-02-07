@@ -36,20 +36,21 @@ class NoteForm extends React.Component<FormProps, FormState> {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    this.setState({isSubmitted: true});
+    this.setState({ isSubmitted: true });
   }
 
   render() {
     return (
       <div>
+        <div className="space"></div>
         <form onSubmit={this.handleSubmit}>
           <label>
             Note title:
-            <input type="text" value={this.state.title} onChange={this.writeTitle} />
+            <input id="title" type="text" value={this.state.title} onChange={this.writeTitle} />
           </label>
           <label>
             Contents:
-            <input type="text" value={this.state.content} onChange={this.writeContent} />
+            <input id="content" type="text" value={this.state.content} onChange={this.writeContent} />
           </label>
           <input type="submit" value="Submit" />
         </form>

@@ -76,3 +76,26 @@ button {
   height: 40px;
   background-color: #73C2FB;
 }
+
+.space {
+  padding: 50px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+#title {
+  width: 400px;
+  height: 40px;
+}
+
+#content {
+  width: 400px;
+  height: 200px;
+}
+
+.card {
+  width: 400px;
+}

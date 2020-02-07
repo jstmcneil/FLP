@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@material-ui/core';
+import { Card, CardContent, Typography } from '@material-ui/core';
 
 interface NoteProps {
     title: string;
@@ -12,12 +12,14 @@ interface NoteState {
 class Note extends React.Component<NoteProps, NoteState> {
     render() {
         return (
-            <Card>
+            <Card className="card">
                 <CardContent>
-                    {this.props.title}
-                </CardContent>
-                <CardContent>
-                    {this.props.mycontent}
+                    <Typography gutterBottom variant="h5" component="h3">
+                        {this.props.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                        {this.props.mycontent}
+                    </Typography>
                 </CardContent>
             </Card>
         );
