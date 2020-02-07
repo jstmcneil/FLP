@@ -41,31 +41,45 @@ exports.login = async (req, res) => {
 
     if (loginSuccess) {
         res.send({
+            msg: null,
+            success: true,
             regCode: regCode,
             isInstructor: isInstructor
         });
     } else {
-        res.send("Login Failed");
+        res.send({
+            msg: "Login Failed",
+            success: false
+        });
     }
 };
 
 exports.studentRegister = async (req, res) => {
     //check code
     if (!await regCodeExist(req.query.regCode)) {
-        res.send("This Registration Code is Invalid");
+        res.send({
+            msg: "This Registration Code is Invalid",
+            success: false
+        });
         return;
     }
 
     //check username already exist
     if (await isRegistered(req.query.username)) {
-        res.send("This Account is Registered");
+        res.send({
+            msg: "This Account is Registered",
+            success: false
+        });
         return;
     }
 
     //gt username checking
-    const regex = /^[a-zA-Z]{1,10}[0-9]{1,5}$/;
+    const regex = /^[a-zA-Z]{1,15}[0-9]{1,5}$/;
     if (!regex.test(req.query.username)) {
-        res.send("Not a GT username format, example: \"gburdell3\"");
+        res.send({
+            msg: "Not a GT username format, example: \"gburdell3\"",
+            success: false
+        });
         return;
     }
 
@@ -79,19 +93,30 @@ exports.studentRegister = async (req, res) => {
 
     acc.save(err => {if (err) console.error(err)});
 
-    res.send("Register Success");
+    res.send({
+        msg: "Register Success",
+        success: true,
+        regCode: req.query.regCode,
+        isInstructor: false
+    });
 };
 
 exports.instructorRegister = async (req, res) => {
     //check code
     if (await regCodeExist(req.query.regCode)) {
-        res.send("This Registration Code is Taken");
+        res.send({
+            msg: "This Registration Code is Taken",
+            success: false
+        });
         return;
     }
 
     //check username already exist
     if (await isRegistered(req.query.username)) {
-        res.send("This Account is Registered");
+        res.send({
+            msg: "This Account is Registered",
+            success: false
+        });
         return;
     }
 
@@ -105,5 +130,10 @@ exports.instructorRegister = async (req, res) => {
 
     acc.save(err => {if (err) console.error(err)});
 
-    res.send("Register Success");
+    res.send({
+        msg: "Register Success",
+        success: false,
+        regCode: req.query.regCode,
+        isInstructor: true
+    });
 }
