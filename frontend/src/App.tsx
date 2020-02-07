@@ -1,11 +1,13 @@
 import React from 'react';
-import { EmailTextComponent } from './components/EmailTextBox';
 import './App.css';
+import Header from './components/Header/Header';
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <div><EmailTextComponent professor="john"/></div>
+      <div>
+        <Header />
+      </div>
     </div>
   );
 }
