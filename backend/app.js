@@ -10,7 +10,7 @@ const app = express();
     * Connect to the database
     */
 
-mongoose.connect('mongodb://localhost');
+   mongoose.connect('mongodb://localhost:27017/FLP-DB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 /**
     * Middleware
