@@ -19,6 +19,13 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// https://enable-cors.org/server_expressjs.html
+app.use(function(_, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "*");
+    next();
+});
+
 // catch 400
 app.use((err, req, res, next) => {
     console.log(err.stack);

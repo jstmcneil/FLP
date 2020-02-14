@@ -1,5 +1,6 @@
 import React from 'react';
 import Login from '../Login';
+import Register from '../Register';
 
 class Profile extends React.Component {
     render() {
@@ -8,6 +9,7 @@ class Profile extends React.Component {
             <div style = { {"display": "flex", "flex-direction": "column"}}>
                 <div className="title">My Profile</div>
                 <Login />
+                <Register />
             </div>
         );
     }
