@@ -1,5 +1,6 @@
 import React from 'react';
 import Note from './Note';
+import { NoteType } from '../../model/NoteType';
 
 
 interface FormProps {
@@ -10,6 +11,7 @@ interface FormState {
   title: string;
   content: string;
   isSubmitted: boolean;
+  notes: NoteType[];
 }
 
 class NoteForm extends React.Component<FormProps, FormState> {
@@ -18,7 +20,8 @@ class NoteForm extends React.Component<FormProps, FormState> {
     this.state = {
       title: '',
       content: '',
-      isSubmitted: false
+      isSubmitted: false,
+      notes: []
     };
 
     this.writeTitle = this.writeTitle.bind(this);
@@ -36,7 +39,28 @@ class NoteForm extends React.Component<FormProps, FormState> {
 
   handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    this.setState({ isSubmitted: true });
+    var newNote: NoteType = {
+      title: this.state.title,
+      content: this.state.content
+    }
+    this.setState({
+      isSubmitted: true,
+      notes: this.state.notes.concat(newNote),
+      title: "",
+      content: ""
+    });
+  }
+
+  showTable() {
+    return this.state.notes.map((note, index) => {
+      const { title, content } = note
+      return (
+        <tr>
+          <td>{title}</td>
+          <td>{content}</td>
+        </tr>
+      )
+    })
   }
 
   render() {
@@ -54,8 +78,17 @@ class NoteForm extends React.Component<FormProps, FormState> {
           </label>
           <input type="submit" value="Submit" />
         </form>
-        <div>
-          {this.state.isSubmitted && <Note title={this.state.title} mycontent={this.state.content} />}
+        <div className="space"></div>
+        <div id="noteTable">
+          <table>
+            <tbody>
+              <tr>
+                <td>Title</td>
+                <td>My Notes</td>
+              </tr>
+              {this.showTable()}
+            </tbody>
+          </table>
         </div>
       </div>
     );
