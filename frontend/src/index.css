@@ -113,3 +113,15 @@ label {
   margin: 20px;
 }
 
+#noteTable {
+  display: inline-block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 1000px;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
