@@ -13,8 +13,12 @@ interface ClassState {
 }
 
 class Class extends React.Component<ClassProps, ClassState> {
-    toCoursePage(id: string) {
-        <Redirect to={`/course/${id}`} />
+    constuctor() {
+        this.routeChange = this.routeChange.bind(this);
+    }
+    routeChange = (id: string) => {
+        let path = `/course/${id}`;
+        window.location.href = path;
     }
 
     render() {
@@ -24,7 +28,9 @@ class Class extends React.Component<ClassProps, ClassState> {
                 <div id="percentage" style={{ backgroundColor: this.props.color }}>
                     {this.props.percent + "%"}
                 </div>
-                <button onClick={() => this.toCoursePage(this.props.id)}></button>
+                <div id="redirectClass">
+                    <button onClick={() => this.routeChange(this.props.id)}>Go to class</button>
+                </div>
             </div>
         );
     }

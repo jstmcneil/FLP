@@ -56,10 +56,10 @@ li {
     grid-row-gap: 15px;
     width: 150px;
     height: 100px;
-    padding: 20px;
+    padding: 50px;
 }
 
-#courseName, #percentage {
+#courseName, #percentage, #redirectClass {
   display: flex;
   align-items: center;
   border: solid 2px black;
@@ -67,7 +67,7 @@ li {
   width: 150px;
 }
 
-#courseName {
+#courseName, #percentage {
   border-bottom: none;
 }
 
@@ -107,3 +107,4 @@ label {
   height: 500px;
   margin: 20px;
 }
+
