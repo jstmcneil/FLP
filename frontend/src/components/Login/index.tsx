@@ -28,7 +28,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                     <div>Password</div>
                     <input type="password" onInput={(event) => this.setState({ password: event.currentTarget.value })}></input>
                 </div>
-                <button onClick={() => loginAction({username: this.state.username, password: this.state.password})}>Submit</button>
+                <button onClick={() => loginAction(this.state.username, this.state.password)}>Submit</button>
             </div>
         );
     }

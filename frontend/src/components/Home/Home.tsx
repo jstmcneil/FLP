@@ -7,7 +7,6 @@ class Home extends React.Component {
         return (
             <div>
                 <div className="title">Home</div>
-                <Login />
                 <img src={logo} alt="buzz" />
                 <h2>Welcome to Georgia Tech Financial Learning Curriculum</h2>
             </div>
