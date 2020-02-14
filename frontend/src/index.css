@@ -99,3 +99,11 @@ label {
 .card {
   width: 400px;
 }
+
+#placeholder {
+  display: inline-block;
+  border: 1px black solid;
+  width: 500px;
+  height: 500px;
+  margin: 20px;
+}
