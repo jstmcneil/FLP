@@ -56,10 +56,10 @@ li {
     grid-row-gap: 15px;
     width: 150px;
     height: 100px;
-    padding: 20px;
+    padding: 50px;
 }
 
-#courseName, #percentage {
+#courseName, #percentage, #redirectClass {
   display: flex;
   align-items: center;
   border: solid 2px black;
@@ -67,7 +67,7 @@ li {
   width: 150px;
 }
 
-#courseName {
+#courseName, #percentage {
   border-bottom: none;
 }
 
@@ -98,4 +98,30 @@ label {
 
 .card {
   width: 400px;
+}
+
+#placeholder {
+  display: inline-block;
+  border: 1px black solid;
+  width: 500px;
+  height: 500px;
+  margin: 20px;
+}
+
+#back {
+  float: left;
+  margin: 20px;
+}
+
+#noteTable {
+  display: inline-block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 1000px;
+}
+
+table, th, td {
+  border: 1px solid black;
 }
