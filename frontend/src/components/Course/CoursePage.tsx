@@ -14,9 +14,16 @@ class CoursePage extends React.Component<PageProps> {
     constructor(props: PageProps) {
         super(props);
     }
+
+    routeChange = () => {
+        window.location.href = "/course";
+    }
+
     render() {
         return (
             <div>
+                <button id="back" onClick={this.routeChange}>Back to Courses</button>
+                <div className="space"></div>
                 <h2>Course {this.props.match.params.id}</h2>
                 <div>Summary of Text</div>
                 <div id="placeholder"></div>
