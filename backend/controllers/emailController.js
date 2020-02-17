@@ -1,30 +1,24 @@
 import SMTPEmail from '../models/emailModel.js';
-import { Email } from './smtp.js';
 
-// parameters: accountId
-async function getEMail(req, res) {
+const nodemailer = require('nodemailer');
+
+async function getEMail(accountId) {
     var emailExist = true,
-        email;
+        returnEmail;
 
-    await SMTPEmail.find({"accountId": req.query.accountId}, (err, emails) => {
-        if (emails.length == 0) {
+    await SMTPEmail.findById(accountId, (err, email) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        if (!email) {
             emailExist = false;
         }
-        email = emails[0];
+        returnEmail = email;
     });
-    
-    if (!emailExist) {
-        res.send({
-            msg: "Email does not exist",
-            success: false
-        });
-    }
 
-    res.send({
-        msg: null,
-        success: true,
-        email: email
-    });
+    return emailExist ? returnEmail : null;
 };
 
 // ONLY GT email allowed
@@ -39,15 +33,37 @@ exports.setEMail = async (req, res) => {
         return;
     }
 
+    await SMTPEmail.findById(req.query.accountId, (err, email) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
 
-    const email = new SMTPEmail({
-        accountId: req.query.accountId, 
-        host: 'smtp.office365.com', 
-        emailUsername: req.query.emailUsername, 
-        emailPassword: req.query.emailPassword
+        if (!email) {
+            // create new
+            const email = new SMTPEmail({
+                _id: req.query.accountId,
+                host: 'smtp.office365.com',
+                username: req.query.emailUsername,
+                password: req.query.emailPassword
+            });
+
+            email.save(err => {if (err) console.error(err)});
+            console.log("create");
+        } else {
+            // update current
+            SMTPEmail.updateOne(
+                {
+                    _id: req.query.accountId
+                },
+                {
+                    $username: req.query.emailUsername,
+                    $password: req.query.emailPassword
+                }
+            );
+            console.log("update");
+        }
     });
-
-    email.save(err => {if (err) console.error(err)});
 
     res.send({
         msg: null,
@@ -57,34 +73,40 @@ exports.setEMail = async (req, res) => {
 
 // parameters: accountId, emailTo, emailSubject, emailBody
 exports.sendEMail = async (req, res) => {
-    await SMTPEmail.find({"accountId": req.query.accountId}, (err, smtpEmail) => {
+    await SMTPEmail.findById(req.query.accountId, (err, smtpEmail) => {
         if (err) {
             console.error(err);
             return;
         }
-        if (smtpEmail.length == 0) {
+
+        if (!smtpEmail) {
             res.send({
                 msg: "Email does not exist",
                 success: false
             });
             return;
         }
-        
-        Email.send({
-            Host : smtpEmail.host,
-            Username : smtpEmail.username,
-            Password : smtpEmail.password,
-            To : req.query.emailTo,
-            From : smtpEmail.username,
-            Subject : req.query.emailSubject,
-            Body : req.query.emailBody
-        }).then(
-        message => alert(message)
-        );
+
+        const transporter = nodemailer.createTransport({
+            host: smtpEmail.host,
+            port: 587,
+            secure: false,
+            auth: {
+              user: smtpEmail.username,
+              pass: smtpEmail.password
+            }
+        });
+
+        transporter.sendMail({
+            from: smtpEmail.username,
+            to: req.query.emailTo,
+            subject: req.query.emailSubject,
+            text: req.query.emailBody
+        });
     });
 
     res.send({
-        msg: "Email sent",
+        msg: null,
         success: true
     });
 };

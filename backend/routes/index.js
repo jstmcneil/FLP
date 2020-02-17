@@ -12,6 +12,8 @@ export default (app) => {
     app.route('/studentRegister').post(Account.studentRegister);
     app.route('/instructorRegister').post(Account.instructorRegister);
     app.route('/login').get(Account.login);
-    app.route('/sendEmail').get(SMTPEmail.sendEMail);
+
+    //email service
     app.route('/setEmail').post(SMTPEmail.setEMail);
+    app.route('/sendEmail').get(SMTPEmail.sendEMail);
 };
