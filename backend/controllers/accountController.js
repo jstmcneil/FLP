@@ -14,9 +14,6 @@ async function isRegistered(username) {
 }
 
 async function regCodeExist(regCode) {
-    if (!regCode) {
-        return true;
-    }
     var codeExist = false;
     await Account.find({'regCode': regCode, 'isInstructor': true}, (err, acc) => {
         if (acc.length != 0) {
@@ -29,13 +26,15 @@ async function regCodeExist(regCode) {
 exports.login = async (req, res) => {
     var loginSuccess = false,
         regCode = null,
-        isInstructor = false;
+        isInstructor = false,
+        accountId = null;
 
     await Account.find({'username': req.query.username}, (err, acc) => {
         if (acc.length != 0 && acc[0].password == req.query.password) {
             loginSuccess = true;
             regCode = acc[0].regCode;
             isInstructor = acc[0].isInstructor;
+            accountId = acc[0]._id;
         }
     }).catch((err) => console.error(err));
 
@@ -44,7 +43,8 @@ exports.login = async (req, res) => {
             msg: null,
             success: true,
             regCode: regCode,
-            isInstructor: isInstructor
+            isInstructor: isInstructor,
+            accountId: accountId
         });
     } else {
         res.send({
@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
 
 exports.studentRegister = async (req, res) => {
     //check code
-    if (!await regCodeExist(req.query.regCode)) {
+    if (!req.query.regCode || !await regCodeExist(req.query.regCode)) {
         res.send({
             msg: "This Registration Code is Invalid",
             success: false
@@ -97,13 +97,14 @@ exports.studentRegister = async (req, res) => {
         msg: "Register Success",
         success: true,
         regCode: req.query.regCode,
-        isInstructor: false
+        isInstructor: false,
+        accountId: acc._id
     });
 };
 
 exports.instructorRegister = async (req, res) => {
     //check code
-    if (await regCodeExist(req.query.regCode)) {
+    if (!req.query.regCode || await regCodeExist(req.query.regCode)) {
         res.send({
             msg: "This Registration Code is Taken",
             success: false
@@ -132,8 +133,9 @@ exports.instructorRegister = async (req, res) => {
 
     res.send({
         msg: "Register Success",
-        success: false,
+        success: true,
         regCode: req.query.regCode,
-        isInstructor: true
+        isInstructor: true,
+        accountId: acc._id
     });
 }
