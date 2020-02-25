@@ -49,7 +49,6 @@ exports.setEMail = async (req, res) => {
             });
 
             email.save(err => {if (err) console.error(err)});
-            console.log("create");
         } else {
             // update current
             SMTPEmail.updateOne(
@@ -61,7 +60,6 @@ exports.setEMail = async (req, res) => {
                     $password: req.query.emailPassword
                 }
             );
-            console.log("update");
         }
     });
 

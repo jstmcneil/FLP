@@ -1,10 +1,10 @@
 {
-    "student register": {
+    "studentRegister": {
         "url": "/studentRegister",
         "params": ["regCode", "username", "password"],
         "requestType": "POST"
     },
-    "instructor register": {
+    "instructorRegister": {
         "url": "/instructorRegister",
         "params": ["regCode", "username", "password"],
         "requestType": "POST"
@@ -14,14 +14,29 @@
         "params": ["username", "password"],
         "requestType": "GET"
     },
-    "send email": {
+    "sendEmail": {
         "url": "/sendEmail",
         "params": ["accountId", "emailTo", "emailSubject", "emailBody"],
         "requestType": "GET"
     },
-    "set email": {
+    "setEmail": {
         "url": "/setEmail",
         "params": ["accoundId", "emailUsername", "emailPassword"],
         "requestType": "POST"
+    },
+    "createReview": {
+        "url": "/createReview",
+        "params": ["accoundId", "title", "notes"],
+        "requestType": "POST"
+    },
+    "deleteReview": {
+        "url": "/deleteReview",
+        "params": ["reviewId"],
+        "requestType": "POST"
+    },
+    "getReviews": {
+        "url": "/getReviews",
+        "params": ["accountId"],
+        "requestType": "GET"
     }
 }
