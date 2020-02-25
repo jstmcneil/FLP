@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ATTEMPT_LOGIN } from '../../actions/types';
-
+import { loggedInSelector } from '../../selectors/authenticationSelector';
 interface LoginProps {
     loginAction: Function;
+    loggedIn: boolean;
 }
 interface LoginState {
     username: string;
@@ -16,7 +17,8 @@ class Login extends React.Component<LoginProps, LoginState> {
         password: ""
     };
     render() {
-        const loginAction = this.props.loginAction;
+        if (!this.props.loggedIn) {
+            const loginAction = this.props.loginAction;
         return (
             <div>
                 <div>Login</div>
@@ -31,11 +33,17 @@ class Login extends React.Component<LoginProps, LoginState> {
                 <button onClick={() => loginAction(this.state.username, this.state.password)}>Submit</button>
             </div>
         );
+        }
+        return (<div>Hello There!</div>);
     }
 }
 
 export default connect(
-    null,
+    state => {
+        return {
+            loggedIn: loggedInSelector(state)
+        }
+    },
     dispatch => {
         return {
             loginAction: (username: string, password: string) => dispatch({type: ATTEMPT_LOGIN, payload: { username, password }})

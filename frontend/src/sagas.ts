@@ -1,5 +1,5 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION } from "./actions/types";
+import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL } from "./actions/types";
 
 const fetchPerson = (username: string, password: string) => {
   return fetch('http://localhost:8000/login?username=' + username + '&password=' + password).then(response => response.json())
@@ -20,22 +20,45 @@ const registerStudent = (username: string, password: string, regCode: number) =>
 function* login(action: any) {
     if (!action.payload) return;
     console.log(action.payload);
-    const x = yield call(fetchPerson, action.payload.username, action.payload.password);
-    console.log(x);
+    const response = yield call(fetchPerson, action.payload.username, action.payload.password);
+    console.log(response);
+    if (response.success) {
+      yield put({
+        type: LOGIN_SUCCESS,
+        payload: {
+          isInstructor: response.isInstructor,
+          loggedIn: response.success,
+          regCode: response.regCode,
+          accountId: response.accountId
+        }
+      });
+    } else {
+      yield put({
+        type: LOGIN_UNSUCCESSFUL
+      });
+    }
+    
 }
 
 
 
 function* register(action: any) {
   if (!action.payload) return;
-  console.log(action.payload);
   const { username, password, isInstructor, regCode } = action.payload;
+  let registrationSuccess = false;
   if (isInstructor) {
     const response = yield call(registerInstructor, username, password, regCode);
+    registrationSuccess = response.success;
     console.log(response);
   } else {
     const response = yield call(registerStudent, username, password, regCode);
+    registrationSuccess = response.success;
     console.log(response);
+  }
+  if (registrationSuccess) {
+    alert('Registration successful! Please log in.');
+  } else {
+    alert('Registration unsuccessful. Please try again.');
   }
 }
 

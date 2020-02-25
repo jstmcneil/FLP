@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ATTEMPT_REGISTRATION } from '../../actions/types';
+import { loggedInSelector } from '../../selectors/authenticationSelector';
 
 interface RegistrationProps {
     registerAction: Function;
+    loggedIn: boolean
 }
 interface RegistrationState {
     username: string;
@@ -20,6 +22,7 @@ class Register extends React.Component<RegistrationProps, RegistrationState> {
         isInstructor: false
     };
     render() {
+        if (!this.props.loggedIn) {
         const registerAction = this.props.registerAction;
         return (
             <div>
@@ -49,11 +52,17 @@ class Register extends React.Component<RegistrationProps, RegistrationState> {
                 <button onClick={() => registerAction(this.state.username, this.state.password, this.state.regCode, this.state.isInstructor)}>Submit</button>
             </div>
         );
+        }
+        return (<div></div>)
     }
 }
 
 export default connect(
-    null,
+    state => {
+        return {
+            loggedIn: loggedInSelector(state)
+        }
+    },
     dispatch => {
         return {
             registerAction: (username: string, password: string, regCode: number, isInstructor: boolean) => dispatch({type: ATTEMPT_REGISTRATION, payload: { username, password, regCode, isInstructor }})
