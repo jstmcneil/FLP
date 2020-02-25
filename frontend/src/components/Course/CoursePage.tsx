@@ -2,6 +2,7 @@ import React from 'react';
 import Quiz from '../MC/Quiz';
 import { EmailTextComponent } from '../EmailTextBox';
 import { RouteComponentProps } from 'react-router-dom';
+import VideoPlayer from '../VideoPlayer';
 
 interface PageProps extends RouteComponentProps<RouterProps> {
 }
@@ -29,6 +30,8 @@ class CoursePage extends React.Component<PageProps> {
                 <div id="placeholder"></div>
                 <div>Quiz Title</div>
                 <div id="placeholder"></div>
+                <div>Video Example</div>
+                <VideoPlayer videoId="jNQXAC9IVRw"/>
                 <Quiz />
                 <div className="space"></div>
                 <EmailTextComponent professor="john" />

@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from '../../img/buzz.png';
 import Login from '../Login';
+import VideoPlayer from '../VideoPlayer';
 
 class Home extends React.Component {
     render() {
