@@ -1,0 +1,27 @@
+{
+    "student register": {
+        "url": "/studentRegister",
+        "params": ["regCode", "username", "password"],
+        "requestType": "POST"
+    },
+    "instructor register": {
+        "url": "/instructorRegister",
+        "params": ["regCode", "username", "password"],
+        "requestType": "POST"
+    },
+    "login": {
+        "url": "/login",
+        "params": ["username", "password"],
+        "requestType": "GET"
+    },
+    "send email": {
+        "url": "/sendEmail",
+        "params": ["accountId", "emailTo", "emailSubject", "emailBody"],
+        "requestType": "GET"
+    },
+    "set email": {
+        "url": "/setEmail",
+        "params": ["accoundId", "emailUsername", "emailPassword"],
+        "requestType": "POST"
+    }
+}
