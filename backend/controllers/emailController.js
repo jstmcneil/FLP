@@ -1,110 +1,44 @@
-import SMTPEmail from '../models/emailModel.js';
+import nodemailer from 'nodemailer';
 
-const nodemailer = require('nodemailer');
+// parameters: emailTo, emailSubject, emailBody, isBodyHtml
+exports.sendEMail = async (req, res) => {
+    var success = true;
 
-async function getEMail(accountId) {
-    var emailExist = true,
-        returnEmail;
-
-    await SMTPEmail.findById(accountId, (err, email) => {
-        if (err) {
-            console.error(err);
-            return;
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'flpemail.noreply@gmail.com',
+            pass: 'TbTCfQu5SY1X'
         }
-
-        if (!email) {
-            emailExist = false;
-        }
-        returnEmail = email;
     });
 
-    return emailExist ? returnEmail : null;
-};
+    var option = {
+        from: 'flpemail.noreply@gmail.com',
+        to: req.query.emailTo,
+        subject: req.query.emailSubject,
+    };
 
-// ONLY GT email allowed
-// parameters: accoundId, emailUsername, emailPassword
-exports.setEMail = async (req, res) => {
-    const regex = /@gatech.edu/;
-    if (!regex.test(req.query.emailUsername)) {
-        res.send({
-            msg: "Not GT Email",
-            success: false
-        });
-        return;
+    if (req.query.isBodyHtml) {
+        option.html = req.query.emailBody;
+    } else {
+        option.text = req.query.emailBody;
     }
 
-    await SMTPEmail.findById(req.query.accountId, (err, email) => {
+    transporter.sendMail(option, (err, info) => {
         if (err) {
-            console.error(err);
-            return;
-        }
-
-        if (!email) {
-            // create new
-            const email = new SMTPEmail({
-                _id: req.query.accountId,
-                host: 'smtp.office365.com',
-                username: req.query.emailUsername,
-                password: req.query.emailPassword
-            });
-
-            email.save(err => {if (err) console.error(err)});
-        } else {
-            // update current
-            SMTPEmail.updateOne(
-                {
-                    _id: req.query.accountId
-                },
-                {
-                    $username: req.query.emailUsername,
-                    $password: req.query.emailPassword
-                }
-            );
-        }
-    });
-
-    res.send({
-        msg: null,
-        success: true
-    });
-};
-
-// parameters: accountId, emailTo, emailSubject, emailBody
-exports.sendEMail = async (req, res) => {
-    await SMTPEmail.findById(req.query.accountId, (err, smtpEmail) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-
-        if (!smtpEmail) {
+            console.log(err);
+            success = false;
             res.send({
-                msg: "Email does not exist",
+                msg: "failed to send email",
                 success: false
             });
-            return;
         }
-
-        const transporter = nodemailer.createTransport({
-            host: smtpEmail.host,
-            port: 587,
-            secure: false,
-            auth: {
-              user: smtpEmail.username,
-              pass: smtpEmail.password
-            }
-        });
-
-        transporter.sendMail({
-            from: smtpEmail.username,
-            to: req.query.emailTo,
-            subject: req.query.emailSubject,
-            text: req.query.emailBody
-        });
     });
 
-    res.send({
-        msg: null,
-        success: true
-    });
+    if (success) {
+        res.send({
+            msg: null,
+            success: true
+        });
+    }
 };

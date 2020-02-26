@@ -7,14 +7,14 @@ import routes from './routes/index.js';
 const app = express();
 
 /**
-    * Connect to the database
-    */
+* Connect to the database
+*/
 
-   mongoose.connect('mongodb://localhost:27017/FLP-DB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/FLP-DB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 /**
-    * Middleware
-    */
+* Middleware
+*/
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

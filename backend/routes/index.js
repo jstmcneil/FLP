@@ -15,7 +15,6 @@ export default (app) => {
     app.route('/login').get(Account.login);
 
     //email service
-    app.route('/setEmail').post(SMTPEmail.setEMail);
     app.route('/sendEmail').get(SMTPEmail.sendEMail);
 
     //review

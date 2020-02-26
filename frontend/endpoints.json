@@ -16,13 +16,9 @@
     },
     "sendEmail": {
         "url": "/sendEmail",
-        "params": ["accountId", "emailTo", "emailSubject", "emailBody"],
-        "requestType": "GET"
-    },
-    "setEmail": {
-        "url": "/setEmail",
-        "params": ["accoundId", "emailUsername", "emailPassword"],
-        "requestType": "POST"
+        "params": ["emailTo", "emailSubject", "emailBody", "isBodyHtml"],
+        "requestType": "GET",
+        "notes": "please use 1 or 0 for isBodyHtml"
     },
     "createReview": {
         "url": "/createReview",
