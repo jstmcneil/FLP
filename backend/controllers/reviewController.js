@@ -1,10 +1,12 @@
 import Review from '../models/reviewModel.js';
+import Account from "../models/accountModel.js";
 
-// parameters: accoundId, title, notes
+// parameters: accoundId, courseId, title, notes
 exports.createReview = async (req, res) => {
     
     const review = new Review({
         accountId: req.query.accountId,
+        courseId: req.query.courseId,
         title: req.query.title,
         notes: req.query.notes
     });
@@ -32,9 +34,27 @@ exports.deleteReview = async (req, res) => {
     });
 };
 
-// parameters: accountId
+// parameters: accountId, courseId
 exports.getReviews = async (req, res) => {
-    await Review.find({accountId: req.query.accountId}, (err, reviews) => {
+    var isInstructor = false;
+
+    await Account.findById(req.query.accountId, (err, acc) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        isInstructor = acc.isInstructor;
+    });
+
+    var query = {
+        courseId: req.query.courseId
+    }
+
+    if (!isInstructor) {
+        query.accountId = req.query.accountId;
+    }
+
+    await Review.find(query, (err, reviews) => {
         if (err) {
             console.error(err);
             return;
