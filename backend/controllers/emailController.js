@@ -1,8 +1,36 @@
 import nodemailer from 'nodemailer';
+import Account from '../models/accountModel.js';
 
-// parameters: emailTo, emailSubject, emailBody, isBodyHtml
+// parameters: accountId, emailSubject, emailBody, isBodyHtml
 exports.sendEMail = async (req, res) => {
     var success = true;
+
+    var instructorUsername;
+
+    await Account.findById(req.query.accountId, async (err, acc) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        await Account.find({regCode: acc.regCode, isInstructor: true}, (err, acc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            if (acc.length == 0) {
+                return;
+            }
+            instructorUsername = acc[0].username;
+        });        
+    });
+
+    if (!instructorUsername) {
+        res.send({
+            msg: "Not registered with a course",
+            success: false
+        });
+        return;
+    }
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -14,7 +42,7 @@ exports.sendEMail = async (req, res) => {
 
     var option = {
         from: 'flpemail.noreply@gmail.com',
-        to: req.query.emailTo,
+        to: instructorUsername + '@gatech.edu',
         subject: req.query.emailSubject,
     };
 

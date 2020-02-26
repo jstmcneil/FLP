@@ -16,7 +16,7 @@
     },
     "sendEmail": {
         "url": "/sendEmail",
-        "params": ["emailTo", "emailSubject", "emailBody", "isBodyHtml"],
+        "params": ["accoundId", "emailSubject", "emailBody", "isBodyHtml"],
         "requestType": "GET",
         "notes": "please use 1 or 0 for isBodyHtml"
     },
