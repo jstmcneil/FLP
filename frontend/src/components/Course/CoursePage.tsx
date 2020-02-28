@@ -1,10 +1,17 @@
 import React from 'react';
 import Quiz from '../MC/Quiz';
-import { EmailTextComponent } from '../EmailTextBox';
+import CourseEmailTextComponent from '../EmailTextBox';
 import { RouteComponentProps } from 'react-router-dom';
 import VideoPlayer from '../VideoPlayer';
+import { connect } from 'react-redux';
+import { loggedInSelector, accountIdSelector, usernameSelector } from '../../selectors';
+import { ATTEMPT_SEND_EMAIL } from '../../actions/types';
 
 interface PageProps extends RouteComponentProps<RouterProps> {
+    loggedIn: boolean;
+    accountId: string;
+    username: string;
+    sendEmailAction: Function;
 }
 
 interface RouterProps {
@@ -21,6 +28,10 @@ class CoursePage extends React.Component<PageProps> {
     }
 
     render() {
+        if (!this.props.loggedIn) {
+            return <div>You are not logged in. Please login to access courses.</div>
+        }
+        const { accountId, username, sendEmailAction } = this.props;
         return (
             <div>
                 <button id="back" onClick={this.routeChange}>Back to Courses</button>
@@ -34,10 +45,23 @@ class CoursePage extends React.Component<PageProps> {
                 <VideoPlayer videoId="jNQXAC9IVRw"/>
                 <Quiz />
                 <div className="space"></div>
-                <EmailTextComponent professor="john" />
+                <CourseEmailTextComponent accountId={accountId} questionName={"example"} username={username} courseName={"courseName"} sendEmailAction={sendEmailAction}/>
             </div>
         );
     }
 }
 
-export default CoursePage;
+export default connect(
+    state => {
+        return {
+            loggedIn: loggedInSelector(state),
+            accountId: accountIdSelector(state),
+            username: usernameSelector(state),
+        }
+    },
+    dispatch => {
+        return {
+            sendEmailAction: (accountId: string, emailSubject: string, emailBody: string) => dispatch({type: ATTEMPT_SEND_EMAIL, payload: {accountId, emailSubject, emailBody}})
+        }
+    }
+)(CoursePage);

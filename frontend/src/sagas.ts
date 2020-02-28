@@ -1,5 +1,5 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL } from "./actions/types";
+import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL } from "./actions/types";
 
 const fetchPerson = (username: string, password: string) => {
   return fetch('http://localhost:8000/login?username=' + username + '&password=' + password).then(response => response.json())
@@ -13,6 +13,12 @@ const registerInstructor = (username: string, password: string, regCode: number)
 }
 const registerStudent = (username: string, password: string, regCode: number) => {
   return fetch('http://localhost:8000/studentRegister?username=' + username + "&password=" + password + "&regCode=" + regCode, {
+    method: 'POST'
+  }).then(response => response.json());
+}
+
+const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: string) => {
+  return fetch('http://localhost:8000/sendEmail?accountId=' + accountId + "&emailSubject=" + emailSubject + "&emailBody=" + emailBody + "&isBodyHtml=false", {
     method: 'POST'
   }).then(response => response.json());
 }
@@ -62,10 +68,28 @@ function* register(action: any) {
   }
 }
 
+function* sendEmail(action: any) {
+  if (!action.payload) return;
+  const { accountId, emailSubject, emailBody } = action.payload;
+  const response = yield call(sendEmailResponse, accountId, emailSubject, emailBody);
+  const { success } = response;
+  if (success) {
+    yield put({
+      type: SEND_EMAIL_SUCCESS
+    });
+    alert('Response submitted and send to instructor!');
+  } else {
+    yield put({
+      type: SEND_EMAIL_FAILURE
+    })
+    alert('Response failed to send to instructor. Please contact instructor.');
+  }
+}
+
 function* sagaWatcher() {
     yield takeLatest(ATTEMPT_LOGIN, login);
     yield takeLatest(ATTEMPT_REGISTRATION, register);
-
+    yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
 }
 
 export default sagaWatcher;
