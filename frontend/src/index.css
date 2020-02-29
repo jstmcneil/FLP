@@ -18,12 +18,12 @@ code {
 }
 
 input {
-	background-color: #fafafa;
-	border: 1px solid #cacece;
-	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
-	padding: 9px;
-	border-radius: 3px;
-	display: inline-block;
+  background-color: #fafafa;
+  border: 1px solid #cacece;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px -15px 10px -12px rgba(0, 0, 0, 0.05);
+  padding: 9px;
+  border-radius: 3px;
+  display: inline-block;
 }
 
 li {
@@ -43,23 +43,28 @@ li {
   font-size: 30px;
 }
 
-#flp, #courseIcon, #reviewIcon, #profileIcon{
+#flp,
+#courseIcon,
+#reviewIcon,
+#profileIcon {
   float: left;
   text-align: left;
   width: 25%;
 }
 
 .class {
-    grid-template-columns: 100px 50px 100px;
-    grid-template-rows: 80px auto 80px; 
-    grid-column-gap: 10px;
-    grid-row-gap: 15px;
-    width: 150px;
-    height: 100px;
-    padding: 50px;
+  grid-template-columns: 100px 50px 100px;
+  grid-template-rows: 80px auto 80px;
+  grid-column-gap: 10px;
+  grid-row-gap: 15px;
+  width: 150px;
+  height: 100px;
+  padding: 50px;
 }
 
-#courseName, #percentage, #redirectClass {
+#courseName,
+#percentage,
+#redirectClass {
   display: flex;
   align-items: center;
   border: solid 2px black;
@@ -67,7 +72,8 @@ li {
   width: 150px;
 }
 
-#courseName, #percentage {
+#courseName,
+#percentage {
   border-bottom: none;
 }
 
@@ -117,11 +123,13 @@ label {
   display: inline-block;
 }
 
-table {
-  border-collapse: collapse;
-  width: 1000px;
+.report {
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-table, th, td {
-  border: 1px solid black;
+#logoff {
+  margin: 10px;
 }
