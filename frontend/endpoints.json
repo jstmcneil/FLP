@@ -22,7 +22,7 @@
     },
     "createReview": {
         "url": "/createReview",
-        "params": ["accoundId", "title", "notes"],
+        "params": ["accoundId", "courseId", "title", "notes"],
         "requestType": "POST"
     },
     "deleteReview": {
@@ -32,7 +32,8 @@
     },
     "getReviews": {
         "url": "/getReviews",
-        "params": ["accountId"],
-        "requestType": "GET"
+        "params": ["accountId", "courseId"],
+        "requestType": "GET",
+        "notes": "student will get only reviews they created, instructor will get all reviews of a course"
     }
 }
