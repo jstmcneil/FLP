@@ -23,10 +23,6 @@ class CoursePage extends React.Component<PageProps> {
         super(props);
     }
 
-    routeChange = () => {
-        window.location.href = "/course";
-    }
-
     render() {
         if (!this.props.loggedIn) {
             return <div>You are not logged in. Please login to access courses.</div>
@@ -34,7 +30,6 @@ class CoursePage extends React.Component<PageProps> {
         const { accountId, username, sendEmailAction } = this.props;
         return (
             <div>
-                <button id="back" onClick={this.routeChange}>Back to Courses</button>
                 <div className="space"></div>
                 <h2>Course {this.props.match.params.id}</h2>
                 <div>Summary of Text</div>

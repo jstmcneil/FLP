@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ATTEMPT_REGISTRATION } from '../../actions/types';
-import { loggedInSelector } from '../../selectors/authenticationSelector';
+import { loggedInSelector } from '../../selectors';
 
 interface RegistrationProps {
     registerAction: Function;

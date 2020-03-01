@@ -31,7 +31,7 @@ class Header extends React.Component<React.Props<Header>, {}> {
                     <Route exact path="/course" component={Course} />
                     <Route path="/review" component={Review} />
                     <Route path="/profile" component={Profile} />
-                    <Route path="/course/:id" component={CoursePage} />
+                    {/* <Route path="/course/:id" component={CoursePage} /> */}
                 </Switch>
             </Router>
         );
