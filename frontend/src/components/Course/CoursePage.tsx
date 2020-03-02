@@ -1,37 +1,29 @@
 import React from 'react';
 import Quiz from '../MC/Quiz';
 import CourseEmailTextComponent from '../EmailTextBox';
-import { RouteComponentProps } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import VideoPlayer from '../VideoPlayer';
 import { connect } from 'react-redux';
 import { loggedInSelector, accountIdSelector, usernameSelector } from '../../selectors';
 import { ATTEMPT_SEND_EMAIL } from '../../actions/types';
 
-interface PageProps extends RouteComponentProps<RouterProps> {
+interface PageProps {
     loggedIn: boolean;
     accountId: string;
     username: string;
     sendEmailAction: Function;
 }
-
-interface RouterProps {
-    id: string | undefined;
-}
-
-class CoursePage extends React.Component<PageProps> {
-    constructor(props: PageProps) {
-        super(props);
+const CoursePage = (props: PageProps) => {
+    const { courseId } = useParams();
+    if (!props.loggedIn) {
+        return <div>You are not logged in. Please login to access courses.</div>
     }
-
-    render() {
-        if (!this.props.loggedIn) {
-            return <div>You are not logged in. Please login to access courses.</div>
-        }
-        const { accountId, username, sendEmailAction } = this.props;
-        return (
-            <div>
+    console.log("CoursePage");
+    const { accountId, username, sendEmailAction } = props;
+    return (
+        <div>
                 <div className="space"></div>
-                <h2>Course {this.props.match.params.id}</h2>
+                <h2>Course {courseId}</h2>
                 <div>Summary of Text</div>
                 <div id="placeholder"></div>
                 <div>Quiz Title</div>
@@ -42,8 +34,7 @@ class CoursePage extends React.Component<PageProps> {
                 <div className="space"></div>
                 <CourseEmailTextComponent accountId={accountId} questionName={"example"} username={username} courseName={"courseName"} sendEmailAction={sendEmailAction}/>
             </div>
-        );
-    }
+    )
 }
 
 export default connect(

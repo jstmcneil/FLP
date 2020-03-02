@@ -11,7 +11,7 @@ const registerInstructor = (username: string, password: string, regCode: number)
     method: 'POST'
   }).then(response => response.json());
 }
-const registerStudent = (username: string, password: string, regCode: number) => {
+const registerStudent = (username: string, password: string, regCode: string) => {
   return fetch('http://localhost:8000/studentRegister?username=' + username + "&password=" + password + "&regCode=" + regCode, {
     method: 'POST'
   }).then(response => response.json());
@@ -52,19 +52,19 @@ function* register(action: any) {
   if (!action.payload) return;
   const { username, password, isInstructor, regCode } = action.payload;
   let registrationSuccess = false;
+  let response: any = { msg: 'Unsuccessful Registration.'};
   if (isInstructor) {
-    const response = yield call(registerInstructor, username, password, regCode);
+    response = yield call(registerInstructor, username, password, regCode);
     registrationSuccess = response.success;
     console.log(response);
   } else {
-    const response = yield call(registerStudent, username, password, regCode);
+    response = yield call(registerStudent, username, password, regCode);
     registrationSuccess = response.success;
-    console.log(response);
   }
   if (registrationSuccess) {
     alert('Registration successful! Please log in.');
   } else {
-    alert('Registration unsuccessful. Please try again.');
+    alert(response.msg);
   }
 }
 

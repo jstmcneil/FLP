@@ -10,7 +10,7 @@ interface RegistrationProps {
 interface RegistrationState {
     username: string;
     password: string;
-    regCode: number;
+    regCode: string;
     isInstructor: boolean;
 }
 
@@ -18,7 +18,7 @@ class Register extends React.Component<RegistrationProps, RegistrationState> {
     public state = {
         username: "",
         password: "",
-        regCode: -1,
+        regCode: "",
         isInstructor: false
     };
     render() {
@@ -37,16 +37,7 @@ class Register extends React.Component<RegistrationProps, RegistrationState> {
                 </div>
                 <div>
                     <div>Registration Code</div>
-                    <input type="text" onInput={(event) => {
-                        const rawValue = event.currentTarget.value;
-                        let parsedValue = -1;
-                        try {
-                            parsedValue = parseInt(rawValue, 10);
-                        } catch (e) {
-                            // no-op
-                        }
-                        this.setState({ regCode: parsedValue});
-                    }}></input>
+                    <input type="text" onInput={(event) => this.setState({ regCode: event.currentTarget.value})}></input>
                 </div>
                 <input type="checkbox" onClick= {(event => {this.setState({isInstructor: event.currentTarget.checked})})}/>
                 <button onClick={() => registerAction(this.state.username, this.state.password, this.state.regCode, this.state.isInstructor)}>Submit</button>
@@ -65,7 +56,7 @@ export default connect(
     },
     dispatch => {
         return {
-            registerAction: (username: string, password: string, regCode: number, isInstructor: boolean) => dispatch({type: ATTEMPT_REGISTRATION, payload: { username, password, regCode, isInstructor }})
+            registerAction: (username: string, password: string, regCode: string, isInstructor: boolean) => dispatch({type: ATTEMPT_REGISTRATION, payload: { username, password, regCode, isInstructor }})
         }
     },
 )(Register);

@@ -15,6 +15,7 @@ interface ClassProps {
     courseName: string;
     percent: number;
     color: string;
+    path: string;
 }
 
 const Class = (props: ClassProps): JSX.Element => {
@@ -23,25 +24,24 @@ const Class = (props: ClassProps): JSX.Element => {
         <div id="percentage" style={{ backgroundColor: props.color }}>
             {props.percent + "%"}
         </div>
-        <div><Link to={`/courses/${props.id}`}>Go To Course</Link></div>
+        <div><Link to={`${props.path}/${props.id}`}>Go To Course</Link></div>
     </div>);
 }
 
 const Course = (props: RouteComponentProps): JSX.Element => {
-    let { path } = useRouteMatch();
+    let { path, url } = useRouteMatch();
+    console.log(path);
     return (
-    <div>
         <Switch>
-            <Route path={`${path}/:id`} component={CoursePage} />
             <Route exact path={path}>
                 <div>
                     <div className="title">My Courses</div>
-                    <Class courseName="Personal Finance" percent={10} color="yellow" id="1"/>
-                    <Class courseName="Offer Letter" percent={30} color="pink" id="2"/>
+                    <Class courseName="Personal Finance" percent={10} color="yellow" id="1" path={path}/>
+                    <Class courseName="Offer Letter" percent={30} color="pink" id="2" path={path}/>
                 </div>
             </Route>
+            <Route path={`${path}/:courseId`} component={CoursePage} />
         </Switch>
-    </div>
     );
 }
 
