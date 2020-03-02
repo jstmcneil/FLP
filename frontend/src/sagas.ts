@@ -19,7 +19,7 @@ const registerStudent = (username: string, password: string, regCode: string) =>
 
 const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: string) => {
   return fetch('http://localhost:8000/sendEmail?accountId=' + accountId + "&emailSubject=" + emailSubject + "&emailBody=" + emailBody + "&isBodyHtml=false", {
-    method: 'POST'
+    method: 'GET'
   }).then(response => response.json());
 }
 

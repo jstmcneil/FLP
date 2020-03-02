@@ -13,6 +13,6 @@ export const reducer = (state: State | undefined, action: any): State => {
         case LOGIN_SUCCESS:
             return {...state, ...action.payload};
         default:
-            return initialState;
+            return state ? state : initialState;
     }
 }
