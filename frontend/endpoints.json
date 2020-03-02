@@ -16,13 +16,13 @@
     },
     "sendEmail": {
         "url": "/sendEmail",
-        "params": ["accoundId", "emailSubject", "emailBody", "isBodyHtml"],
+        "params": ["accountId", "emailSubject", "emailBody", "isBodyHtml"],
         "requestType": "GET",
         "notes": "please use 1 or 0 for isBodyHtml"
     },
     "createReview": {
         "url": "/createReview",
-        "params": ["accoundId", "courseId", "title", "notes"],
+        "params": ["accountId", "courseId", "title", "notes"],
         "requestType": "POST"
     },
     "deleteReview": {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ATTEMPT_LOGIN } from '../../actions/types';
-import { loggedInSelector } from '../../selectors/authenticationSelector';
+import { loggedInSelector } from '../../selectors';
 interface LoginProps {
     loginAction: Function;
     loggedIn: boolean;

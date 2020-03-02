@@ -9,12 +9,10 @@ import Home from '../Home/Home';
 import Course from '../Course/Course';
 import Review from '../Review/Review';
 import Profile from '../Profile/Profile';
-import Login from '../Login';
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import BookIcon from '@material-ui/icons/Book';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import CoursePage from '../Course/CoursePage';
 
 class Header extends React.Component<React.Props<Header>, {}> {
     render() {
@@ -28,10 +26,9 @@ class Header extends React.Component<React.Props<Header>, {}> {
                 </div>
                 <Switch>
                     <Route exact path="/" component={Home} />
-                    <Route exact path="/course" component={Course} />
+                    <Route path="/course" component={Course} />
                     <Route path="/review" component={Review} />
                     <Route path="/profile" component={Profile} />
-                    <Route path="/course/:id" component={CoursePage} />
                 </Switch>
             </Router>
         );

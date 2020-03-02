@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 interface ClassProps {
     id: string;
@@ -28,9 +28,7 @@ class Class extends React.Component<ClassProps, ClassState> {
                 <div id="percentage" style={{ backgroundColor: this.props.color }}>
                     {this.props.percent + "%"}
                 </div>
-                <div id="redirectClass">
-                    <button onClick={() => this.routeChange(this.props.id)}>Go to class</button>
-                </div>
+                <div id="redirectClass"><Link to={`/courses/${this.props.id}`} /></div>
             </div>
         );
     }
