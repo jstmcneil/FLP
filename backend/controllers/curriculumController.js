@@ -4,7 +4,7 @@ import { verifyJWTToken } from '../util/auth.js';
 // parameters: regCode, courses: [courseId]
 exports.setCurriculum = async(req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",
@@ -27,7 +27,7 @@ exports.setCurriculum = async(req, res) => {
 // parameters: regCode
 exports.getCurriculum = async(req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",

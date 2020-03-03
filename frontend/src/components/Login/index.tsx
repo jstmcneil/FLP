@@ -23,7 +23,7 @@ class Login extends React.Component<LoginProps, LoginState> {
             <div>
                 <div>Login</div>
                 <div>
-                    <div>Username</div>
+                    <div>Email</div>
                     <input type="text" onInput={(event) => this.setState({ username: event.currentTarget.value })}></input>
                 </div>
                 <div>

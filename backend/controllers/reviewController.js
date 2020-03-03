@@ -24,7 +24,7 @@ async function convertToUsername(arr) {
 // parameters: accoundId, courseId, review
 exports.createReview = async (req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",
@@ -51,7 +51,7 @@ exports.createReview = async (req, res) => {
 // parameters: accountId, courseId
 exports.getReviews = async (req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",

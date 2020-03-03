@@ -5,7 +5,7 @@ import { verifyJWTToken } from '../util/auth.js';
 // parameters: accountId, emailSubject, emailBody, isBodyHtml
 exports.sendEMail = async (req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",

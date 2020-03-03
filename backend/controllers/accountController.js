@@ -41,13 +41,13 @@ exports.login = async (req, res) => {
     }).catch((err) => console.error(err));
 
     if (loginSuccess) {
-        res.cookie('token', generateJWTToken(accountId));
         res.send({
             msg: null,
             success: true,
             regCode: regCode,
             isInstructor: isInstructor,
-            accountId: accountId
+            accountId: accountId,
+            token: generateJWTToken(accountId)
         });
     } else {
         res.send({
@@ -96,7 +96,6 @@ exports.studentRegister = async (req, res) => {
 
     acc.save(err => {if (err) console.error(err)});
 
-    res.cookie('token', generateJWTToken(acc._id));
     res.send({
         msg: "Register Success",
         success: true,
@@ -153,7 +152,6 @@ exports.instructorRegister = async (req, res) => {
 
     curriculum.save(err => {if (err) console.error(err)});
 
-    res.cookie('token', generateJWTToken(acc._id));
     res.send({
         msg: "Register Success",
         success: true,

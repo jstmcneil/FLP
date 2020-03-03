@@ -4,7 +4,7 @@ import Curriculum from '../models/curriculumModel.js';
 import { verifyJWTToken } from '../util/auth.js';
 import fs from 'fs';
 import path from 'path';
-const curriculum = JSON.parse(fs.readFileSync(path.resolve() + '\\curriculum.json'));
+const curriculum = JSON.parse(fs.readFileSync(path.resolve() + '\/curriculum.json'));
 
 async function convertToUsername(arr) {
     var mutableArr = [];
@@ -28,7 +28,7 @@ async function convertToUsername(arr) {
 // parameters: accountId, courseId, answers: [{questionId: Number, answerIndex: Number}], completedEmailQuestion: Boolean
 exports.submitQuiz = async (req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",
@@ -85,7 +85,7 @@ exports.submitQuiz = async (req, res) => {
 // parameters: regCode
 exports.getCourses = async (req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",
@@ -130,7 +130,7 @@ exports.getCourses = async (req, res) => {
 // parameters: accountId, regCode
 exports.getAllGrades = async (req, res) => {
     //verify token
-    const token = req.cookies.token;
+    const token = req.headers['authorization'];
     if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",
