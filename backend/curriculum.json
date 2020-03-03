@@ -1,0 +1,100 @@
+{
+    "courses": [
+        {
+            "id": 123,
+            "summaryText": "course 1 summary",
+            "summaryVideo": [
+                {
+                    "type": "youtube",
+                    "id": "20aZdIiW7ik"
+                },
+                {
+                    "type": "youtube",
+                    "id": "FMvppuS_ehg"
+                }
+            ],
+            "quiz": {
+                "mcQuestions": [
+                    {
+                        "questionId": 0,
+                        "questionContent": "1 + 1 = ?",
+                        "answerChoices": [
+                            "2",
+                            "3",
+                            "999",
+                            "-1"
+                        ],
+                        "correctAnswerIndex": 0,
+                        "videoId": null
+                    },
+                    {
+                        "questionId": 1,
+                        "questionContent": "3 * 3 = ?",
+                        "answerChoices": [
+                            "1",
+                            "3",
+                            "9",
+                            "0"
+                        ],
+                        "correctAnswerIndex": 2,
+                        "videoType": "youtube",
+                        "videoId": "20aZdIiW7ik"
+                    }
+                ],
+                "emailQuestions": [
+                    {
+                        "questionContent": "what is your favorite color?",
+                        "videoType": null,
+                        "videoId": null
+                    }
+                ]
+            }
+        },
+        {
+            "id": 456,
+            "summaryText": "course 2 summary",
+            "summaryVideo": [
+                {
+                    "type": "youtube",
+                    "id": "wd16ZC_evTE"
+                }
+            ],
+            "quiz": {
+                "mcQuestions": [
+                    {
+                        "questionId": 0,
+                        "questionContent": "3 * 333 = ?",
+                        "answerChoices": [
+                            "2",
+                            "3",
+                            "999",
+                            "-1"
+                        ],
+                        "correctAnswerIndex": 2,
+                        "videoId": null
+                    },
+                    {
+                        "questionId": 1,
+                        "questionContent": "3 * 1 = ?",
+                        "answerChoices": [
+                            "1",
+                            "3",
+                            "9",
+                            "0"
+                        ],
+                        "correctAnswerIndex": 1,
+                        "videoType": "youtube",
+                        "videoId": "20aZdIiW7ik"
+                    }
+                ],
+                "emailQuestions": [
+                    {
+                        "questionContent": "what is your favorite food?",
+                        "videoType": null,
+                        "videoId": null
+                    }
+                ]
+            }
+        }
+    ]
+}

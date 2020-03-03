@@ -1,14 +1,42 @@
 import Review from '../models/reviewModel.js';
-import Account from "../models/accountModel.js";
+import Account from '../models/accountModel.js';
+import { verifyJWTToken } from '../util/auth.js';
 
-// parameters: accoundId, courseId, title, notes
+async function convertToUsername(arr) {
+    var mutableArr = [];
+    for (let i = 0; i < arr.length; i++) {
+        mutableArr.push(JSON.parse(JSON.stringify(arr[i])));
+        let username;
+        await Account.findById(mutableArr[i].accountId, (err, acc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            username = acc.username;
+        });
+
+        mutableArr[i].username = username;
+        delete mutableArr[i].accountId;
+    }
+    return mutableArr;
+}
+
+// parameters: accoundId, courseId, review
 exports.createReview = async (req, res) => {
-    
+    //verify token
+    const token = req.cookies.token;
+    if (!token || !verifyJWTToken(token)) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+
     const review = new Review({
         accountId: req.query.accountId,
         courseId: req.query.courseId,
-        title: req.query.title,
-        notes: req.query.notes
+        review: req.query.review
     });
 
     review.save(err => {if (err) console.error(err)});
@@ -20,22 +48,18 @@ exports.createReview = async (req, res) => {
     });
 };
 
-// parameters: reviewId
-exports.deleteReview = async (req, res) => {
-    Review.findByIdAndDelete(req.query.reviewId, (err, review) => {
-        if (err) {
-            console.log(err);
-        }
-    });
-
-    res.send({
-        msg: null,
-        success: true
-    });
-};
-
 // parameters: accountId, courseId
 exports.getReviews = async (req, res) => {
+    //verify token
+    const token = req.cookies.token;
+    if (!token || !verifyJWTToken(token)) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+
     var isInstructor = false;
 
     await Account.findById(req.query.accountId, (err, acc) => {
@@ -54,16 +78,23 @@ exports.getReviews = async (req, res) => {
         query.accountId = req.query.accountId;
     }
 
-    await Review.find(query, (err, reviews) => {
+    var reviews = [];
+
+    await Review.find(query, (err, revs) => {
         if (err) {
             console.error(err);
             return;
         }
+        reviews = revs;
+    });
 
-        res.send({
-            reviews: reviews,
-            msg: null,
-            success: true
-        })
+    if (isInstructor) {
+        reviews = await convertToUsername(reviews);
+    }
+
+    res.send({
+        reviews: reviews,
+        msg: null,
+        success: true
     });
 };

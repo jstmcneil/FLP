@@ -1,10 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-
+import cookieParser from 'cookie-parser';
 import routes from './routes/index.js';
 
 const app = express();
+app.use(cookieParser());
 
 /**
 * Connect to the database

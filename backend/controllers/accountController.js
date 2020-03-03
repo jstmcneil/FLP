@@ -1,4 +1,6 @@
 import Account from '../models/accountModel.js';
+import Curriculum from '../models/curriculumModel.js';
+import { generateJWTToken } from '../util/auth.js';
 
 async function isRegistered(username) {
     if (!username) {
@@ -39,6 +41,7 @@ exports.login = async (req, res) => {
     }).catch((err) => console.error(err));
 
     if (loginSuccess) {
+        res.cookie('token', generateJWTToken(accountId));
         res.send({
             msg: null,
             success: true,
@@ -73,11 +76,11 @@ exports.studentRegister = async (req, res) => {
         return;
     }
 
-    //gt username checking
-    const regex = /^[a-zA-Z]{1,15}[0-9]{1,5}$/;
+    //gt email checking
+    const regex = /@gatech.edu/;
     if (!regex.test(req.query.username)) {
         res.send({
-            msg: "Not a GT username format, example: \"gburdell3\"",
+            msg: "Please register with a GT email",
             success: false
         });
         return;
@@ -93,6 +96,7 @@ exports.studentRegister = async (req, res) => {
 
     acc.save(err => {if (err) console.error(err)});
 
+    res.cookie('token', generateJWTToken(acc._id));
     res.send({
         msg: "Register Success",
         success: true,
@@ -121,6 +125,16 @@ exports.instructorRegister = async (req, res) => {
         return;
     }
 
+    //gt email checking
+    const regex = /@gatech.edu/;
+    if (!regex.test(req.query.username)) {
+        res.send({
+            msg: "Please register with a GT email",
+            success: false
+        });
+        return;
+    }
+
     //create and save new account
     const acc = new Account({
         username: req.query.username,
@@ -131,6 +145,15 @@ exports.instructorRegister = async (req, res) => {
 
     acc.save(err => {if (err) console.error(err)});
 
+    //create empty curriculum for the regCode
+    const curriculum = new Curriculum({
+        regCode: req.query.regCode,
+        courses: []
+    });
+
+    curriculum.save(err => {if (err) console.error(err)});
+
+    res.cookie('token', generateJWTToken(acc._id));
     res.send({
         msg: "Register Success",
         success: true,

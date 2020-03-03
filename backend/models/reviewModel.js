@@ -8,8 +8,7 @@ import mongoose, {Schema} from 'mongoose';
 const ReviewSchema = new Schema({
     accountId: String,
     courseId: String,
-    title: String,
-    notes: String
+    review: String
 });
 
 export default mongoose.model('Review', ReviewSchema);

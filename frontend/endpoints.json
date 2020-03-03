@@ -16,18 +16,12 @@
     },
     "sendEmail": {
         "url": "/sendEmail",
-        "params": ["accountId", "emailSubject", "emailBody", "isBodyHtml"],
-        "requestType": "GET",
-        "notes": "please use 1 or 0 for isBodyHtml"
+        "params": ["accoundId", "emailSubject", "emailBody", "isBodyHtml"],
+        "requestType": "GET"
     },
     "createReview": {
         "url": "/createReview",
-        "params": ["accountId", "courseId", "title", "notes"],
-        "requestType": "POST"
-    },
-    "deleteReview": {
-        "url": "/deleteReview",
-        "params": ["reviewId"],
+        "params": ["accoundId", "courseId", "review"],
         "requestType": "POST"
     },
     "getReviews": {
@@ -35,5 +29,32 @@
         "params": ["accountId", "courseId"],
         "requestType": "GET",
         "notes": "student will get only reviews they created, instructor will get all reviews of a course"
+    },
+    "setCurriculum": {
+        "url": "/setCurriculum",
+        "params": ["regCode", "courses"],
+        "requestType": "POST",
+        "notes": "courses: [courseId]"
+    },
+    "getCurriculum": {
+        "url": "/getCurriculum",
+        "params": ["regCode"],
+        "requestType": "GET"
+    },
+    "submitQuiz": {
+        "url": "/submitQuiz",
+        "params": ["accountId", "courseId", "answers", "completedEmailQuestion"],
+        "requestType": "POST",
+        "notes": "answers: [{questionId: Number, answerIndex: Number}]"
+    },
+    "getCourses": {
+        "url": "/getCourses",
+        "params": ["regCode"],
+        "requestType": "GET"
+    },
+    "getAllGrades": {
+        "url": "/getAllGrades",
+        "params": ["accountId", "regCode"],
+        "requestType": "GET"
     }
 }
