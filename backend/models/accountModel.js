@@ -10,7 +10,6 @@ const AccountSchema = new Schema({
     password: String,
     regCode: String,
     isInstructor: Boolean,
-    jwtToken: String
 });
 
 export default mongoose.model('Account', AccountSchema);

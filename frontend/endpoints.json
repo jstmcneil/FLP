@@ -12,7 +12,7 @@
     "login": {
         "url": "/login",
         "params": ["username", "password"],
-        "requestType": "GET"
+        "requestType": "POST"
     },
     "getAccount": {
         "url": "/getAccount",

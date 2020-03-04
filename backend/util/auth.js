@@ -18,6 +18,7 @@ function sliceOffBearerFromToken(token) {
 }
 
 export function verifyJWTToken(token) {
+    if (!token || token === "") { return false; }
     const tokenToTry = sliceOffBearerFromToken(token);
     if (tokenToTry === "") {
         return false;

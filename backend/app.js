@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 // https://enable-cors.org/server_expressjs.html
 app.use(function(_, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Authorization");
+    res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
     res.header("Access-Control-Allow-Credentials", true);
     next();
 });

@@ -13,15 +13,27 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import BookIcon from '@material-ui/icons/Book';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import { connect } from 'react-redux';
+import { SETUP_APP } from '../../actions/types';
+import { loggedInSelector, isInstructorSelector } from '../../selectors';
 
-class Header extends React.Component<React.Props<Header>, {}> {
+interface HeaderProps extends React.Props<Header> {
+    setUpAction: Function;
+    loggedIn: boolean;
+    isInstructor: boolean;
+}
+
+class Header extends React.Component<HeaderProps, {}> {
+    public componentDidMount() {
+        this.props.setUpAction();
+    }
+
     render() {
         return (
             <Router>
                 <div className="header">
                     <div id="flp"><MonetizationOnIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/">FLP</Link></div>
-                    <div id="courseIcon"><BookIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/course">Course</Link></div>
-                    <div id="reviewIcon"><SpeakerNotesIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/review">Review</Link></div>
+                    { this.props.loggedIn && !this.props.isInstructor && <div id="courseIcon"><BookIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/course">Course</Link></div>}
                     <div id="profileIcon"><AccountBoxIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/profile">Profile</Link></div>
                 </div>
                 <Switch>
@@ -35,4 +47,15 @@ class Header extends React.Component<React.Props<Header>, {}> {
     }
 }
 
-export default Header;
+export default connect(
+    state => {
+        return {
+            loggedIn: loggedInSelector(state),
+            isInstructor: isInstructorSelector(state)
+        }
+    },
+    dispatch => {
+        return {
+            setUpAction: () => dispatch({ type: SETUP_APP })
+        }
+})(Header);

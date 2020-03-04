@@ -112,6 +112,7 @@ exports.studentRegister = async (req, res) => {
 };
 
 exports.instructorRegister = async (req, res) => {
+    console.log(req.body);
     //check code
     if (!req.body.regCode || await regCodeExist(req.body.regCode)) {
         res.send({
@@ -170,7 +171,9 @@ exports.instructorRegister = async (req, res) => {
 exports.getAccountByToken = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(token);
+    console.log(decoded);
+    if (!token || !decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -178,7 +181,7 @@ exports.getAccountByToken = async (req, res) => {
         return;
     }
 
-    await Account.findOne({jwtToken: token}, (err, acc) => {
+    await Account.findOne({_id: decoded.accountId}, (err, acc) => {
         if (err) {
             console.log(err);
             return;
@@ -193,7 +196,12 @@ exports.getAccountByToken = async (req, res) => {
 
         res.send({
             msg: null,
-            account: acc,
+            account: {
+                username: acc.username,
+                regCode: acc.regCode,
+                isInstructor: acc.isInstructor,
+                accountId: acc._id
+            },
             success: true
         });
     });
