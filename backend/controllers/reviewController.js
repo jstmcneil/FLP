@@ -34,9 +34,9 @@ exports.createReview = async (req, res) => {
     }
 
     const review = new Review({
-        accountId: req.query.accountId,
-        courseId: req.query.courseId,
-        review: req.query.review
+        accountId: req.body.accountId,
+        courseId: req.body.courseId,
+        review: req.body.review
     });
 
     review.save(err => {if (err) console.error(err)});
@@ -62,7 +62,7 @@ exports.getReviews = async (req, res) => {
 
     var isInstructor = false;
 
-    await Account.findById(req.query.accountId, (err, acc) => {
+    await Account.findById(req.body.accountId, (err, acc) => {
         if (err) {
             console.error(err);
             return;
@@ -71,11 +71,11 @@ exports.getReviews = async (req, res) => {
     });
 
     var query = {
-        courseId: req.query.courseId
+        courseId: req.body.courseId
     }
 
     if (!isInstructor) {
-        query.accountId = req.query.accountId;
+        query.accountId = req.body.accountId;
     }
 
     var reviews = [];

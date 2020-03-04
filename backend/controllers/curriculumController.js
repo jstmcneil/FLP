@@ -12,9 +12,9 @@ exports.setCurriculum = async(req, res) => {
         });
         return;
     }
-    await Curriculum.updateOne({regCode: req.query.regCode}, {
+    await Curriculum.updateOne({regCode: req.body.regCode}, {
         $set: {
-            courses: req.query.courses
+            courses: req.body.courses
         }
     });
 
@@ -36,7 +36,7 @@ exports.getCurriculum = async(req, res) => {
         return;
     }
 
-    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
+    await Curriculum.find({regCode: req.body.regCode}, (err, cur) => {
         if (err) {
             console.log(err);
             res.send({

@@ -38,7 +38,7 @@ exports.submitQuiz = async (req, res) => {
     }
 
     var quizTaken = false;
-    await Course.find({accountId: req.query.accountId, courseId: req.query.courseId}, (err, course) => {
+    await Course.find({accountId: req.body.accountId, courseId: req.body.courseId}, (err, course) => {
         if (err) {
             console.log(err);
             return;
@@ -55,8 +55,8 @@ exports.submitQuiz = async (req, res) => {
     }
 
     const answers = [ {"questionId":0,"answerIndex":2},
-    {"questionId":1,"answerIndex":2} ];//JSON.parse(req.query.answers);
-    await curriculum.courses.filter((course => course.id == req.query.courseId));
+    {"questionId":1,"answerIndex":2} ];//JSON.parse(req.body.answers);
+    await curriculum.courses.filter((course => course.id == req.body.courseId));
     const quiz = curriculum.courses[0].quiz;
     var correctCount = 0.0;
 
@@ -67,10 +67,10 @@ exports.submitQuiz = async (req, res) => {
     });
 
     const course = new Course({
-        accountId: req.query.accountId,
-        courseId: req.query.courseId,
+        accountId: req.body.accountId,
+        courseId: req.body.courseId,
         mcGrade: correctCount / quiz.mcQuestions.length * 100,
-        completedEmailQuestion: req.query.completedEmailQuestion
+        completedEmailQuestion: req.body.completedEmailQuestion
     });
 
     course.save(err => {if(err) console.log(err)});
@@ -95,7 +95,7 @@ exports.getCourses = async (req, res) => {
     }
 
     var courseId = [];
-    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
+    await Curriculum.find({regCode: req.body.regCode}, (err, cur) => {
         if (err) {
             console.log(err);
             return;
@@ -142,7 +142,7 @@ exports.getAllGrades = async (req, res) => {
     var isInstructor = false;
     var courseId;
 
-    await Account.findById(req.query.accountId, (err, acc) => {
+    await Account.findById(req.body.accountId, (err, acc) => {
         if (err) {
             console.error(err);
             return;
@@ -150,7 +150,7 @@ exports.getAllGrades = async (req, res) => {
         isInstructor = acc.isInstructor;
     });
 
-    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
+    await Curriculum.find({regCode: req.body.regCode}, (err, cur) => {
         if (err) {
             console.log(err);
             return;
@@ -162,7 +162,7 @@ exports.getAllGrades = async (req, res) => {
     var query = {};
 
     if (!isInstructor) {
-        query.accountId = req.query.accountId;
+        query.accountId = req.body.accountId;
     }
 
     for (const id of courseId) {

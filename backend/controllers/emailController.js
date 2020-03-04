@@ -18,7 +18,7 @@ exports.sendEMail = async (req, res) => {
     var instructorEmail;
     var regCode;
 
-    await Account.findById(req.query.accountId, (err, acc) => {
+    await Account.findById(req.body.accountId, (err, acc) => {
         if (err) {
             console.log(err);
             return;
@@ -69,13 +69,13 @@ exports.sendEMail = async (req, res) => {
     var option = {
         from: 'flpemail.noreply@gmail.com',
         to: instructorEmail,
-        subject: req.query.emailSubject,
+        subject: req.body.emailSubject,
     };
 
-    if (req.query.isBodyHtml) {
-        option.html = req.query.emailBody;
+    if (req.body.isBodyHtml) {
+        option.html = req.body.emailBody;
     } else {
-        option.text = req.query.emailBody;
+        option.text = req.body.emailBody;
     }
 
     transporter.sendMail(option, (err, info) => {

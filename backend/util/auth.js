@@ -2,17 +2,17 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs';
 
 const privateKey = fs.readFileSync(__dirname + '\/private.key');
-const expiresIn = '3h';
+const expiresIn = '5h';
 
 export function generateJWTToken(accountId) {
-    return jwt.sign({ accountId }, privateKey, {expiresIn: "3h"});
+    return jwt.sign({ accountId }, privateKey, {expiresIn: expiresIn});
 }
 
 function sliceOffBearerFromToken(token) {
     const bearer = 'Bearer ';
     const bearerLocation = token.indexOf(bearer);
     if (bearerLocation === -1) {
-        return "";
+        return token;
     }
     return token.substring(bearerLocation + bearer.length, token.length);
 }
