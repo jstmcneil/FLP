@@ -62,7 +62,7 @@ exports.getReviews = async (req, res) => {
 
     var isInstructor = false;
 
-    await Account.findById(req.body.accountId, (err, acc) => {
+    await Account.findById(req.query.accountId, (err, acc) => {
         if (err) {
             console.error(err);
             return;
@@ -71,11 +71,11 @@ exports.getReviews = async (req, res) => {
     });
 
     var query = {
-        courseId: req.body.courseId
+        courseId: req.query.courseId
     }
 
     if (!isInstructor) {
-        query.accountId = req.body.accountId;
+        query.accountId = req.query.accountId;
     }
 
     var reviews = [];

@@ -36,7 +36,7 @@ exports.getCurriculum = async(req, res) => {
         return;
     }
 
-    await Curriculum.find({regCode: req.body.regCode}, (err, cur) => {
+    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
         if (err) {
             console.log(err);
             res.send({

@@ -61,5 +61,10 @@
         "url": "/getAllGrades",
         "params": ["accountId", "regCode"],
         "requestType": "GET"
+    },
+    "getAllCourses": {
+        "url": "/getAllCourses",
+        "params": [],
+        "requestType": "GET"
     }
 }
