@@ -70,7 +70,6 @@ const fetchPostWrapper = (
         fetchHeaders.set(headerKey, headers[headerKey]);
       });
   }
-  console.log(fetchHeaders);
   return fetch(`${baseUrlToFetch}${route}`, { 
     method: "POST",
     mode: 'cors',
@@ -99,12 +98,27 @@ const registerStudent = (username: string, password: string, regCode: string) =>
 }
 
 const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: string) => {
-  return fetchGetWrapper('/sendEmail', { accountId, emailSubject, emailBody,  isBodyHtml: "false" });
+  return fetchPostWrapper('/sendEmail', { accountId, emailSubject, emailBody,  isBodyHtml: "false" });
 }
 
 const getCourses = (regCode?: string) => {
   return regCode ? fetchGetWrapper('/getCourses', { regCode }) : fetchGetWrapper('/getCourses');
 }
+
+
+// helper functions
+
+// TODO: maybe move this away from a string check?
+const isTokenValid = (response: any): void => {
+  if (response.msg && response.msg === "Invalid Token") {
+    alert('Session has expired. Please login again.');
+    document.location.href = '/profile'
+  }
+}
+
+
+
+// saga watchers
 
 function* login(action: any) {
     if (!action.payload) return;
@@ -129,8 +143,6 @@ function* login(action: any) {
     
 }
 
-// saga watchers
-
 function* setupApp() {
   const response = yield call(getAccount);
   if (response.success) {
@@ -152,6 +164,7 @@ function* setupApp() {
 
 function* logOut() {
   storeTokenInCookie("");
+  document.location.href = '/profile';
   return;
 }
 
@@ -179,6 +192,7 @@ function* sendEmail(action: any) {
   if (!action.payload) return;
   const { accountId, emailSubject, emailBody } = action.payload;
   const response = yield call(sendEmailResponse, accountId, emailSubject, emailBody);
+  isTokenValid(response);
   const success = response ? response.success : false;
   if (success) {
     yield put({
@@ -197,6 +211,7 @@ function* getCoursesSaga(action: any) {
   if (!action.payload) return;
   const regCode = action.payload ? action.payload.regCode : "";
   const response = yield call(getCourses);
+  isTokenValid(response);
   if (response.success && response.courses) {
     yield put({
       type: SAVE_COURSES,
