@@ -41,19 +41,13 @@ exports.login = async (req, res) => {
     }).catch((err) => console.error(err));
 
     if (loginSuccess) {
-        const jwtToken = generateJWTToken(accountId);
-        await Account.update({_id: accountId}, {
-            $set: {
-                jwtToken: jwtToken
-            }
-        });
         res.send({
             msg: null,
             success: true,
             regCode: regCode,
             isInstructor: isInstructor,
             accountId: accountId,
-            token: jwtToken
+            token: generateJWTToken(accountId)
         });
     } else {
         res.send({
@@ -172,7 +166,6 @@ exports.getAccountByToken = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
     const decoded = verifyJWTToken(token);
-    console.log(decoded);
     if (!token || !decoded) {
         res.send({
             msg: "Invalid Token",
