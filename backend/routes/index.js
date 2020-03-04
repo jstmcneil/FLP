@@ -15,10 +15,11 @@ export default (app) => {
     //register and login
     app.route('/studentRegister').post(Account.studentRegister);
     app.route('/instructorRegister').post(Account.instructorRegister);
-    app.route('/login').get(Account.login);
+    app.route('/login').post(Account.login);
+    app.route('/getAccount').get(Account.getAccountByToken);
 
     //email service
-    app.route('/sendEmail').get(SMTPEmail.sendEMail);
+    app.route('/sendEmail').post(SMTPEmail.sendEMail);
 
     //review
     app.route('/getReviews').get(Review.getReviews);

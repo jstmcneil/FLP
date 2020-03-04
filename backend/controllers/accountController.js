@@ -1,6 +1,6 @@
 import Account from '../models/accountModel.js';
 import Curriculum from '../models/curriculumModel.js';
-import { generateJWTToken } from '../util/auth.js';
+import { generateJWTToken, verifyJWTToken } from '../util/auth.js';
 
 async function isRegistered(username) {
     if (!username) {
@@ -31,8 +31,8 @@ exports.login = async (req, res) => {
         isInstructor = false,
         accountId = null;
 
-    await Account.find({'username': req.query.username}, (err, acc) => {
-        if (acc.length != 0 && acc[0].password == req.query.password) {
+    await Account.find({'username': req.body.username}, (err, acc) => {
+        if (acc.length != 0 && acc[0].password == req.body.password) {
             loginSuccess = true;
             regCode = acc[0].regCode;
             isInstructor = acc[0].isInstructor;
@@ -41,13 +41,19 @@ exports.login = async (req, res) => {
     }).catch((err) => console.error(err));
 
     if (loginSuccess) {
-        res.cookie('token', generateJWTToken(accountId));
+        const jwtToken = generateJWTToken(accountId);
+        await Account.update({_id: accountId}, {
+            $set: {
+                jwtToken: jwtToken
+            }
+        });
         res.send({
             msg: null,
             success: true,
             regCode: regCode,
             isInstructor: isInstructor,
-            accountId: accountId
+            accountId: accountId,
+            token: jwtToken
         });
     } else {
         res.send({
@@ -59,7 +65,7 @@ exports.login = async (req, res) => {
 
 exports.studentRegister = async (req, res) => {
     //check code
-    if (!req.query.regCode || !await regCodeExist(req.query.regCode)) {
+    if (!req.body.regCode || !await regCodeExist(req.body.regCode)) {
         res.send({
             msg: "This Registration Code is Invalid",
             success: false
@@ -68,7 +74,7 @@ exports.studentRegister = async (req, res) => {
     }
 
     //check username already exist
-    if (await isRegistered(req.query.username)) {
+    if (await isRegistered(req.body.username)) {
         res.send({
             msg: "This Account is Registered",
             success: false
@@ -78,7 +84,7 @@ exports.studentRegister = async (req, res) => {
 
     //gt email checking
     const regex = /@gatech.edu/;
-    if (!regex.test(req.query.username)) {
+    if (!regex.test(req.body.username)) {
         res.send({
             msg: "Please register with a GT email",
             success: false
@@ -88,27 +94,27 @@ exports.studentRegister = async (req, res) => {
 
     //create and save new account
     const acc = new Account({
-        username: req.query.username,
-        password: req.query.password,
-        regCode: req.query.regCode,
+        username: req.body.username,
+        password: req.body.password,
+        regCode: req.body.regCode,
         isInstructor: false
     });
 
     acc.save(err => {if (err) console.error(err)});
 
-    res.cookie('token', generateJWTToken(acc._id));
     res.send({
         msg: "Register Success",
         success: true,
-        regCode: req.query.regCode,
+        regCode: req.body.regCode,
         isInstructor: false,
         accountId: acc._id
     });
 };
 
 exports.instructorRegister = async (req, res) => {
+    console.log(req.body);
     //check code
-    if (!req.query.regCode || await regCodeExist(req.query.regCode)) {
+    if (!req.body.regCode || await regCodeExist(req.body.regCode)) {
         res.send({
             msg: "This Registration Code is Taken",
             success: false
@@ -117,7 +123,7 @@ exports.instructorRegister = async (req, res) => {
     }
 
     //check username already exist
-    if (await isRegistered(req.query.username)) {
+    if (await isRegistered(req.body.username)) {
         res.send({
             msg: "This Account is Registered",
             success: false
@@ -127,7 +133,7 @@ exports.instructorRegister = async (req, res) => {
 
     //gt email checking
     const regex = /@gatech.edu/;
-    if (!regex.test(req.query.username)) {
+    if (!regex.test(req.body.username)) {
         res.send({
             msg: "Please register with a GT email",
             success: false
@@ -137,9 +143,9 @@ exports.instructorRegister = async (req, res) => {
 
     //create and save new account
     const acc = new Account({
-        username: req.query.username,
-        password: req.query.password,
-        regCode: req.query.regCode,
+        username: req.body.username,
+        password: req.body.password,
+        regCode: req.body.regCode,
         isInstructor: true
     });
 
@@ -147,18 +153,57 @@ exports.instructorRegister = async (req, res) => {
 
     //create empty curriculum for the regCode
     const curriculum = new Curriculum({
-        regCode: req.query.regCode,
+        regCode: req.body.regCode,
         courses: []
     });
 
     curriculum.save(err => {if (err) console.error(err)});
 
-    res.cookie('token', generateJWTToken(acc._id));
     res.send({
         msg: "Register Success",
         success: true,
-        regCode: req.query.regCode,
+        regCode: req.body.regCode,
         isInstructor: true,
         accountId: acc._id
     });
+}
+
+exports.getAccountByToken = async (req, res) => {
+    //verify token
+    const token = req.headers['authorization'];
+    const decoded = verifyJWTToken(token);
+    console.log(decoded);
+    if (!token || !decoded) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+
+    await Account.findOne({_id: decoded.accountId}, (err, acc) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        if (!acc) {
+            res.send({
+                msg: "Account not found",
+                success: false
+            })
+            return;
+        }
+
+        res.send({
+            msg: null,
+            account: {
+                username: acc.username,
+                regCode: acc.regCode,
+                isInstructor: acc.isInstructor,
+                accountId: acc._id
+            },
+            success: true
+        });
+    });
+
 }

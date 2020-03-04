@@ -9,7 +9,7 @@ const AccountSchema = new Schema({
     username: String,
     password: String,
     regCode: String,
-    isInstructor: Boolean
+    isInstructor: Boolean,
 });
 
 export default mongoose.model('Account', AccountSchema);

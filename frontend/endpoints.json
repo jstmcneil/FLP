@@ -12,6 +12,11 @@
     "login": {
         "url": "/login",
         "params": ["username", "password"],
+        "requestType": "POST"
+    },
+    "getAccount": {
+        "url": "/getAccount",
+        "params": [],
         "requestType": "GET"
     },
     "sendEmail": {

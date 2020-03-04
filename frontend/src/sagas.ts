@@ -1,33 +1,114 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL } from "./actions/types";
+import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_COURSES, SAVE_COURSES } from "./actions/types";
 
-const fetchPerson = (username: string, password: string) => {
-  return fetch('http://localhost:8000/login?username=' + username + '&password=' + password).then(response => response.json())
+const BASE_URL = 'http://localhost:8000';
+const queryParams = (args: {[index: string]: string}): string => {
+  return `?${Object.keys(args).map(key => `${key}=${args[key]}`).join('&')}`;
+}
+
+const storeTokenInCookie = (token: string) => {
+  document.cookie = `token=${token};path=/`;
+}
+const getTokenInCookie = () => {
+  const tokenKeyPlusEqual = "token=";
+  const tokenKeyIndex = document.cookie.indexOf(tokenKeyPlusEqual);
+  if (tokenKeyIndex < 0) {
+    return "";
+  }
+  const documentCookieStringAfterTokenKey = document.cookie.substring(tokenKeyIndex + tokenKeyPlusEqual.length);
+  const endDelimiter = documentCookieStringAfterTokenKey.indexOf(';') !== -1
+    ? documentCookieStringAfterTokenKey.indexOf(';')
+    : documentCookieStringAfterTokenKey.length;
+  return documentCookieStringAfterTokenKey.substring(0, endDelimiter);
+}
+
+const fetchGetWrapper = (
+  route: string,
+  queryArgs?: {[index: string]: string},
+  baseUrl?: string,
+  headers?: {[index: string]: string}
+  ) => {
+  const baseUrlToFetch = baseUrl ? baseUrl : BASE_URL;
+  const token = getTokenInCookie();
+  console.log(token);
+  let fetchHeaders: Headers = new Headers();
+  if (token !== "") {
+      fetchHeaders.set("Authorization", `Bearer ${getTokenInCookie()}`);
+  }
+  if (headers) {
+      Object.keys(headers).forEach((headerKey: string): void => {
+        fetchHeaders.set(headerKey, headers[headerKey]);
+      });
+  }
+  console.log(fetchHeaders);
+  const url = queryArgs 
+    ? `${baseUrlToFetch}${route}${queryParams(queryArgs)}`
+    : `${baseUrlToFetch}${route}`;
+  return fetch(url, { 
+    method: "GET",
+    mode: 'cors',
+    headers: fetchHeaders
+  })
+    .then(response => response.json(), reason => reason);
+}
+
+const fetchPostWrapper = (
+  route: string,
+  postBody: object,
+  baseUrl?: string,
+  headers?: {[index: string]: string}
+) => {
+  const baseUrlToFetch = baseUrl ? baseUrl : BASE_URL;
+  const token = getTokenInCookie();
+  let fetchHeaders: Headers = new Headers();
+  fetchHeaders.set("Content-Type", `application/json`);
+  if (token !== "") {
+      fetchHeaders.set("Authorization", `Bearer ${getTokenInCookie()}`);
+  }
+  if (headers) {
+      Object.keys(headers).forEach((headerKey: string): void => {
+        fetchHeaders.set(headerKey, headers[headerKey]);
+      });
+  }
+  console.log(fetchHeaders);
+  return fetch(`${baseUrlToFetch}${route}`, { 
+    method: "POST",
+    mode: 'cors',
+    headers: fetchHeaders,
+    body: JSON.stringify(postBody)
+  })
+    .then(response => response.json(), reason => reason);
+}
+
+// API calls
+
+const getAccount = () => {
+  return fetchGetWrapper('/getAccount');
+}
+
+const loginPerson = (username: string, password: string) => {
+  return fetchPostWrapper('/login', { username, password });
 }
 
 // consulted the mdn docs very heavy initially for background on fetch for this
 const registerInstructor = (username: string, password: string, regCode: number) => {
-  return fetch('http://localhost:8000/instructorRegister?username=' + username + "&password=" + password + "&regCode=" + regCode, {
-    method: 'POST'
-  }).then(response => response.json());
+  return fetchPostWrapper('/instructorRegister', { username, password, regCode });
 }
 const registerStudent = (username: string, password: string, regCode: string) => {
-  return fetch('http://localhost:8000/studentRegister?username=' + username + "&password=" + password + "&regCode=" + regCode, {
-    method: 'POST'
-  }).then(response => response.json());
+  return fetchPostWrapper('/studentRegister', { username, password, regCode });
 }
 
 const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: string) => {
-  return fetch('http://localhost:8000/sendEmail?accountId=' + accountId + "&emailSubject=" + emailSubject + "&emailBody=" + emailBody + "&isBodyHtml=false", {
-    method: 'GET'
-  }).then(response => response.json());
+  return fetchGetWrapper('/sendEmail', { accountId, emailSubject, emailBody,  isBodyHtml: "false" });
+}
+
+const getCourses = (regCode?: string) => {
+  return regCode ? fetchGetWrapper('/getCourses', { regCode }) : fetchGetWrapper('/getCourses');
 }
 
 function* login(action: any) {
     if (!action.payload) return;
-    console.log(action.payload);
-    const response = yield call(fetchPerson, action.payload.username, action.payload.password);
-    console.log(response);
+    const response = yield call(loginPerson, action.payload.username, action.payload.password);
     if (response.success) {
       yield put({
         type: LOGIN_SUCCESS,
@@ -35,9 +116,11 @@ function* login(action: any) {
           isInstructor: response.isInstructor,
           loggedIn: response.success,
           regCode: response.regCode,
-          accountId: response.accountId
+          accountId: response.accountId,
         }
       });
+      storeTokenInCookie(response.token);
+      yield put({ type: GET_COURSES, payload: { regCode: response.regCode } });
     } else {
       yield put({
         type: LOGIN_UNSUCCESSFUL
@@ -46,7 +129,31 @@ function* login(action: any) {
     
 }
 
+// saga watchers
 
+function* setupApp() {
+  const response = yield call(getAccount);
+  if (response.success) {
+    const account = response.account;
+    if (account) {
+      yield put({
+        type: LOGIN_SUCCESS,
+        payload: {
+          isInstructor: account.isInstructor,
+          loggedIn: true,
+          regCode: account.regCode,
+          accountId: account.accountId
+        }
+      });
+      yield put({ type: GET_COURSES, payload: { regCode: account.regCode } });
+    }
+  }
+}
+
+function* logOut() {
+  storeTokenInCookie("");
+  return;
+}
 
 function* register(action: any) {
   if (!action.payload) return;
@@ -72,7 +179,7 @@ function* sendEmail(action: any) {
   if (!action.payload) return;
   const { accountId, emailSubject, emailBody } = action.payload;
   const response = yield call(sendEmailResponse, accountId, emailSubject, emailBody);
-  const { success } = response;
+  const success = response ? response.success : false;
   if (success) {
     yield put({
       type: SEND_EMAIL_SUCCESS
@@ -86,10 +193,28 @@ function* sendEmail(action: any) {
   }
 }
 
+function* getCoursesSaga(action: any) {
+  if (!action.payload) return;
+  const regCode = action.payload ? action.payload.regCode : "";
+  const response = yield call(getCourses);
+  if (response.success && response.courses) {
+    yield put({
+      type: SAVE_COURSES,
+      payload: {
+        courses: response.courses
+      }
+    })
+  }
+
+}
+
 function* sagaWatcher() {
     yield takeLatest(ATTEMPT_LOGIN, login);
     yield takeLatest(ATTEMPT_REGISTRATION, register);
     yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
+    yield takeLatest(LOG_OUT, logOut);
+    yield takeLatest(SETUP_APP, setupApp);
+    yield takeLatest(GET_COURSES, getCoursesSaga);
 }
 
 export default sagaWatcher;
