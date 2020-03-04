@@ -93,6 +93,22 @@ exports.getCourses = async (req, res) => {
         });
         return;
     }
+    
+    const regCode = req.query.regCode;
+    if (!regCode || regCode === "") {
+        const curr = curriculum.courses;
+        curr.forEach(c => {
+            c.quiz.mcQuestions.forEach(question => {
+                delete question.correctAnswerIndex;
+            });
+        });
+        res.send({
+            courses: curr,
+            msg: null,
+            success: true
+        });
+        return;
+    }
 
     var courseId = [];
     await Curriculum.find({regCode: req.body.regCode}, (err, cur) => {

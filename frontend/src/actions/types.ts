@@ -7,3 +7,5 @@ export const SEND_EMAIL_SUCCESS = "SEND_EMAIL_SUCCESS";
 export const SEND_EMAIL_FAILURE = "SEND_EMAIL_FAILURE";
 export const LOG_OUT = "LOG_OUT";
 export const SETUP_APP = "SETUP_APP";
+export const GET_COURSES = "GET_COURSES";
+export const SAVE_COURSES = "SAVE_COURSES";
