@@ -33,4 +33,5 @@ export default (app) => {
     app.route('/submitQuiz').post(Course.submitQuiz);
     app.route('/getCourses').get(Course.getCourses);
     app.route('/getAllGrades').get(Course.getAllGrades);
+    app.route('/getAllCourses').get(Course.getAllCourses);
 };

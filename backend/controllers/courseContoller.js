@@ -54,8 +54,7 @@ exports.submitQuiz = async (req, res) => {
         return;
     }
 
-    const answers = [ {"questionId":0,"answerIndex":2},
-    {"questionId":1,"answerIndex":2} ];//JSON.parse(req.body.answers);
+    const answers = JSON.parse(req.body.answers);
     await curriculum.courses.filter((course => course.id == req.body.courseId));
     const quiz = curriculum.courses[0].quiz;
     var correctCount = 0.0;
@@ -93,25 +92,9 @@ exports.getCourses = async (req, res) => {
         });
         return;
     }
-    
-    const regCode = req.query.regCode;
-    if (!regCode || regCode === "") {
-        const curr = curriculum.courses;
-        curr.forEach(c => {
-            c.quiz.mcQuestions.forEach(question => {
-                delete question.correctAnswerIndex;
-            });
-        });
-        res.send({
-            courses: curr,
-            msg: null,
-            success: true
-        });
-        return;
-    }
 
     var courseId = [];
-    await Curriculum.find({regCode: req.body.regCode}, (err, cur) => {
+    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
         if (err) {
             console.log(err);
             return;
@@ -128,8 +111,9 @@ exports.getCourses = async (req, res) => {
         return;
     }
 
-    await curriculum.courses.filter(course => courseId.includes(course.id));
-    const courses = curriculum.courses;
+    var curriculumCopy = Object.create(curriculum);
+    await curriculumCopy.courses.filter(course => courseId.includes(course.id));
+    const courses = curriculumCopy.courses;
     courses.forEach(cur => {
         cur.quiz.mcQuestions.forEach(question => {
             delete question.correctAnswerIndex;
@@ -158,7 +142,7 @@ exports.getAllGrades = async (req, res) => {
     var isInstructor = false;
     var courseId;
 
-    await Account.findById(req.body.accountId, (err, acc) => {
+    await Account.findById(req.query.accountId, (err, acc) => {
         if (err) {
             console.error(err);
             return;
@@ -166,7 +150,7 @@ exports.getAllGrades = async (req, res) => {
         isInstructor = acc.isInstructor;
     });
 
-    await Curriculum.find({regCode: req.body.regCode}, (err, cur) => {
+    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
         if (err) {
             console.log(err);
             return;
@@ -178,7 +162,7 @@ exports.getAllGrades = async (req, res) => {
     var query = {};
 
     if (!isInstructor) {
-        query.accountId = req.body.accountId;
+        query.accountId = req.query.accountId;
     }
 
     for (const id of courseId) {
@@ -199,6 +183,33 @@ exports.getAllGrades = async (req, res) => {
     res.send({
         grades: grades,
         msg: null,
+        success: true
+    });
+}
+
+// parameters: none
+exports.getAllCourses = async(req, res) => {
+    //verify token
+    const token = req.headers['authorization'];
+    if (!token || !verifyJWTToken(token)) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+
+    var courses = JSON.parse(JSON.stringify(curriculum.courses));
+    
+    courses.forEach(cur => {
+        cur.quiz.mcQuestions.forEach(question => {
+            delete question.correctAnswerIndex;
+        });
+    });
+
+    res.send({
+        msg: null,
+        courses: courses,
         success: true
     });
 }
