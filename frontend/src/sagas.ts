@@ -1,5 +1,5 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_COURSES, SAVE_COURSES } from "./actions/types";
+import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES } from "./actions/types";
 
 const BASE_URL = 'http://localhost:8000';
 const queryParams = (args: {[index: string]: string}): string => {
@@ -101,8 +101,12 @@ const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: s
   return fetchPostWrapper('/sendEmail', { accountId, emailSubject, emailBody,  isBodyHtml: "false" });
 }
 
-const getCourses = (regCode?: string) => {
-  return regCode ? fetchGetWrapper('/getCourses', { regCode }) : fetchGetWrapper('/getCourses');
+const getCourses = (regCode: string) => {
+  return fetchGetWrapper('/getCourses', { regCode });
+}
+
+const getAllCourses = () => {
+  return fetchGetWrapper('/getAllCourses');
 }
 
 
@@ -134,7 +138,7 @@ function* login(action: any) {
         }
       });
       storeTokenInCookie(response.token);
-      yield put({ type: GET_COURSES, payload: { regCode: response.regCode } });
+      yield put({ type: GET_ALL_COURSES, payload: { regCode: response.regCode } });
     } else {
       yield put({
         type: LOGIN_UNSUCCESSFUL
@@ -157,7 +161,7 @@ function* setupApp() {
           accountId: account.accountId
         }
       });
-      yield put({ type: GET_COURSES, payload: { regCode: account.regCode } });
+      yield put({ type: GET_ALL_COURSES, payload: { regCode: account.regCode } });
     }
   }
 }
@@ -207,10 +211,9 @@ function* sendEmail(action: any) {
   }
 }
 
-function* getCoursesSaga(action: any) {
+function* getAllCoursesSaga(action: any) {
   if (!action.payload) return;
-  const regCode = action.payload ? action.payload.regCode : "";
-  const response = yield call(getCourses);
+  const response = yield call(getAllCourses);
   isTokenValid(response);
   if (response.success && response.courses) {
     yield put({
@@ -229,7 +232,7 @@ function* sagaWatcher() {
     yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
     yield takeLatest(LOG_OUT, logOut);
     yield takeLatest(SETUP_APP, setupApp);
-    yield takeLatest(GET_COURSES, getCoursesSaga);
+    yield takeLatest(GET_ALL_COURSES, getAllCoursesSaga);
 }
 
 export default sagaWatcher;
