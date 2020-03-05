@@ -1,5 +1,6 @@
 import Review from '../models/reviewModel.js';
 import Account from '../models/accountModel.js';
+import AccountController from './accountController.js';
 import { verifyJWTToken } from '../util/auth.js';
 
 async function convertToUsername(arr) {
@@ -9,7 +10,7 @@ async function convertToUsername(arr) {
         let username;
         await Account.findById(mutableArr[i].accountId, (err, acc) => {
             if (err) {
-                console.log(err);
+                console.error(err);
                 return;
             }
             username = acc.username;
@@ -21,7 +22,7 @@ async function convertToUsername(arr) {
     return mutableArr;
 }
 
-// parameters: accoundId, courseId, review
+// parameters: regCode, courseId, review
 exports.createReview = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
@@ -33,8 +34,30 @@ exports.createReview = async (req, res) => {
         return;
     }
 
+    const account = await AccountController.getAccountByToken(token);
+
+    var reviewExist = false;
+    await Review.findOne({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, (err, revs) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        if (revs) {
+            reviewExist = true;
+        }
+    });
+
+    if (reviewExist) {
+        res.send({
+            msg: "Cannot submit the review twice",
+            success: false
+        });
+        return;
+    }
+
     const review = new Review({
-        accountId: req.body.accountId,
+        accountId: account._id,
+        regCode: req.body.regCode,
         courseId: req.body.courseId,
         review: req.body.review
     });
@@ -48,7 +71,7 @@ exports.createReview = async (req, res) => {
     });
 };
 
-// parameters: accountId, courseId
+// parameters: regCode, courseId
 exports.getReviews = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
@@ -60,22 +83,15 @@ exports.getReviews = async (req, res) => {
         return;
     }
 
-    var isInstructor = false;
-
-    await Account.findById(req.query.accountId, (err, acc) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        isInstructor = acc.isInstructor;
-    });
+    const account = await AccountController.getAccountByToken(token);
 
     var query = {
+        regCode: req.query.regCode,
         courseId: req.query.courseId
     }
 
-    if (!isInstructor) {
-        query.accountId = req.query.accountId;
+    if (!account.isInstructor) {
+        query.accountId = account._id;
     }
 
     var reviews = [];
@@ -88,7 +104,7 @@ exports.getReviews = async (req, res) => {
         reviews = revs;
     });
 
-    if (isInstructor) {
+    if (account.isInstructor) {
         reviews = await convertToUsername(reviews);
     }
 
