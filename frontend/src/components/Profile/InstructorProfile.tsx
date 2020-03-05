@@ -6,6 +6,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import { Grade } from '../../model/Grade';
 import { TableHead } from '@material-ui/core';
+import LogOutButton from '../LogOutButton';
 
 interface InstructorProps {
 
@@ -76,7 +77,7 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                         ))}
                     </TableBody>
                 </Table>
-                <button id="logoff">Log Off</button>
+                <LogOutButton />
             </div>
         );
     }

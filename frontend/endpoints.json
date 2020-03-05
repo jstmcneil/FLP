@@ -22,7 +22,7 @@
     "sendEmail": {
         "url": "/sendEmail",
         "params": ["accoundId", "emailSubject", "emailBody", "isBodyHtml"],
-        "requestType": "GET"
+        "requestType": "POST"
     },
     "createReview": {
         "url": "/createReview",

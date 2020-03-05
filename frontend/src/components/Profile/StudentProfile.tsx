@@ -7,6 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Grade } from '../../model/Grade';
 import { textAlign } from '@material-ui/system';
+import LogOutButton from '../LogOutButton';
 
 interface StudentProps {
 
@@ -81,7 +82,7 @@ class StudentProfile extends React.Component<StudentProps, StudentState> {
             ))}
           </TableBody>
         </Table>
-        <button id="logoff">Log Off</button>
+        <LogOutButton />
       </div>
     );
   }
