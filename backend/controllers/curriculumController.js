@@ -5,8 +5,8 @@ import { verifyJWTToken } from '../util/auth.js';
 // parameters: regCode, courses: [courseId]
 exports.setCurriculum = async(req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -28,8 +28,8 @@ exports.setCurriculum = async(req, res) => {
 // parameters: none
 exports.getCurriculum = async(req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -37,7 +37,7 @@ exports.getCurriculum = async(req, res) => {
         return;
     }
 
-    const account = await AccountController.getAccountByToken(token);
+    const account = await AccountController.getAccountByToken(decoded);
     var curriculum = [];
     for (const code of account.regCode) {
         const cur = await Curriculum.findOne({regCode: code}, {courses: 1});

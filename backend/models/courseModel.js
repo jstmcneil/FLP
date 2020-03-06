@@ -1,7 +1,7 @@
 import mongoose, {Schema} from 'mongoose';
 
 /**
- * Create database schema for curriculum
+ * Create database schema for courseData
  * PK: _id
  * FK: accountId -> Account, regCode -> Curriculum, courseId -> Course
  */
@@ -15,4 +15,3 @@ const CourseSchema = new Schema({
 });
 
 export default mongoose.model("Course", CourseSchema);
-

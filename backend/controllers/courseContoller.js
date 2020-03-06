@@ -29,8 +29,8 @@ async function convertToUsername(arr) {
 // parameters: regCode, courseId, answers, completedEmailQuestion
 exports.submitQuiz = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -38,7 +38,7 @@ exports.submitQuiz = async (req, res) => {
         return;
     }
 
-    const account = await AccountController.getAccountByToken(token);
+    const account = await AccountController.getAccountByToken(decoded);
 
     var quizTaken = false;
     await Course.find({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, (err, course) => {
@@ -89,8 +89,8 @@ exports.submitQuiz = async (req, res) => {
 // parameters: regCode
 exports.getCourses = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -127,8 +127,8 @@ exports.getCourses = async (req, res) => {
 // parameters: regCode
 exports.getGrades = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -136,7 +136,7 @@ exports.getGrades = async (req, res) => {
         return;
     }
 
-    const account = await AccountController.getAccountByToken(token);
+    const account = await AccountController.getAccountByToken(decoded);
     const courses = (await Curriculum.findOne({regCode: req.query.regCode}, {courses: 1})).courses;
 
     var grades = [];
@@ -174,8 +174,8 @@ exports.getGrades = async (req, res) => {
 // parameters: none
 exports.getAllGrades = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -183,7 +183,7 @@ exports.getAllGrades = async (req, res) => {
         return;
     }
 
-    const account = await AccountController.getAccountByToken(token);
+    const account = await AccountController.getAccountByToken(decoded);
     var grades = [];
     var query = {};
 
@@ -220,8 +220,8 @@ exports.getAllGrades = async (req, res) => {
 // parameters: none
 exports.getAllCourses = async(req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false

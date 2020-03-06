@@ -174,15 +174,15 @@ exports.instructorRegister = async (req, res) => {
 // parameters: none
 exports.getAccount = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
         });
         return;
     }
-    const account = await getAccountByToken(token);
+    const account = await getAccountByToken(decoded);
 
     res.send({
         msg: null,
@@ -197,15 +197,15 @@ exports.getAccount = async (req, res) => {
 // parameter: regCode
 exports.addRegCode = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
         });
         return;
     }
-    const account = await getAccountByToken(token);
+    const account = await getAccountByToken(decoded);
     await Account.updateOne({_id: account._id}, {
         $set: {
             regCode: [...account.regCode, req.body.regCode]
@@ -227,11 +227,7 @@ exports.addRegCode = async (req, res) => {
     });
 }
 
-const getAccountByToken = async (token) => {
-    const decoded = verifyJWTToken(token);
-    if (!decoded) {
-        return null;
-    }
+const getAccountByToken = async (decoded) => {
     var account;
     await Account.findById(decoded.accountId, (err, acc) => {
         if (err) {

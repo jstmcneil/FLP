@@ -25,8 +25,8 @@ async function convertToUsername(arr) {
 // parameters: regCode, courseId, review
 exports.createReview = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -34,7 +34,7 @@ exports.createReview = async (req, res) => {
         return;
     }
 
-    const account = await AccountController.getAccountByToken(token);
+    const account = await AccountController.getAccountByToken(decoded);
 
     const existingReview = await Review.findOne({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, {review: 1});
 
@@ -65,8 +65,8 @@ exports.createReview = async (req, res) => {
 // parameters: regCode, courseId
 exports.getReviews = async (req, res) => {
     //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
         res.send({
             msg: "Invalid Token",
             success: false
@@ -74,7 +74,7 @@ exports.getReviews = async (req, res) => {
         return;
     }
 
-    const account = await AccountController.getAccountByToken(token);
+    const account = await AccountController.getAccountByToken(decoded);
 
     var query = {
         regCode: req.query.regCode,
