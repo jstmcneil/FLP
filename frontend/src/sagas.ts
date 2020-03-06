@@ -146,10 +146,7 @@ function* login(action: any) {
         }
       });
       storeTokenInCookie(response.token);
-      if (response.isInstructor) {
-
-        yield put({ type: GET_ALL_COURSES });
-      }
+      yield put({ type: GET_ALL_COURSES });
       yield put({ type: GET_CURRICULUM });
     } else {
       yield put({
@@ -173,9 +170,7 @@ function* setupApp() {
           accountId: account.accountId
         }
       });
-      if (account.isInstructor) {
-        yield put({ type: GET_ALL_COURSES });
-      }
+      yield put({ type: GET_ALL_COURSES });
       yield put({ type: GET_CURRICULUM });
     }
   }
