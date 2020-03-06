@@ -24,11 +24,6 @@
         "params": ["regCode"],
         "requestType": "POST"
     },
-    "removeRegCode": {
-        "url": "/removeRegCode",
-        "params": ["regCode"],
-        "requestType": "POST"
-    },
     "sendEmail": {
         "url": "/sendEmail",
         "params": ["regCode", "emailSubject", "emailBody", "isBodyHtml"],
@@ -58,7 +53,7 @@
     },
     "submitQuiz": {
         "url": "/submitQuiz",
-        "params": ["regCode", "courseId", "answers", "completedEmailQuestion"],
+        "params": ["regCode", "courseId", "answers", "emailResponse"],
         "requestType": "POST",
         "notes": "answers: [{questionId: Number, answerIndex: Number}]"
     },
@@ -67,9 +62,14 @@
         "params": ["regCode"],
         "requestType": "GET"
     },
+    "getGrades": {
+        "url": "/getGrades",
+        "params": ["regCode"],
+        "requestType": "GET"
+    },
     "getAllGrades": {
         "url": "/getAllGrades",
-        "params": ["regCode"],
+        "params": [],
         "requestType": "GET"
     },
     "getAllCourses": {

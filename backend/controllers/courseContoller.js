@@ -59,8 +59,8 @@ exports.submitQuiz = async (req, res) => {
 
     const answers = JSON.parse(req.body.answers);
     var curriculumCopy = JSON.parse(JSON.stringify(curriculum));
-    await curriculumCopy.courses.filter((course => course.id == req.body.courseId));
-    const quiz = curriculumCopy.courses[0].quiz;
+    var courses = curriculumCopy.courses.filter((course => course.id == req.body.courseId));
+    const quiz = courses[0].quiz;
     var correctCount = 0.0;
 
     answers.forEach(ans => {
@@ -74,7 +74,7 @@ exports.submitQuiz = async (req, res) => {
         regCode: req.body.regCode,
         courseId: req.body.courseId,
         mcGrade: correctCount / quiz.mcQuestions.length * 100,
-        completedEmailQuestion: req.body.completedEmailQuestion
+        emailResponse: req.body.emailResponse
     });
 
     course.save(err => {if(err) console.error(err)});
@@ -98,14 +98,7 @@ exports.getCourses = async (req, res) => {
         return;
     }
 
-    var courseId = [];
-    await Curriculum.findOne({regCode: req.query.regCode}, (err, cur) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        courseId = cur.courses;
-    });
+    var courseId = (await Curriculum.findOne({regCode: req.query.regCode}, {courses: 1})).courses;
 
     if (courseId.length === 0) {
         res.send({
@@ -132,6 +125,53 @@ exports.getCourses = async (req, res) => {
 }
 
 // parameters: regCode
+exports.getGrades = async (req, res) => {
+    //verify token
+    const token = req.headers['authorization'];
+    if (!token || !verifyJWTToken(token)) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+
+    const account = await AccountController.getAccountByToken(token);
+    const courses = (await Curriculum.findOne({regCode: req.query.regCode}, {courses: 1})).courses;
+
+    var grades = [];
+    var query = {
+        regCode: req.query.regCode
+    };
+
+    if (!account.isInstructor) {
+        query.accountId = account._id;
+    }
+
+    for (const id of courses) {
+        query.courseId = id;
+        const courseInfo = await Course.findOne(query, {
+            accountId: 1,
+            regCode: 1,
+            courseId: 1,
+            mcGrade: 1,
+            emailResponse: 1
+        });
+        grades.push(courseInfo);
+    }
+
+    if (account.isInstructor) {
+        grades = await convertToUsername(grades);
+    }
+
+    res.send({
+        grades: grades,
+        msg: null,
+        success: true
+    });
+}
+
+// parameters: none
 exports.getAllGrades = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
@@ -144,16 +184,6 @@ exports.getAllGrades = async (req, res) => {
     }
 
     const account = await AccountController.getAccountByToken(token);
-    var courseId;
-
-    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        courseId = cur[0].courses;
-    });
-
     var grades = [];
     var query = {};
 
@@ -161,21 +191,25 @@ exports.getAllGrades = async (req, res) => {
         query.accountId = account._id;
     }
 
-    for (const id of courseId) {
-        query.courseId = id;
-        await Course.findOne(query, (err, courseInfo) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            grades.push(courseInfo);
-        });
+    for (const code of account.regCode) {
+        const courses = (await Curriculum.findOne({regCode: code}, {courses: 1})).courses;
+        query.regCode = code;
+        for (const id of courses) {
+            query.courseId = id;
+            const grade = await Course.findOne(query, {
+                accountId: 1,
+                regCode: 1,
+                courseId: 1,
+                mcGrade: 1,
+                emailResponse: 1
+            });
+            grades.push(grade);
+        }
     }
 
     if (account.isInstructor) {
         grades = await convertToUsername(grades);
     }
-
     res.send({
         grades: grades,
         msg: null,

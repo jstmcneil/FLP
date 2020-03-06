@@ -11,7 +11,7 @@ const CourseSchema = new Schema({
     regCode: String,
     courseId: String,
     mcGrade: Number,
-    completedEmailQuestion: Boolean
+    emailResponse: String
 });
 
 export default mongoose.model("Course", CourseSchema);

@@ -167,7 +167,7 @@ exports.instructorRegister = async (req, res) => {
         success: true,
         regCode: req.body.regCode,
         isInstructor: true,
-        accountId: acc._id
+        token: generateJWTToken(acc._id)
     });
 }
 
@@ -217,35 +217,10 @@ exports.addRegCode = async (req, res) => {
             regCode: req.body.regCode,
             courses: []
         });
-    
+
         curriculum.save(err => {if (err) console.error(err)});
     }
 
-    res.send({
-        msg: null,
-        success: true
-    });
-}
-
-// parameter: regCode
-exports.removeRegCode = async (req, res) => {
-    //verify token
-    const token = req.headers['authorization'];
-    if (!token || !verifyJWTToken(token)) {
-        res.send({
-            msg: "Invalid Token",
-            success: false
-        });
-        return;
-    }
-    const account = await getAccountByToken(token);
-    var code = [...account.regCode];
-    code.splice(code.indexOf(req.body.regCode), 1);
-    await Account.updateOne({_id: account._id}, {
-        $set: {
-            regCode: code
-        }
-    });
     res.send({
         msg: null,
         success: true
