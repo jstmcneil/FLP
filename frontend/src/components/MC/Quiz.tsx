@@ -3,13 +3,14 @@ import Question from './Question';
 import { questionAPI } from '../../api/index';
 import { exampleQuestions } from '../../api/mockData';
 import { Answer } from '../../model/Answer';
+import { MCQuizType } from '../../model/MCQuizType';
 
 interface State {
     counter: number,
     questionId: number,
     questionContent: string,
     questionPoints: number,
-    answerOptions: Array<Answer>,
+    answerOptions: string[],
     answerKey: number,
     myAnswer: number,
     myScore: number,
@@ -18,7 +19,7 @@ interface State {
 }
 
 interface Props {
-
+    questions: MCQuizType[];
 }
 
 class Quiz extends React.Component<Props, State> {
@@ -41,35 +42,30 @@ class Quiz extends React.Component<Props, State> {
     }
 
     public componentDidMount() {
-        questionAPI.getQuestions()
-            .then((exampleQuestions) => {
-                this.setState({
-                    questionContent: exampleQuestions[this.state.questionId].questionContent,
-                    questionPoints: exampleQuestions[this.state.questionId].score,
-                    answerOptions: exampleQuestions[this.state.questionId].answerChoices,
-                    answerKey: exampleQuestions[this.state.questionId].correctAnswer,
-                    totalPoints: exampleQuestions[this.state.questionId].score,
-                });
-            })
+        this.setState({
+            questionContent: this.props.questions[this.state.questionId].questionContent,
+            answerOptions: this.props.questions[this.state.questionId].answerChoices,
+            answerKey: this.props.questions[this.state.questionId].correctAnswerIndex,
+        });
     }
 
     handleClick(value: number) {
-        console.log(value);
+        console.log(value - 1);
         this.setState({
-            myAnswer: value
+            myAnswer: value - 1
         });
     }
 
     nextQuestion() {
         let newScore = this.state.myScore;
+        console.log(this.state.answerKey)
         if (this.state.myAnswer === this.state.answerKey) {
-            newScore += this.state.questionPoints
+            console.log("Yay");
+            newScore += 1
         }
-        console.log(newScore);
-
         const nextCount = this.state.counter + 1;
         const nextQuestion = this.state.questionId + 1;
-        if (nextCount >= exampleQuestions.length) {
+        if (nextCount >= this.props.questions.length) {
             this.setState({
                 myScore: newScore,
                 end: true
@@ -78,12 +74,12 @@ class Quiz extends React.Component<Props, State> {
             this.setState({
                 counter: nextCount,
                 questionId: nextQuestion,
-                questionContent: exampleQuestions[nextCount].questionContent,
-                questionPoints: exampleQuestions[nextCount].score,
-                answerOptions: exampleQuestions[nextCount].answerChoices,
-                answerKey: exampleQuestions[nextCount].correctAnswer,
+                questionContent: this.props.questions[nextCount].questionContent,
+                questionPoints: 1,
+                answerOptions: this.props.questions[nextCount].answerChoices,
+                answerKey: this.props.questions[nextCount].correctAnswerIndex,
                 myScore: newScore,
-                totalPoints: this.state.totalPoints + exampleQuestions[nextCount].score,
+                totalPoints: this.state.totalPoints + 1,
             });
         }
     }
