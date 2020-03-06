@@ -48,7 +48,6 @@
     },
     "getCurriculum": {
         "url": "/getCurriculum",
-        "params": ["regCode"],
         "requestType": "GET"
     },
     "submitQuiz": {

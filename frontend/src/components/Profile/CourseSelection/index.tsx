@@ -81,7 +81,7 @@ class CourseSelection extends React.Component<CourseSelectionProps, CourseSelect
         return (
             <div>
                 <div>Registration Code: {this.props.regCode}</div>
-                {this.renderRegCodeCourseSelection(this.props.curriculum.courses, this.props.courses, this.props.regCode)}
+                {this.renderRegCodeCourseSelection(this.props.curriculum[this.props.regCode].courses, this.props.courses, this.props.regCode)}
             </div>
         )
     }

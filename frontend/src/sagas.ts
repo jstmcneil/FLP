@@ -1,4 +1,5 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
+import keyBy from "lodash/keyBy";
 import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES, GET_CURRICULUM, SAVE_CURRICULUM, SET_CURRICULUM, ADD_REG_CODE } from "./actions/types";
 
 const BASE_URL = 'http://localhost:8000';
@@ -105,8 +106,8 @@ const getAllCourses = () => {
   return fetchGetWrapper('/getAllCourses');
 }
 
-const getCurriculum = (regCode: string) => {
-  return fetchGetWrapper('/getCurriculum', { regCode });
+const getCurriculum = () => {
+  return fetchGetWrapper('/getCurriculum');
 }
 
 const setCurriculum = (regCode: string, courseIds: string[]) => {
@@ -149,7 +150,7 @@ function* login(action: any) {
 
         yield put({ type: GET_ALL_COURSES });
       }
-      yield put({ type: GET_CURRICULUM, payload: { regCodes: response.regCode }});
+      yield put({ type: GET_CURRICULUM });
     } else {
       yield put({
         type: LOGIN_UNSUCCESSFUL
@@ -175,7 +176,7 @@ function* setupApp() {
       if (account.isInstructor) {
         yield put({ type: GET_ALL_COURSES });
       }
-      yield put({ type: GET_CURRICULUM, payload: { regCodes: account.regCode }});
+      yield put({ type: GET_CURRICULUM });
     }
   }
 }
@@ -240,20 +241,16 @@ function* getAllCoursesSaga() {
 
 
 function* getCurriculumSaga(action: any) {
-  if (!action.payload) return;
-  for (let i = 0; i < action.payload.regCodes.length; i++) {
-    const response = yield call(getCurriculum, action.payload.regCodes[i]);
-    isTokenValid(response);
-    if (response.success) {
-      yield put({
-        type: SAVE_CURRICULUM,
-        payload: {
-          curriculum: response.curriculum
-        }
-      })
-    }
+  const response = yield call(getCurriculum);
+  isTokenValid(response);
+  if (response.success) {
+    yield put({
+      type: SAVE_CURRICULUM,
+      payload: {
+        curriculum: keyBy(response.curriculum, "regCode")
+      }
+    })
   }
-    
 }
 
 function* setCurriculumSaga(action: any) {
