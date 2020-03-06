@@ -1,5 +1,5 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES } from "./actions/types";
+import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES, GET_CURRICULUM, SAVE_CURRICULUM, SET_CURRICULUM } from "./actions/types";
 
 const BASE_URL = 'http://localhost:8000';
 const queryParams = (args: {[index: string]: string}): string => {
@@ -101,12 +101,16 @@ const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: s
   return fetchPostWrapper('/sendEmail', { accountId, emailSubject, emailBody,  isBodyHtml: "false" });
 }
 
-const getCourses = (regCode: string) => {
-  return fetchGetWrapper('/getCourses', { regCode });
-}
-
 const getAllCourses = () => {
   return fetchGetWrapper('/getAllCourses');
+}
+
+const getCurriculum = (regCode: string) => {
+  return fetchGetWrapper('/getCurriculum', { regCode });
+}
+
+const setCurriculum = (regCode: string, courseIds: string[]) => {
+  return fetchPostWrapper('/setCurriculum', { regCode, courses: courseIds });
 }
 
 
@@ -133,12 +137,16 @@ function* login(action: any) {
         payload: {
           isInstructor: response.isInstructor,
           loggedIn: response.success,
-          regCode: response.regCode,
+          regCodes: response.regCode,
           accountId: response.accountId,
         }
       });
       storeTokenInCookie(response.token);
-      yield put({ type: GET_ALL_COURSES, payload: { regCode: response.regCode } });
+      if (response.isInstructor) {
+
+        yield put({ type: GET_ALL_COURSES });
+      }
+      yield put({ type: GET_CURRICULUM, payload: { regCode: response.regCode }});
     } else {
       yield put({
         type: LOGIN_UNSUCCESSFUL
@@ -157,11 +165,14 @@ function* setupApp() {
         payload: {
           isInstructor: account.isInstructor,
           loggedIn: true,
-          regCode: account.regCode,
+          regCodes: account.regCode,
           accountId: account.accountId
         }
       });
-      yield put({ type: GET_ALL_COURSES, payload: { regCode: account.regCode } });
+      if (account.isInstructor) {
+        yield put({ type: GET_ALL_COURSES });
+      }
+      yield put({ type: GET_CURRICULUM, payload: { regCode: account.regCode }});
     }
   }
 }
@@ -211,17 +222,42 @@ function* sendEmail(action: any) {
   }
 }
 
-function* getAllCoursesSaga(action: any) {
-  if (!action.payload) return;
+function* getAllCoursesSaga() {
   const response = yield call(getAllCourses);
   isTokenValid(response);
-  if (response.success && response.courses) {
+  if (response.success) {
     yield put({
       type: SAVE_COURSES,
       payload: {
         courses: response.courses
       }
     })
+  }
+}
+
+
+function* getCurriculumSaga(action: any) {
+  if (!action.payload) return;
+  const response = yield call(getCurriculum, action.payload.regCode);
+  isTokenValid(response);
+  if (response.success) {
+    yield put({
+      type: SAVE_CURRICULUM,
+      payload: {
+        curriculum: response.curriculum
+      }
+    })
+  }
+}
+
+function* setCurriculumSaga(action: any) {
+  if (!action.payload) return;
+  const response = yield call(setCurriculum, action.payload.regCode, action.payload.courseIds);
+  isTokenValid(response);
+  if (response.success) {
+    alert(`Curriculum for registration code ${action.payload.regCode} set!`);
+  } else {
+    alert(response.msg);
   }
 
 }
@@ -233,6 +269,8 @@ function* sagaWatcher() {
     yield takeLatest(LOG_OUT, logOut);
     yield takeLatest(SETUP_APP, setupApp);
     yield takeLatest(GET_ALL_COURSES, getAllCoursesSaga);
+    yield takeEvery(GET_CURRICULUM, getCurriculumSaga);
+    yield takeLatest(SET_CURRICULUM, setCurriculumSaga);
 }
 
 export default sagaWatcher;
