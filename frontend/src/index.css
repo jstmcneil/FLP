@@ -17,6 +17,11 @@ code {
   flex-direction: column;
 }
 
+.horizontalContainer {
+  display: flex;
+  flex-direction: row;
+}
+
 input {
   background-color: #fafafa;
   border: 1px solid #cacece;

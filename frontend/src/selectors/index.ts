@@ -4,4 +4,4 @@ export const isInstructorSelector = (state: any): boolean => state.isInstructor;
 export const usernameSelector = (state: any): string => state.username;
 export const coursesSelector = (state: any): any => state.courses;
 export const curriculumSelector = (state: any): any => state.curriculum;
-export const regCodesSelector = (state: any): any => state.regCodes;
+export const regCodesSelector = (state: any): string[] => state.regCodes;

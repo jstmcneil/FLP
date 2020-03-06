@@ -16,3 +16,5 @@ export const SAVE_COURSES = "SAVE_COURSES";
 export const GET_CURRICULUM = "GET_CURRICULUM";
 export const SAVE_CURRICULUM = "SAVE_CURRICULUM";
 export const SET_CURRICULUM = "SET_CURRICULUM";
+
+export const ADD_REG_CODE = "ADD_REG_CODE";

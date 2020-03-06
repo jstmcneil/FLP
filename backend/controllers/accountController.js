@@ -211,6 +211,16 @@ exports.addRegCode = async (req, res) => {
             regCode: [...account.regCode, req.body.regCode]
         }
     });
+
+    if (account.isInstructor) {
+        const curriculum = new Curriculum({
+            regCode: req.body.regCode,
+            courses: []
+        });
+    
+        curriculum.save(err => {if (err) console.error(err)});
+    }
+
     res.send({
         msg: null,
         success: true
