@@ -30,14 +30,14 @@ app.use(function(_, res, next) {
 
 // catch 400
 app.use((err, req, res, next) => {
-    console.log(err.stack);
+    console.error(err.stack);
     res.status(400).send(`Error: ${res.originUrl} not found`);
     next();
 });
 
 // catch 500
 app.use((err, req, res, next) => {
-    console.log(err.stack)
+    console.error(err.stack)
     res.status(500).send(`Error: ${err}`);
     next();
 });

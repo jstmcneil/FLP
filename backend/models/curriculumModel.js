@@ -6,9 +6,9 @@ import mongoose, {Schema} from 'mongoose';
  * FK: courses -> Course
  */
 
- const CurriculumSchema = new Schema({
-        regCode: String,
-        courses: Array
- });
+const CurriculumSchema = new Schema({
+    regCode: String,
+    courses: Array
+});
 
- export default mongoose.model("Curriculum", CurriculumSchema);
+export default mongoose.model("Curriculum", CurriculumSchema);

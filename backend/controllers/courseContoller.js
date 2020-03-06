@@ -1,4 +1,5 @@
 import Account from '../models/accountModel.js';
+import AccountController from './accountController.js';
 import Course from '../models/courseModel.js';
 import Curriculum from '../models/curriculumModel.js';
 import { verifyJWTToken } from '../util/auth.js';
@@ -13,7 +14,7 @@ async function convertToUsername(arr) {
         let username;
         await Account.findById(mutableArr[i].accountId, (err, acc) => {
             if (err) {
-                console.log(err);
+                console.error(err);
                 return;
             }
             username = acc.username;
@@ -25,7 +26,7 @@ async function convertToUsername(arr) {
     return mutableArr;
 }
 
-// parameters: accountId, courseId, answers: [{questionId: Number, answerIndex: Number}], completedEmailQuestion: Boolean
+// parameters: regCode, courseId, answers, completedEmailQuestion
 exports.submitQuiz = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
@@ -37,10 +38,12 @@ exports.submitQuiz = async (req, res) => {
         return;
     }
 
+    const account = await AccountController.getAccountByToken(token);
+
     var quizTaken = false;
-    await Course.find({accountId: req.body.accountId, courseId: req.body.courseId}, (err, course) => {
+    await Course.find({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, (err, course) => {
         if (err) {
-            console.log(err);
+            console.error(err);
             return;
         }
         quizTaken = course.length > 0;
@@ -55,8 +58,9 @@ exports.submitQuiz = async (req, res) => {
     }
 
     const answers = JSON.parse(req.body.answers);
-    await curriculum.courses.filter((course => course.id == req.body.courseId));
-    const quiz = curriculum.courses[0].quiz;
+    var curriculumCopy = JSON.parse(JSON.stringify(curriculum));
+    await curriculumCopy.courses.filter((course => course.id == req.body.courseId));
+    const quiz = curriculumCopy.courses[0].quiz;
     var correctCount = 0.0;
 
     answers.forEach(ans => {
@@ -66,13 +70,14 @@ exports.submitQuiz = async (req, res) => {
     });
 
     const course = new Course({
-        accountId: req.body.accountId,
+        accountId: account._id,
+        regCode: req.body.regCode,
         courseId: req.body.courseId,
         mcGrade: correctCount / quiz.mcQuestions.length * 100,
         completedEmailQuestion: req.body.completedEmailQuestion
     });
 
-    course.save(err => {if(err) console.log(err)});
+    course.save(err => {if(err) console.error(err)});
 
     res.send({
         courseInfo: course,
@@ -94,12 +99,12 @@ exports.getCourses = async (req, res) => {
     }
 
     var courseId = [];
-    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
+    await Curriculum.findOne({regCode: req.query.regCode}, (err, cur) => {
         if (err) {
-            console.log(err);
+            console.error(err);
             return;
         }
-        courseId = cur[0].courses;
+        courseId = cur.courses;
     });
 
     if (courseId.length === 0) {
@@ -111,9 +116,8 @@ exports.getCourses = async (req, res) => {
         return;
     }
 
-    var curriculumCopy = Object.create(curriculum);
-    await curriculumCopy.courses.filter(course => courseId.includes(course.id));
-    const courses = curriculumCopy.courses;
+    var curriculumCopy = JSON.parse(JSON.stringify(curriculum));
+    var courses = curriculumCopy.courses.filter(course => courseId.includes(course.id));
     courses.forEach(cur => {
         cur.quiz.mcQuestions.forEach(question => {
             delete question.correctAnswerIndex;
@@ -127,7 +131,7 @@ exports.getCourses = async (req, res) => {
     });
 }
 
-// parameters: accountId, regCode
+// parameters: regCode
 exports.getAllGrades = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
@@ -139,20 +143,12 @@ exports.getAllGrades = async (req, res) => {
         return;
     }
 
-    var isInstructor = false;
+    const account = await AccountController.getAccountByToken(token);
     var courseId;
-
-    await Account.findById(req.query.accountId, (err, acc) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        isInstructor = acc.isInstructor;
-    });
 
     await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
         if (err) {
-            console.log(err);
+            console.error(err);
             return;
         }
         courseId = cur[0].courses;
@@ -161,22 +157,22 @@ exports.getAllGrades = async (req, res) => {
     var grades = [];
     var query = {};
 
-    if (!isInstructor) {
-        query.accountId = req.query.accountId;
+    if (!account.isInstructor) {
+        query.accountId = account._id;
     }
 
     for (const id of courseId) {
         query.courseId = id;
-        await Course.find(query, (err, courseInfo) => {
+        await Course.findOne(query, (err, courseInfo) => {
             if (err) {
-                console.log(err);
+                console.error(err);
                 return;
             }
             grades.push(courseInfo);
         });
     }
 
-    if (isInstructor) {
+    if (account.isInstructor) {
         grades = await convertToUsername(grades);
     }
 
@@ -200,7 +196,7 @@ exports.getAllCourses = async(req, res) => {
     }
 
     var courses = JSON.parse(JSON.stringify(curriculum.courses));
-    
+
     courses.forEach(cur => {
         cur.quiz.mcQuestions.forEach(question => {
             delete question.correctAnswerIndex;

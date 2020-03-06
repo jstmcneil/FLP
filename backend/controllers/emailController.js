@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import Account from '../models/accountModel.js';
 import { verifyJWTToken } from '../util/auth.js';
 
-// parameters: accountId, emailSubject, emailBody, isBodyHtml
+// parameters: regCode, emailSubject, emailBody, isBodyHtml
 exports.sendEMail = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
@@ -16,37 +16,15 @@ exports.sendEMail = async (req, res) => {
 
     var success = true;
     var instructorEmail;
-    var regCode;
 
-    await Account.findById(req.body.accountId, (err, acc) => {
+    await Account.find({regCode: req.body.regCode, isInstructor: true}, (err, acc) => {
         if (err) {
-            console.log(err);
-            return;
-        }
-        if (!acc) {
-            success = false;
-            return;
-        }
-        regCode = acc.regCode;
-    });
-
-    if (!success) {
-        res.send({
-            msg: 'Cannot find your account',
-            success: false
-        });
-        return;
-    }
-
-    await Account.find({regCode: regCode, isInstructor: true}, (err, acc) => {
-        if (err) {
-            console.log(err);
+            console.error(err);
             return;
         }
         if (acc.length == 0) {
             return;
         }
-        console.log(acc);
         instructorEmail = acc[0].username;
     });
 
@@ -80,7 +58,7 @@ exports.sendEMail = async (req, res) => {
 
     transporter.sendMail(option, (err, info) => {
         if (err) {
-            console.log(err);
+            console.error(err);
             success = false;
             res.send({
                 msg: "failed to send email",

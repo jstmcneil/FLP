@@ -8,23 +8,32 @@ async function isRegistered(username) {
     }
     var userExist = false;
     await Account.find({'username': username}, (err, acc) => {
+        if (err) {
+            console.error(err);
+            return false;
+        }
         if (acc.length != 0) {
             userExist = true;
         }
-    }).catch((err) => console.error(err));
+    });
     return userExist;
 }
 
 async function regCodeExist(regCode) {
     var codeExist = false;
-    await Account.find({'regCode': regCode, 'isInstructor': true}, (err, acc) => {
-        if (acc.length != 0) {
+    await Curriculum.find({'regCode': regCode}, (err, cur) => {
+        if (err) {
+            console.error(err);
+            return false;
+        }
+        if (cur.length != 0) {
             codeExist = true;
         }
-    }).catch((err) => console.err(err));
+    });
     return codeExist;
 }
 
+// parameters: username, password
 exports.login = async (req, res) => {
     var loginSuccess = false,
         regCode = null,
@@ -46,7 +55,6 @@ exports.login = async (req, res) => {
             success: true,
             regCode: regCode,
             isInstructor: isInstructor,
-            accountId: accountId,
             token: generateJWTToken(accountId)
         });
     } else {
@@ -57,6 +65,7 @@ exports.login = async (req, res) => {
     }
 };
 
+// parameters: username, password, regCode
 exports.studentRegister = async (req, res) => {
     //check code
     if (!req.body.regCode || !await regCodeExist(req.body.regCode)) {
@@ -90,7 +99,7 @@ exports.studentRegister = async (req, res) => {
     const acc = new Account({
         username: req.body.username,
         password: req.body.password,
-        regCode: req.body.regCode,
+        regCode: [req.body.regCode],
         isInstructor: false
     });
 
@@ -99,14 +108,14 @@ exports.studentRegister = async (req, res) => {
     res.send({
         msg: "Register Success",
         success: true,
-        regCode: req.body.regCode,
+        regCode: acc.regCode,
         isInstructor: false,
-        accountId: acc._id
+        token: generateJWTToken(acc._id)
     });
 };
 
+// parameters: username, password, regCode
 exports.instructorRegister = async (req, res) => {
-    console.log(req.body);
     //check code
     if (!req.body.regCode || await regCodeExist(req.body.regCode)) {
         res.send({
@@ -139,7 +148,7 @@ exports.instructorRegister = async (req, res) => {
     const acc = new Account({
         username: req.body.username,
         password: req.body.password,
-        regCode: req.body.regCode,
+        regCode: [req.body.regCode],
         isInstructor: true
     });
 
@@ -162,41 +171,92 @@ exports.instructorRegister = async (req, res) => {
     });
 }
 
-exports.getAccountByToken = async (req, res) => {
+// parameters: none
+exports.getAccount = async (req, res) => {
     //verify token
     const token = req.headers['authorization'];
-    const decoded = verifyJWTToken(token);
-    if (!token || !decoded) {
+    if (!token || !verifyJWTToken(token)) {
         res.send({
             msg: "Invalid Token",
             success: false
         });
         return;
     }
+    const account = await getAccountByToken(token);
 
-    await Account.findOne({_id: decoded.accountId}, (err, acc) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        if (!acc) {
-            res.send({
-                msg: "Account not found",
-                success: false
-            })
-            return;
-        }
-
-        res.send({
-            msg: null,
-            account: {
-                username: acc.username,
-                regCode: acc.regCode,
-                isInstructor: acc.isInstructor,
-                accountId: acc._id
-            },
-            success: true
-        });
+    res.send({
+        msg: null,
+        account: {
+            regCode: account.regCode,
+            isInstructor: account.isInstructor
+        },
+        success: true
     });
-
 }
+
+// parameter: regCode
+exports.addRegCode = async (req, res) => {
+    //verify token
+    const token = req.headers['authorization'];
+    if (!token || !verifyJWTToken(token)) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+    const account = await getAccountByToken(token);
+    await Account.updateOne({_id: account._id}, {
+        $set: {
+            regCode: [...account.regCode, req.body.regCode]
+        }
+    });
+    res.send({
+        msg: null,
+        success: true
+    });
+}
+
+// parameter: regCode
+exports.removeRegCode = async (req, res) => {
+    //verify token
+    const token = req.headers['authorization'];
+    if (!token || !verifyJWTToken(token)) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+    const account = await getAccountByToken(token);
+    var code = [...account.regCode];
+    code.splice(code.indexOf(req.body.regCode), 1);
+    await Account.updateOne({_id: account._id}, {
+        $set: {
+            regCode: code
+        }
+    });
+    res.send({
+        msg: null,
+        success: true
+    });
+}
+
+const getAccountByToken = async (token) => {
+    const decoded = verifyJWTToken(token);
+    if (!decoded) {
+        return null;
+    }
+    var account;
+    await Account.findById(decoded.accountId, (err, acc) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        account = acc;
+    });
+    return account;
+}
+
+// private
+exports.getAccountByToken = getAccountByToken;

@@ -19,7 +19,7 @@ exports.setCurriculum = async(req, res) => {
     });
 
     res.send({
-        msg: "",
+        msg: null,
         success: true
     });
 }
@@ -36,9 +36,9 @@ exports.getCurriculum = async(req, res) => {
         return;
     }
 
-    await Curriculum.find({regCode: req.query.regCode}, (err, cur) => {
+    await Curriculum.findOne({regCode: req.query.regCode}, (err, cur) => {
         if (err) {
-            console.log(err);
+            console.error(err);
             res.send({
                 msg: 'Error getting curriculum',
                 curriculum: null,
@@ -47,7 +47,7 @@ exports.getCurriculum = async(req, res) => {
         } else {
             res.send({
                 msg: null,
-                curriculum: cur[0],
+                curriculum: cur,
                 success: true
             });
         }

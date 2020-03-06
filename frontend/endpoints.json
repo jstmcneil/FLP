@@ -19,19 +19,29 @@
         "params": [],
         "requestType": "GET"
     },
+    "addRegCode": {
+        "url": "/addRegCode",
+        "params": ["regCode"],
+        "requestType": "POST"
+    },
+    "removeRegCode": {
+        "url": "/removeRegCode",
+        "params": ["regCode"],
+        "requestType": "POST"
+    },
     "sendEmail": {
         "url": "/sendEmail",
-        "params": ["accoundId", "emailSubject", "emailBody", "isBodyHtml"],
+        "params": ["regCode", "emailSubject", "emailBody", "isBodyHtml"],
         "requestType": "POST"
     },
     "createReview": {
         "url": "/createReview",
-        "params": ["accoundId", "courseId", "review"],
+        "params": ["regCode", "courseId", "review"],
         "requestType": "POST"
     },
     "getReviews": {
         "url": "/getReviews",
-        "params": ["accountId", "courseId"],
+        "params": ["regCode", "courseId"],
         "requestType": "GET",
         "notes": "student will get only reviews they created, instructor will get all reviews of a course"
     },
@@ -48,7 +58,7 @@
     },
     "submitQuiz": {
         "url": "/submitQuiz",
-        "params": ["accountId", "courseId", "answers", "completedEmailQuestion"],
+        "params": ["regCode", "courseId", "answers", "completedEmailQuestion"],
         "requestType": "POST",
         "notes": "answers: [{questionId: Number, answerIndex: Number}]"
     },
@@ -59,7 +69,7 @@
     },
     "getAllGrades": {
         "url": "/getAllGrades",
-        "params": ["accountId", "regCode"],
+        "params": ["regCode"],
         "requestType": "GET"
     },
     "getAllCourses": {
