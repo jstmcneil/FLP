@@ -36,18 +36,9 @@ exports.createReview = async (req, res) => {
 
     const account = await AccountController.getAccountByToken(token);
 
-    var reviewExist = false;
-    await Review.findOne({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, (err, revs) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        if (revs) {
-            reviewExist = true;
-        }
-    });
+    const existingReview = await Review.findOne({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, {review: 1});
 
-    if (reviewExist) {
+    if (existingReview) {
         res.send({
             msg: "Cannot submit the review twice",
             success: false

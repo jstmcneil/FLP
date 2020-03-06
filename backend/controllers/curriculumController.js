@@ -1,4 +1,5 @@
 import Curriculum from '../models/curriculumModel';
+import AccountController from './accountController.js';
 import { verifyJWTToken } from '../util/auth.js';
 
 // parameters: regCode, courses: [courseId]
@@ -24,7 +25,7 @@ exports.setCurriculum = async(req, res) => {
     });
 }
 
-// parameters: regCode
+// parameters: none
 exports.getCurriculum = async(req, res) => {
     //verify token
     const token = req.headers['authorization'];
@@ -36,20 +37,16 @@ exports.getCurriculum = async(req, res) => {
         return;
     }
 
-    await Curriculum.findOne({regCode: req.query.regCode}, (err, cur) => {
-        if (err) {
-            console.error(err);
-            res.send({
-                msg: 'Error getting curriculum',
-                curriculum: null,
-                success: false
-            });
-        } else {
-            res.send({
-                msg: null,
-                curriculum: cur,
-                success: true
-            });
-        }
+    const account = await AccountController.getAccountByToken(token);
+    var curriculum = [];
+    for (const code of account.regCode) {
+        const cur = await Curriculum.findOne({regCode: code}, {courses: 1});
+        curriculum.push({regCode: code, courses: cur.courses});
+    }
+
+    res.send({
+        msg: null,
+        curriculum: curriculum,
+        success: true
     });
 }

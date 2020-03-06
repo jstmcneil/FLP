@@ -18,7 +18,6 @@ export default (app) => {
     app.route('/login').post(Account.login);
     app.route('/getAccount').get(Account.getAccount);
     app.route('/addRegCode').post(Account.addRegCode);
-    app.route('/removeRegCode').post(Account.removeRegCode);
 
     //email service
     app.route('/sendEmail').post(SMTPEmail.sendEMail);
@@ -34,6 +33,7 @@ export default (app) => {
     //course
     app.route('/submitQuiz').post(Course.submitQuiz);
     app.route('/getCourses').get(Course.getCourses);
+    app.route('/getGrades').get(Course.getGrades);
     app.route('/getAllGrades').get(Course.getAllGrades);
     app.route('/getAllCourses').get(Course.getAllCourses);
 };
