@@ -6,7 +6,7 @@ import { FormControlLabel, FormControl } from '@material-ui/core';
 interface QuestionProps {
   key: number;
   questionContent: string;
-  answerChoices: Array<Answer>;
+  answerChoices: string[];
   answer: (value: number) => void;
 }
 
@@ -30,13 +30,13 @@ class Question extends React.Component<QuestionProps, QuestionState> {
     console.log(value);
   }
 
-  handleOnclick(key: Answer, i: number) {
+  handleOnclick(i: number) {
     const myClonedArray = [...this.state.checked];
     myClonedArray[i] = !this.state.checked[i];
     this.setState(prevState => ({
       checked: myClonedArray
     }));
-    this.props.answer(i+1);
+    this.props.answer(i + 1);
   }
 
   render() {
@@ -47,12 +47,12 @@ class Question extends React.Component<QuestionProps, QuestionState> {
           {this.props.answerChoices.map((key, i) => (
             <FormControlLabel
               control={<Checkbox
-                key={key.id}
-                value={key.type}
+                key={i}
+                value={i}
                 checked={this.state.checked[i] || false}
-                onChange={() => this.handleOnclick(key, i)}
+                onChange={() => this.handleOnclick(i)}
               />}
-              label={key.text}
+              label={key}
             />
           ))}
         </FormControl>
