@@ -48,6 +48,12 @@ li {
   font-size: 30px;
 }
 
+.subtitle {
+  float: left;
+  padding: 10px;
+  font-size: 20px;
+}
+
 #flp,
 #courseIcon,
 #reviewIcon,
