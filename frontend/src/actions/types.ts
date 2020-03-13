@@ -18,3 +18,6 @@ export const SAVE_CURRICULUM = "SAVE_CURRICULUM";
 export const SET_CURRICULUM = "SET_CURRICULUM";
 
 export const ADD_REG_CODE = "ADD_REG_CODE";
+
+export const GET_ALL_GRADES = "GET_ALL_GRADES";
+export const SAVE_GRADES = "SAVE_GRADES";
