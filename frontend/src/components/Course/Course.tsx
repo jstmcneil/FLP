@@ -12,7 +12,6 @@ import CoursePage from './CoursePage';
 import { CourseType } from '../../model/CourseType';
 import { connect } from 'react-redux';
 import { courseSelector, regCodesSelector, curriculumSelector } from '../../selectors/index';
-import Line from './Line';
 
 interface ClassProps {
     id: number;
