@@ -81,6 +81,7 @@ exports.submitQuiz = async (req, res) => {
 
     res.send({
         courseInfo: course,
+        quiz: quiz,
         msg: null,
         success: true
     });
