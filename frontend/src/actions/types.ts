@@ -20,3 +20,6 @@ export const SET_CURRICULUM = "SET_CURRICULUM";
 export const ADD_REG_CODE = "ADD_REG_CODE";
 
 export const SUBMIT_QUIZ = "SUBMIT_QUIZ";
+
+export const GET_ALL_GRADES = "GET_ALL_GRADES";
+export const SAVE_GRADES = "SAVE_GRADES";
