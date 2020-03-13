@@ -1,9 +1,9 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
 import keyBy from "lodash/keyBy";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES, GET_CURRICULUM, SAVE_CURRICULUM, SET_CURRICULUM, ADD_REG_CODE } from "./actions/types";
+import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES, GET_CURRICULUM, SAVE_CURRICULUM, SET_CURRICULUM, ADD_REG_CODE, GET_ALL_GRADES, SAVE_GRADES } from "./actions/types";
 
 const BASE_URL = 'http://localhost:8000';
-const queryParams = (args: {[index: string]: string}): string => {
+const queryParams = (args: { [index: string]: string }): string => {
   return `?${Object.keys(args).map(key => `${key}=${args[key]}`).join('&')}`;
 }
 
@@ -25,27 +25,27 @@ const getTokenInCookie = () => {
 
 const fetchGetWrapper = (
   route: string,
-  queryArgs?: {[index: string]: string},
+  queryArgs?: { [index: string]: string },
   baseUrl?: string,
-  headers?: {[index: string]: string}
-  ) => {
+  headers?: { [index: string]: string }
+) => {
   const baseUrlToFetch = baseUrl ? baseUrl : BASE_URL;
   const token = getTokenInCookie();
   console.log(token);
   let fetchHeaders: Headers = new Headers();
   if (token !== "") {
-      fetchHeaders.set("Authorization", `Bearer ${getTokenInCookie()}`);
+    fetchHeaders.set("Authorization", `Bearer ${getTokenInCookie()}`);
   }
   if (headers) {
-      Object.keys(headers).forEach((headerKey: string): void => {
-        fetchHeaders.set(headerKey, headers[headerKey]);
-      });
+    Object.keys(headers).forEach((headerKey: string): void => {
+      fetchHeaders.set(headerKey, headers[headerKey]);
+    });
   }
   console.log(fetchHeaders);
-  const url = queryArgs 
+  const url = queryArgs
     ? `${baseUrlToFetch}${route}${queryParams(queryArgs)}`
     : `${baseUrlToFetch}${route}`;
-  return fetch(url, { 
+  return fetch(url, {
     method: "GET",
     mode: 'cors',
     headers: fetchHeaders
@@ -57,21 +57,21 @@ const fetchPostWrapper = (
   route: string,
   postBody: object,
   baseUrl?: string,
-  headers?: {[index: string]: string}
+  headers?: { [index: string]: string }
 ) => {
   const baseUrlToFetch = baseUrl ? baseUrl : BASE_URL;
   const token = getTokenInCookie();
   let fetchHeaders: Headers = new Headers();
   fetchHeaders.set("Content-Type", `application/json`);
   if (token !== "") {
-      fetchHeaders.set("Authorization", `Bearer ${getTokenInCookie()}`);
+    fetchHeaders.set("Authorization", `Bearer ${getTokenInCookie()}`);
   }
   if (headers) {
-      Object.keys(headers).forEach((headerKey: string): void => {
-        fetchHeaders.set(headerKey, headers[headerKey]);
-      });
+    Object.keys(headers).forEach((headerKey: string): void => {
+      fetchHeaders.set(headerKey, headers[headerKey]);
+    });
   }
-  return fetch(`${baseUrlToFetch}${route}`, { 
+  return fetch(`${baseUrlToFetch}${route}`, {
     method: "POST",
     mode: 'cors',
     headers: fetchHeaders,
@@ -99,7 +99,7 @@ const registerStudent = (username: string, password: string, regCode: string) =>
 }
 
 const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: string) => {
-  return fetchPostWrapper('/sendEmail', { accountId, emailSubject, emailBody,  isBodyHtml: "false" });
+  return fetchPostWrapper('/sendEmail', { accountId, emailSubject, emailBody, isBodyHtml: "false" });
 }
 
 const getAllCourses = () => {
@@ -118,6 +118,10 @@ const addRegCode = (regCode: string) => {
   return fetchPostWrapper('/addRegCode', { regCode });
 }
 
+const getAllGrades = () => {
+  return fetchGetWrapper('/getAllGrades');
+}
+
 // helper functions
 
 // TODO: maybe move this away from a string check?
@@ -133,27 +137,28 @@ const isTokenValid = (response: any): void => {
 // saga watchers
 
 function* login(action: any) {
-    if (!action.payload) return;
-    const response = yield call(loginPerson, action.payload.username, action.payload.password);
-    if (response.success) {
-      yield put({
-        type: LOGIN_SUCCESS,
-        payload: {
-          isInstructor: response.isInstructor,
-          loggedIn: response.success,
-          regCodes: response.regCode,
-          accountId: response.accountId,
-        }
-      });
-      storeTokenInCookie(response.token);
-      yield put({ type: GET_ALL_COURSES });
-      yield put({ type: GET_CURRICULUM });
-    } else {
-      yield put({
-        type: LOGIN_UNSUCCESSFUL
-      });
-    }
-    
+  if (!action.payload) return;
+  const response = yield call(loginPerson, action.payload.username, action.payload.password);
+  if (response.success) {
+    yield put({
+      type: LOGIN_SUCCESS,
+      payload: {
+        isInstructor: response.isInstructor,
+        loggedIn: response.success,
+        regCodes: response.regCode,
+        accountId: response.accountId,
+      }
+    });
+    storeTokenInCookie(response.token);
+    yield put({ type: GET_ALL_COURSES });
+    yield put({ type: GET_CURRICULUM });
+    yield put({ type: GET_ALL_GRADES });
+  } else {
+    yield put({
+      type: LOGIN_UNSUCCESSFUL
+    });
+  }
+
 }
 
 function* setupApp() {
@@ -186,7 +191,7 @@ function* register(action: any) {
   if (!action.payload) return;
   const { username, password, isInstructor, regCode } = action.payload;
   let registrationSuccess = false;
-  let response: any = { msg: 'Unsuccessful Registration.'};
+  let response: any = { msg: 'Unsuccessful Registration.' };
   if (isInstructor) {
     response = yield call(registerInstructor, username, password, regCode);
     registrationSuccess = response.success;
@@ -273,16 +278,31 @@ function* addRegCodeSaga(action: any) {
   }
 }
 
+function* getAllGradesSaga(action: any) {
+  const response = yield call(getAllGrades);
+  isTokenValid(response);
+  if (response.success) {
+    yield put({
+      type: SAVE_GRADES,
+      payload: {
+        grades: response.grades
+      }
+    })
+  }
+}
+
+
 function* sagaWatcher() {
-    yield takeLatest(ATTEMPT_LOGIN, login);
-    yield takeLatest(ATTEMPT_REGISTRATION, register);
-    yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
-    yield takeLatest(LOG_OUT, logOut);
-    yield takeLatest(SETUP_APP, setupApp);
-    yield takeLatest(GET_ALL_COURSES, getAllCoursesSaga);
-    yield takeEvery(GET_CURRICULUM, getCurriculumSaga);
-    yield takeLatest(SET_CURRICULUM, setCurriculumSaga);
-    yield takeLatest(ADD_REG_CODE, addRegCodeSaga);
+  yield takeLatest(ATTEMPT_LOGIN, login);
+  yield takeLatest(ATTEMPT_REGISTRATION, register);
+  yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
+  yield takeLatest(LOG_OUT, logOut);
+  yield takeLatest(SETUP_APP, setupApp);
+  yield takeLatest(GET_ALL_COURSES, getAllCoursesSaga);
+  yield takeEvery(GET_CURRICULUM, getCurriculumSaga);
+  yield takeLatest(SET_CURRICULUM, setCurriculumSaga);
+  yield takeLatest(ADD_REG_CODE, addRegCodeSaga);
+  yield takeLatest(GET_ALL_GRADES, getAllGradesSaga);
 }
 
 export default sagaWatcher;

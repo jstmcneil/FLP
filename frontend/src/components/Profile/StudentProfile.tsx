@@ -8,6 +8,9 @@ import TableRow from '@material-ui/core/TableRow';
 import { Grade } from '../../model/Grade';
 import { textAlign } from '@material-ui/system';
 import LogOutButton from '../LogOutButton';
+import { connect } from 'react-redux';
+import { gradesSelector } from '../../selectors';
+import RegCodeSelection from './RegCodeSelection';
 
 interface StudentProps {
 
@@ -20,50 +23,14 @@ class StudentProfile extends React.Component<StudentProps, StudentState> {
   constructor(props: StudentProps) {
     super(props);
     this.state = {
-      grades: [
-        {
-          studentUsername: 'abc',
-          instructor: 'x',
-          courseNumber: 1,
-          courseGrade: 90
-        },
-        {
-          studentUsername: 'abc',
-          instructor: 'x',
-          courseNumber: 2,
-          courseGrade: 100
-        },
-        {
-          studentUsername: 'abc',
-          instructor: 'x',
-          courseNumber: 3,
-          courseGrade: 80
-        },
-        {
-          studentUsername: 'abc',
-          instructor: 'x',
-          courseNumber: 4,
-          courseGrade: 95
-        },
-        {
-          studentUsername: 'abc',
-          instructor: 'x',
-          courseNumber: 5,
-          courseGrade: 90
-        },
-        {
-          studentUsername: 'abc',
-          instructor: 'x',
-          courseNumber: 6,
-          courseGrade: 100
-        },
-      ],
-    }
+      grades: [],
+    };
   }
   render() {
     return (
       <div className="report">
         <h1>Student Name: XYZ</h1>
+        <RegCodeSelection />
         <Table style={{ width: 500, textAlign: "center" }}>
           <TableHead>
             <TableRow>
@@ -88,4 +55,10 @@ class StudentProfile extends React.Component<StudentProps, StudentState> {
   }
 }
 
-export default StudentProfile;
+export default connect(
+  state => {
+    return {
+      grades: gradesSelector(state),
+    }
+  }
+)(StudentProfile);

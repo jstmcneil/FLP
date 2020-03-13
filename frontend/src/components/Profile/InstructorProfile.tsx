@@ -53,9 +53,9 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
         }
     }
 
-    
 
-    
+
+
 
     render() {
         let validData = this.state.reports;
@@ -63,34 +63,34 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
             <div className="report">
                 <h1>Instructor Name: XYZ</h1>
                 <RegCodeSelection />
-                { this.props.regCodes
+                {this.props.regCodes
                     && this.props.regCodes.map(regCode => {
                         return (
-                        <div>
-                            <CourseSelection regCode={regCode} />
                             <div>
-                                <Table style={{ width: 500, textAlign: "center" }}>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Course Number</TableCell>
-                                            <TableCell align="right">Student Name</TableCell>
-                                            <TableCell align="right">Student Grade</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {validData.map(d => (
+                                <CourseSelection regCode={regCode} />
+                                <div>
+                                    <Table style={{ width: 500, textAlign: "center" }}>
+                                        <TableHead>
                                             <TableRow>
-                                                <TableCell component="th" scope="row">
-                                                    {d.courseNumber}
-                                                </TableCell>
-                                                <TableCell align="right">{d.studentUsername}</TableCell>
-                                                <TableCell align="right">{d.courseGrade}</TableCell>
+                                                <TableCell>Course Number</TableCell>
+                                                <TableCell align="right">Student Name</TableCell>
+                                                <TableCell align="right">Student Grade</TableCell>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                                        </TableHead>
+                                        <TableBody>
+                                            {validData.map(d => (
+                                                <TableRow>
+                                                    <TableCell component="th" scope="row">
+                                                        {d.courseNumber}
+                                                    </TableCell>
+                                                    <TableCell align="right">{d.studentUsername}</TableCell>
+                                                    <TableCell align="right">{d.courseGrade}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
                             </div>
-                        </div>
                         );
                     })
                 }

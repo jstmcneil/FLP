@@ -3,7 +3,9 @@ import AccountController from './accountController.js';
 import EmailController from './emailController.js';
 import Course from '../models/courseModel.js';
 import Curriculum from '../models/curriculumModel.js';
-import { verifyJWTToken } from '../util/auth.js';
+import {
+    verifyJWTToken
+} from '../util/auth.js';
 import fs from 'fs';
 import path from 'path';
 const curriculum = JSON.parse(fs.readFileSync(path.resolve() + '\/curriculum.json'));
@@ -42,7 +44,11 @@ exports.submitQuiz = async (req, res) => {
     const account = await AccountController.getAccountByToken(decoded);
 
     var quizTaken = false;
-    await Course.find({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, (err, course) => {
+    await Course.find({
+        accountId: account._id,
+        regCode: req.body.regCode,
+        courseId: req.body.courseId
+    }, (err, course) => {
         if (err) {
             console.error(err);
             return;
@@ -87,7 +93,9 @@ exports.submitQuiz = async (req, res) => {
         emailResponse: req.body.emailResponse
     });
 
-    course.save(err => {if(err) console.error(err)});
+    course.save(err => {
+        if (err) console.error(err)
+    });
 
     res.send({
         courseInfo: course,
@@ -109,7 +117,11 @@ exports.getCourses = async (req, res) => {
         return;
     }
 
-    var courseId = (await Curriculum.findOne({regCode: req.query.regCode}, {courses: 1})).courses;
+    var courseId = (await Curriculum.findOne({
+        regCode: req.query.regCode
+    }, {
+        courses: 1
+    })).courses;
 
     if (courseId.length === 0) {
         res.send({
@@ -148,7 +160,11 @@ exports.getGrades = async (req, res) => {
     }
 
     const account = await AccountController.getAccountByToken(decoded);
-    const courses = (await Curriculum.findOne({regCode: req.query.regCode}, {courses: 1})).courses;
+    const courses = (await Curriculum.findOne({
+        regCode: req.query.regCode
+    }, {
+        courses: 1
+    })).courses;
 
     var grades = [];
     var query = {
@@ -203,7 +219,11 @@ exports.getAllGrades = async (req, res) => {
     }
 
     for (const code of account.regCode) {
-        const courses = (await Curriculum.findOne({regCode: code}, {courses: 1})).courses;
+        const courses = (await Curriculum.findOne({
+            regCode: code
+        }, {
+            courses: 1
+        })).courses;
         query.regCode = code;
         for (const id of courses) {
             query.courseId = id;
@@ -229,7 +249,7 @@ exports.getAllGrades = async (req, res) => {
 }
 
 // parameters: none
-exports.getAllCourses = async(req, res) => {
+exports.getAllCourses = async (req, res) => {
     //verify token
     const decoded = verifyJWTToken(req.headers['authorization']);
     if (!decoded) {
