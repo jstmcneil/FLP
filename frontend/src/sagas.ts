@@ -181,6 +181,7 @@ function* setupApp() {
       });
       yield put({ type: GET_ALL_COURSES });
       yield put({ type: GET_CURRICULUM });
+      yield put({ type: GET_ALL_GRADES });
     }
   }
 }

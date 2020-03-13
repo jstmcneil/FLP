@@ -63,7 +63,6 @@ exports.submitQuiz = async (req, res) => {
         });
         return;
     }
-    console.log(req.body);
     const answers = req.body.answers;
     var curriculumCopy = JSON.parse(JSON.stringify(curriculum));
     var courses = curriculumCopy.courses.filter((course => course.id == req.body.courseId));
