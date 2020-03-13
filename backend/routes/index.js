@@ -19,9 +19,6 @@ export default (app) => {
     app.route('/getAccount').get(Account.getAccount);
     app.route('/addRegCode').post(Account.addRegCode);
 
-    //email service
-    app.route('/sendEmail').post(SMTPEmail.sendEMail);
-
     //review
     app.route('/getReviews').get(Review.getReviews);
     app.route('/createReview').post(Review.createReview);

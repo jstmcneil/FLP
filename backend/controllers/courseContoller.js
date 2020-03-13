@@ -1,5 +1,6 @@
 import Account from '../models/accountModel.js';
 import AccountController from './accountController.js';
+import EmailController from './emailController.js';
 import Course from '../models/courseModel.js';
 import Curriculum from '../models/curriculumModel.js';
 import { verifyJWTToken } from '../util/auth.js';
@@ -26,7 +27,7 @@ async function convertToUsername(arr) {
     return mutableArr;
 }
 
-// parameters: regCode, courseId, answers, completedEmailQuestion
+// parameters: regCode, courseId, answers, emailResponse
 exports.submitQuiz = async (req, res) => {
     //verify token
     const decoded = verifyJWTToken(req.headers['authorization']);
@@ -68,6 +69,15 @@ exports.submitQuiz = async (req, res) => {
             correctCount++;
         }
     });
+
+
+    if (!await EmailController.sendEMail(req.body.regCode, req.body.emailResponse)) {
+        res.send({
+            msg: 'Sumbit quiz failed',
+            success: false
+        });
+        return;
+    }
 
     const course = new Course({
         accountId: account._id,

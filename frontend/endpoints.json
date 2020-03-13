@@ -24,11 +24,6 @@
         "params": ["regCode"],
         "requestType": "POST"
     },
-    "sendEmail": {
-        "url": "/sendEmail",
-        "params": ["regCode", "emailSubject", "emailBody", "isBodyHtml"],
-        "requestType": "POST"
-    },
     "createReview": {
         "url": "/createReview",
         "params": ["regCode", "courseId", "review"],

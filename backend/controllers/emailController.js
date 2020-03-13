@@ -1,23 +1,12 @@
 import nodemailer from 'nodemailer';
 import Account from '../models/accountModel.js';
-import { verifyJWTToken } from '../util/auth.js';
 
-// parameters: regCode, emailSubject, emailBody, isBodyHtml
-exports.sendEMail = async (req, res) => {
-    //verify token
-    const decoded = verifyJWTToken(req.headers['authorization']);
-    if (!decoded) {
-        res.send({
-            msg: "Invalid Token",
-            success: false
-        });
-        return;
-    }
+const emailSubject = 'FLP Email Response';
 
-    var success = true;
+exports.sendEMail = async (regCode, emailBody) => {
     var instructorEmail;
 
-    await Account.find({regCode: req.body.regCode, isInstructor: true}, (err, acc) => {
+    await Account.find({regCode: regCode, isInstructor: true}, (err, acc) => {
         if (err) {
             console.error(err);
             return;
@@ -27,14 +16,6 @@ exports.sendEMail = async (req, res) => {
         }
         instructorEmail = acc[0].username;
     });
-
-    if (!instructorEmail) {
-        res.send({
-            msg: "Not registered with a course",
-            success: false
-        });
-        return;
-    }
 
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -47,30 +28,17 @@ exports.sendEMail = async (req, res) => {
     var option = {
         from: 'flpemail.noreply@gmail.com',
         to: instructorEmail,
-        subject: req.body.emailSubject,
+        subject: emailSubject,
+        html: emailBody
     };
 
-    if (req.body.isBodyHtml) {
-        option.html = req.body.emailBody;
-    } else {
-        option.text = req.body.emailBody;
-    }
-
+    var sucess = true;
     transporter.sendMail(option, (err, info) => {
         if (err) {
             console.error(err);
-            success = false;
-            res.send({
-                msg: "failed to send email",
-                success: false
-            });
+            sucess = false;
         }
     });
 
-    if (success) {
-        res.send({
-            msg: null,
-            success: true
-        });
-    }
+    return sucess;
 };
