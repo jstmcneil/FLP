@@ -12,11 +12,13 @@ import CoursePage from './CoursePage';
 import { CourseType } from '../../model/CourseType';
 import { connect } from 'react-redux';
 import { courseSelector, regCodesSelector, curriculumSelector } from '../../selectors/index';
+import keyBy from 'lodash/keyBy';
 
 interface ClassProps {
     id: number;
-    courseName: CourseType;
+    courseName: string;
     path: string;
+    regCode: string;
 }
 
 interface CourseProps extends RouteComponentProps {
@@ -27,39 +29,18 @@ interface CourseProps extends RouteComponentProps {
 
 const Class = (props: ClassProps): JSX.Element => {
     return (<div className="class">
-        <div id="courseName">{props.courseName.id}</div>
+        <div id="courseName">{props.courseName}</div>
         <div id="redirectClass"><Link to={{
-            pathname: `${props.path}/${props.id}`,
-            state: {
-                data: props.courseName
-            }
+            pathname: `${props.path}/${props.regCode}/${props.id}`,
         }}>Go To Course</Link></div>
     </div>);
 }
 
 const Course = (props: CourseProps): JSX.Element => {
     let { path, url } = useRouteMatch();
-    if (!props.courses || !props.curriculum) return <Fragment />;
-    let myMap = new Map();
-    for (var k in props.curriculum) {
-        if (props.curriculum.hasOwnProperty(k) && props.regCodes.includes(k)) {
-            myMap.set(k, props.curriculum[k].courses);
-        }
-    }
-    let keys: string[] = [];
-    let vals: CourseType[][] = [];
-    myMap.forEach((value: string[], key: string) => {
-        let validCourse: CourseType[] = [];
-        value.forEach(v => {
-            props.courses.forEach(c => {
-                if (c.id === +v) {
-                    validCourse.push(c);
-                }
-            })
-        })
-        keys.push(k);
-        vals.push(validCourse);
-    });
+    if (!props.courses || !props.curriculum || !props.regCodes) return <Fragment />;
+    const courses = keyBy(props.courses, "id");
+    console.log(courses);
     return (
         <Switch>
             <Route exact path={path}>
@@ -67,20 +48,21 @@ const Course = (props: CourseProps): JSX.Element => {
                     <div className="title">My Courses</div>
                     <div className="space"></div>
                     {
-                        keys.map((key: string, index: number) => (
+                        props.regCodes.map((key: string) => (
                             <div>
                                 <div className="subtitle">RegCode: {key}</div>
                                 {
-                                    vals[index].map((c) => (
-                                        <Class courseName={c} id={c.id} path={path} />
-                                    ))
+                                    props.curriculum[key] && props.curriculum[key].courses.map((c: number[]) => {
+                                        const course: any = courses[String(c)];
+                                        return (<Class courseName={course.courseName} id={course.id} path={path} regCode={key} />)
+                                    })
                                 }
                             </div>
                         ))
                     }
                 </div>
             </Route>
-            <Route path={`${path}/:courseId`} render={(props) => <CoursePage {...props} />} />
+            <Route path={`${path}/:regCode/:courseId`} render={(props) => <CoursePage {...props} />} />
         </Switch>
     );
 }

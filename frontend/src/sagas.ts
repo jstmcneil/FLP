@@ -1,6 +1,7 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
 import keyBy from "lodash/keyBy";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES, GET_CURRICULUM, SAVE_CURRICULUM, SET_CURRICULUM, ADD_REG_CODE } from "./actions/types";
+import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES, GET_CURRICULUM, SAVE_CURRICULUM, SET_CURRICULUM, ADD_REG_CODE, SUBMIT_QUIZ } from "./actions/types";
+import { AnswerType } from "./model/CourseType";
 
 const BASE_URL = 'http://localhost:8000';
 const queryParams = (args: {[index: string]: string}): string => {
@@ -116,6 +117,10 @@ const setCurriculum = (regCode: string, courseIds: string[]) => {
 
 const addRegCode = (regCode: string) => {
   return fetchPostWrapper('/addRegCode', { regCode });
+}
+
+const submitQuiz = (regCode: string, courseId: string, answers: AnswerType[], emailResponse: string) => {
+  return fetchPostWrapper('/submitQuiz', { regCode, courseId, answers, emailResponse });
 }
 
 // helper functions
@@ -273,6 +278,25 @@ function* addRegCodeSaga(action: any) {
   }
 }
 
+function* submitQuizSaga(action: any) {
+  if (!action.payload
+    || !action.payload.regCode
+    || action.payload.courseId === undefined
+    || !action.payload.emailResponse
+    || !action.payload.answers) {
+      return;
+    }
+  const { regCode, courseId, emailResponse, answers } = action.payload;
+  const response = yield call(submitQuiz, regCode, String(courseId), answers, emailResponse);
+  isTokenValid(response);
+  if (response.success) {
+    alert('Quiz Submitted!');
+    document.location.href = '/profile';
+  } else {
+    alert(response.msg);
+  }
+}
+
 function* sagaWatcher() {
     yield takeLatest(ATTEMPT_LOGIN, login);
     yield takeLatest(ATTEMPT_REGISTRATION, register);
@@ -283,6 +307,7 @@ function* sagaWatcher() {
     yield takeEvery(GET_CURRICULUM, getCurriculumSaga);
     yield takeLatest(SET_CURRICULUM, setCurriculumSaga);
     yield takeLatest(ADD_REG_CODE, addRegCodeSaga);
+    yield takeLatest(SUBMIT_QUIZ, submitQuizSaga);
 }
 
 export default sagaWatcher;

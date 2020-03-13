@@ -4,43 +4,32 @@ import CourseEmailTextComponent from '../EmailTextBox';
 import { useParams, RouteComponentProps } from 'react-router-dom';
 import VideoPlayer from '../VideoPlayer';
 import { connect } from 'react-redux';
-import { loggedInSelector, accountIdSelector, usernameSelector } from '../../selectors';
+import { loggedInSelector, accountIdSelector, usernameSelector, coursesSelector } from '../../selectors';
 import { ATTEMPT_SEND_EMAIL } from '../../actions/types';
-import { Video } from '../../model/Video';
-import { EmailType } from '../../model/EmailType';
+import keyBy from 'lodash/keyBy';
+import { Video, CourseType } from '../../model/CourseType';
 
 interface PageProps extends RouteComponentProps {
     loggedIn: boolean;
-    accountId: string;
-    username: string;
-    sendEmailAction: Function;
+    courses: CourseType[];
 }
 const CoursePage = (props: PageProps): JSX.Element => {
-    var { data }: any = props.location.state;
-    const { courseId } = useParams();
-    console.log(data)
-    if (!props.loggedIn) {
+    const { courseId, regCode } = useParams();
+    if (!props.loggedIn || !props.courses || regCode === undefined || courseId === undefined) {
         return <div>You are not logged in. Please login to access courses.</div>
     }
-    console.log("CoursePage");
-    const { accountId, username, sendEmailAction } = props;
+    const courses = keyBy(props.courses, "id");
+    const course = courses[courseId || ""];
     return (
         <div>
             <div className="space"></div>
-            <h2>Course {courseId}</h2>
-            <div>{data.summaryText}</div>
-            {data.summaryVideo.map((video: Video) => (
+            <h2>Course {course.id}</h2>
+            <div>{course.summaryText}</div>
+            {course.summaryVideo.map((video: Video) => (
                 <VideoPlayer videoId={video.id} />
             ))}
-            <div>Multiple Choice Quiz</div>
-            <Quiz questions={data.quiz.mcQuestions} />
-            <div>Short Answer</div>
-            {data.quiz.emailQuestions.map((emailQ: EmailType) => (
-                <div>
-                    <div>{emailQ.questionContent}</div>
-                    <CourseEmailTextComponent accountId={accountId} questionName={"example"} username={username} courseName={"courseName"} sendEmailAction={sendEmailAction} />
-                </div>
-            ))}
+            <div>Quiz</div>
+            <Quiz questions={course.quiz} regCode={regCode} courseId={course.id} />
         </div>
     )
 }
@@ -48,14 +37,13 @@ const CoursePage = (props: PageProps): JSX.Element => {
 export default connect(
     state => {
         return {
-            loggedIn: loggedInSelector(state),
-            accountId: accountIdSelector(state),
-            username: usernameSelector(state),
+            courses: coursesSelector(state),
+            loggedIn: loggedInSelector(state)
         }
     },
     dispatch => {
         return {
-            sendEmailAction: (accountId: string, emailSubject: string, emailBody: string) => dispatch({ type: ATTEMPT_SEND_EMAIL, payload: { accountId, emailSubject, emailBody } })
+            
         }
     }
 )(CoursePage);

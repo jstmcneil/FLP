@@ -1,9 +1,41 @@
-import { Video } from "./Video";
-import { QuizType } from "./QuizType";
+export interface Video {
+    type: string;
+    id: string
+}
+
+export interface QuestionType {
+    questionContent: string;
+    type: string;
+}
+
+export interface MCQuizType extends QuestionType {
+    type: "MC"
+    questionId: number;
+    answerChoices: string[];
+    videoId: string;
+}
+
+export interface EmailType extends QuestionType {
+    type: "Email"
+    questionContent: string;
+    videoType: string;
+    videoId: string;
+}
+
+export interface QuizType {
+    mcQuestions: MCQuizType[];
+    emailQuestions: EmailType[];
+}
 
 export interface CourseType {
-    id: number;
+    id: string;
+    courseName: string;
     summaryText: string;
     summaryVideo: Video[];
     quiz: QuizType;
+}
+
+export interface AnswerType {
+    questionId: number;
+    answerIndex: number;
 }
