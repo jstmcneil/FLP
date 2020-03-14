@@ -1,13 +1,18 @@
 import Account from '../models/accountModel.js';
 import Curriculum from '../models/curriculumModel.js';
-import { generateJWTToken, verifyJWTToken } from '../util/auth.js';
+import {
+    generateJWTToken,
+    verifyJWTToken
+} from '../util/auth.js';
 
 async function isRegistered(username) {
     if (!username) {
         return true;
     }
     var userExist = false;
-    await Account.find({'username': username}, (err, acc) => {
+    await Account.find({
+        'username': username
+    }, (err, acc) => {
         if (err) {
             console.error(err);
             return false;
@@ -21,7 +26,9 @@ async function isRegistered(username) {
 
 async function regCodeExist(regCode) {
     var codeExist = false;
-    await Curriculum.find({'regCode': regCode}, (err, cur) => {
+    await Curriculum.find({
+        'regCode': regCode
+    }, (err, cur) => {
         if (err) {
             console.error(err);
             return false;
@@ -40,7 +47,9 @@ exports.login = async (req, res) => {
         isInstructor = false,
         accountId = null;
 
-    await Account.find({'username': req.body.username}, (err, acc) => {
+    await Account.find({
+        'username': req.body.username
+    }, (err, acc) => {
         if (acc.length != 0 && acc[0].password == req.body.password) {
             loginSuccess = true;
             regCode = acc[0].regCode;
@@ -103,7 +112,9 @@ exports.studentRegister = async (req, res) => {
         isInstructor: false
     });
 
-    acc.save(err => {if (err) console.error(err)});
+    acc.save(err => {
+        if (err) console.error(err)
+    });
 
     res.send({
         msg: "Register Success",
@@ -152,7 +163,9 @@ exports.instructorRegister = async (req, res) => {
         isInstructor: true
     });
 
-    acc.save(err => {if (err) console.error(err)});
+    acc.save(err => {
+        if (err) console.error(err)
+    });
 
     //create empty curriculum for the regCode
     const curriculum = new Curriculum({
@@ -160,7 +173,9 @@ exports.instructorRegister = async (req, res) => {
         courses: []
     });
 
-    curriculum.save(err => {if (err) console.error(err)});
+    curriculum.save(err => {
+        if (err) console.error(err)
+    });
 
     res.send({
         msg: "Register Success",
@@ -206,7 +221,9 @@ exports.addRegCode = async (req, res) => {
         return;
     }
     const account = await getAccountByToken(decoded);
-    await Account.updateOne({_id: account._id}, {
+    await Account.updateOne({
+        _id: account._id
+    }, {
         $set: {
             regCode: [...account.regCode, req.body.regCode]
         }
@@ -218,7 +235,9 @@ exports.addRegCode = async (req, res) => {
             courses: []
         });
 
-        curriculum.save(err => {if (err) console.error(err)});
+        curriculum.save(err => {
+            if (err) console.error(err)
+        });
     }
 
     res.send({

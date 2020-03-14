@@ -14,6 +14,7 @@ async function convertToUsername(arr) {
     var mutableArr = [];
     for (let i = 0; i < arr.length; i++) {
         mutableArr.push(JSON.parse(JSON.stringify(arr[i])));
+        if (mutableArr[i] == null) continue;
         let username;
         await Account.findById(mutableArr[i].accountId, (err, acc) => {
             if (err) {
@@ -218,11 +219,16 @@ exports.getAllGrades = async (req, res) => {
     }
 
     for (const code of account.regCode) {
-        const courses = (await Curriculum.findOne({
+        const findCourse = (await Curriculum.findOne({
             regCode: code
         }, {
             courses: 1
-        })).courses;
+        }));
+        if (findCourse == null) {
+            console.log("Did not find courses for regCode: " + code);
+            continue;
+        }
+        const courses = findCourse.courses;
         query.regCode = code;
         for (const id of courses) {
             query.courseId = id;
@@ -236,7 +242,6 @@ exports.getAllGrades = async (req, res) => {
             grades.push(grade);
         }
     }
-
     if (account.isInstructor) {
         grades = await convertToUsername(grades);
     }
