@@ -11,7 +11,7 @@ interface CourseSelectionProps {
     setCurriculumAction: Function;
 }
 
-type CourseIdChanges = {[id: number]: boolean};
+type CourseIdChanges = { [id: number]: boolean };
 
 interface CourseSelectionState {
     courseIdChanges: CourseIdChanges;
@@ -45,30 +45,31 @@ class CourseSelection extends React.Component<CourseSelectionProps, CourseSelect
     onCheckBoxChanged(_: React.ChangeEvent<HTMLInputElement>, checked: boolean, id: number) {
         this.state.courseIdChanges[id] = checked;
     }
-    
+
     renderRegCodeCourseSelection(curriculumForRegCode: number[], allCourses: any, currRegCode: string) {
+        console.log(allCourses);
         return (
             <div>
                 {
-                allCourses.map((course: any): JSX.Element => {
-                    return (
-                        <div style={{display: "flex", flexDirection: "row"}}>
-                            <div>{course.courseName}</div>
-                            <Checkbox 
-                                id={`checkbox-${course.id}-${course.courseName}-${currRegCode}`} 
-                                onChange={(event, checked) => this.onCheckBoxChanged(event, checked, course.id)} 
-                                defaultChecked={curriculumForRegCode.includes(course.id)}
-                            />
-                        </div>
-                    )
-                })
-            }
-            <button onClick={() => 
-                this.props.setCurriculumAction(
-                    applyCheckboxChanges(curriculumForRegCode, 
-                        this.state.courseIdChanges),
-                    currRegCode)}>
-                Set Course Selection
+                    allCourses.map((course: any): JSX.Element => {
+                        return (
+                            <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div>{course.courseName}</div>
+                                <Checkbox
+                                    id={`checkbox-${course.id}-${course.courseName}-${currRegCode}`}
+                                    onChange={(event, checked) => this.onCheckBoxChanged(event, checked, course.id)}
+                                    defaultChecked={curriculumForRegCode.includes(course.id)}
+                                />
+                            </div>
+                        )
+                    })
+                }
+                <button onClick={() =>
+                    this.props.setCurriculumAction(
+                        applyCheckboxChanges(curriculumForRegCode,
+                            this.state.courseIdChanges),
+                        currRegCode)}>
+                    Set Course Selection
             </button>
             </div>
         );
@@ -94,6 +95,6 @@ export default connect(state => {
     }
 }, dispatch => {
     return {
-        setCurriculumAction: (courseIds: number[], regCode: string) => dispatch({type: SET_CURRICULUM, payload: { courseIds, regCode }})
+        setCurriculumAction: (courseIds: number[], regCode: string) => dispatch({ type: SET_CURRICULUM, payload: { courseIds, regCode } })
     }
 })(CourseSelection);

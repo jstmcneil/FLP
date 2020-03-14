@@ -1,8 +1,8 @@
-export interface Grade {
+export interface GradeInstructorView {
     _id: string;
-    accountId: string;
     regCode: string;
     courseId: string;
     mcGrade: number;
     emailResponse: string;
+    username: string;
 }

@@ -1,4 +1,6 @@
 import { CourseType } from '../model/CourseType';
+import { Grade } from '../model/Grade';
+import { GradeInstructorView } from '../model/GradeInstructorView';
 export const loggedInSelector = (state: any): boolean => state.loggedIn;
 export const accountIdSelector = (state: any): string => state.accountId;
 export const isInstructorSelector = (state: any): boolean => state.isInstructor;
@@ -7,4 +9,5 @@ export const coursesSelector = (state: any): any => state.courses;
 export const curriculumSelector = (state: any): any => state.curriculum;
 export const regCodesSelector = (state: any): string[] => state.regCodes;
 export const courseSelector = (state: any): CourseType[] => state.courses;
-export const gradesSelector = (state: any): any => state.grades;  
+export const gradesSelector = (state: any): Grade[] => state.grades;  
+export const instructorGradesSelector = (state: any): GradeInstructorView[] => state.grades;  

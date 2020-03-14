@@ -289,8 +289,8 @@ function* submitQuizSaga(action: any) {
     || action.payload.courseId === undefined
     || !action.payload.emailResponse
     || !action.payload.answers) {
-      return;
-    }
+    return;
+  }
   const { regCode, courseId, emailResponse, answers } = action.payload;
   const response = yield call(submitQuiz, regCode, String(courseId), answers, emailResponse);
   isTokenValid(response);
@@ -316,17 +316,17 @@ function* getAllGradesSaga(action: any) {
 }
 
 function* sagaWatcher() {
-    yield takeLatest(ATTEMPT_LOGIN, login);
-    yield takeLatest(ATTEMPT_REGISTRATION, register);
-    yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
-    yield takeLatest(LOG_OUT, logOut);
-    yield takeLatest(SETUP_APP, setupApp);
-    yield takeLatest(GET_ALL_COURSES, getAllCoursesSaga);
-    yield takeEvery(GET_CURRICULUM, getCurriculumSaga);
-    yield takeLatest(SET_CURRICULUM, setCurriculumSaga);
-    yield takeLatest(ADD_REG_CODE, addRegCodeSaga);
-    yield takeLatest(SUBMIT_QUIZ, submitQuizSaga);
-    yield takeLatest(GET_ALL_GRADES, getAllGradesSaga);
+  yield takeLatest(ATTEMPT_LOGIN, login);
+  yield takeLatest(ATTEMPT_REGISTRATION, register);
+  yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
+  yield takeLatest(LOG_OUT, logOut);
+  yield takeLatest(SETUP_APP, setupApp);
+  yield takeLatest(GET_ALL_COURSES, getAllCoursesSaga);
+  yield takeEvery(GET_CURRICULUM, getCurriculumSaga);
+  yield takeLatest(SET_CURRICULUM, setCurriculumSaga);
+  yield takeLatest(ADD_REG_CODE, addRegCodeSaga);
+  yield takeLatest(SUBMIT_QUIZ, submitQuizSaga);
+  yield takeEvery(GET_ALL_GRADES, getAllGradesSaga);
 }
 
 export default sagaWatcher;
