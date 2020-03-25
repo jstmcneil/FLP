@@ -1,7 +1,7 @@
 {
     "courses": [
         {
-            "id": 123,
+            "id": "123",
             "courseName": "Course 1",
             "summaryText": "course 1 summary",
             "summaryVideo": [
@@ -52,7 +52,7 @@
             }
         },
         {
-            "id": 456,
+            "id": "456",
             "courseName": "Course 2",
             "summaryText": "course 2 summary",
             "summaryVideo": [

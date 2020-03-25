@@ -33,4 +33,5 @@ export default (app) => {
     app.route('/getGrades').get(Course.getGrades);
     app.route('/getAllGrades').get(Course.getAllGrades);
     app.route('/getAllCourses').get(Course.getAllCourses);
+    app.route('/getAnswers').get(Course.getAnswers);
 };

@@ -70,5 +70,10 @@
         "url": "/getAllCourses",
         "params": [],
         "requestType": "GET"
+    },
+    "getAnswers": {
+        "url": "/getAnswers",
+        "params": ["regCode", "courseId"],
+        "requestType": "GET"
     }
 }

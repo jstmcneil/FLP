@@ -278,3 +278,51 @@ exports.getAllCourses = async (req, res) => {
         success: true
     });
 }
+
+// parameter: regCode, courseId
+exports.getAnswers = async(req, res) => {
+    //verify token
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
+        res.send({
+            msg: "Invalid Token",
+            success: false
+        });
+        return;
+    }
+
+    const account = await AccountController.getAccountByToken(decoded);
+
+    var quizTaken = false;
+    await Course.find({
+        accountId: account._id,
+        regCode: req.query.regCode,
+        courseId: req.query.courseId
+    }, (err, course) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        quizTaken = course.length > 0;
+    });
+
+    if (!quizTaken) {
+        res.send({
+            msg: "Quiz is not taken",
+            success: false
+        });
+    } else {
+        var answer = curriculum.courses.find((course) => course.id == req.query.courseId);
+        console.log(answer);
+        answer = answer.quiz.mcQuestions.map(question => {
+            return {
+                questionId: question.questionId,
+                correctAnswerIndex: question.correctAnswerIndex
+            }
+        });
+        res.send({
+            answers: answer,
+            success: true
+        })
+    };
+}
