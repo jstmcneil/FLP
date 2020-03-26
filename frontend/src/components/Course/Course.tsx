@@ -13,9 +13,10 @@ import { CourseType } from '../../model/CourseType';
 import { connect } from 'react-redux';
 import { courseSelector, regCodesSelector, curriculumSelector } from '../../selectors/index';
 import keyBy from 'lodash/keyBy';
+import { CurriculumType } from '../../model/CurriculumType';
 
 interface ClassProps {
-    id: number;
+    id: string;
     courseName: string;
     path: string;
     regCode: string;
@@ -24,7 +25,7 @@ interface ClassProps {
 interface CourseProps extends RouteComponentProps {
     courses: CourseType[];
     regCodes: string[];
-    curriculum: any;
+    curriculum: CurriculumType;
 }
 
 const Class = (props: ClassProps): JSX.Element => {
@@ -52,8 +53,8 @@ const Course = (props: CourseProps): JSX.Element => {
                             <div>
                                 <div className="subtitle">RegCode: {key}</div>
                                 {
-                                    props.curriculum[key] && props.curriculum[key].courses.map((c: number[]) => {
-                                        const course: any = courses[String(c)];
+                                    props.curriculum[key] && props.curriculum[key].courses.map((c: number) => {
+                                        const course: CourseType = courses[String(c)];
                                         return (<Class courseName={course.courseName} id={course.id} path={path} regCode={key} />)
                                     })
                                 }

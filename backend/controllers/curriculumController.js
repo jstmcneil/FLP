@@ -4,6 +4,27 @@ import {
     verifyJWTToken
 } from '../util/auth.js';
 
+async function getCurriculumByAccount(account) {
+    if (!account) {
+        return [];
+    }
+    var curriculum = [];
+    for (const code of account.regCode) {
+        const cur = await Curriculum.findOne({
+            regCode: code
+        }, {
+            courses: 1
+        });
+        if (cur != null) {
+            curriculum.push({
+                regCode: code,
+                courses: cur.courses
+            });
+        }
+    }
+    return curriculum;
+}
+
 // parameters: regCode, courses: [courseId]
 exports.setCurriculum = async (req, res) => {
     //verify token
@@ -43,21 +64,7 @@ exports.getCurriculum = async (req, res) => {
 
     const account = await AccountController.getAccountByToken(decoded);
     if (account != null) {
-        var curriculum = [];
-        for (const code of account.regCode) {
-            const cur = await Curriculum.findOne({
-                regCode: code
-            }, {
-                courses: 1
-            });
-            if (cur != null) {
-                curriculum.push({
-                    regCode: code,
-                    courses: cur.courses
-                });
-            }
-        }
-
+        const curriculum = await getCurriculumByAccount(account);
         res.send({
             msg: null,
             curriculum: curriculum,
@@ -65,3 +72,6 @@ exports.getCurriculum = async (req, res) => {
         });
     }
 }
+
+// private
+exports.getCurriculumByAccount = getCurriculumByAccount

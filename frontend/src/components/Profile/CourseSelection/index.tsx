@@ -3,31 +3,32 @@ import { Checkbox } from '@material-ui/core';
 import { curriculumSelector, coursesSelector } from '../../../selectors';
 import { SET_CURRICULUM } from '../../../actions/types';
 import { connect } from 'react-redux';
+import { CourseType } from '../../../model/CourseType';
+import { CurriculumType } from '../../../model/CurriculumType';
 
 interface CourseSelectionProps {
     regCode: string;
-    curriculum: any;
-    courses: any;
+    curriculum: CurriculumType;
+    courses: CourseType[];
     setCurriculumAction: Function;
 }
 
-type CourseIdChanges = { [id: number]: boolean };
+type CourseIdChanges = { [id: string]: boolean };
 
 interface CourseSelectionState {
     courseIdChanges: CourseIdChanges;
 }
 
-const applyCheckboxChanges = (originalCourseIds: number[], courseIdChanges: CourseIdChanges): number[] => {
-    let courseIds: number[] = [];
+const applyCheckboxChanges = (originalCourseIds: string[], courseIdChanges: CourseIdChanges): string[] => {
+    let courseIds: string[] = [];
     originalCourseIds.forEach(courseId => {
         courseIds.push(courseId);
     })
     Object.keys(courseIdChanges).forEach(id => {
-        const idAsNumber = parseInt(id);
-        const idInOriginalCourseIds = originalCourseIds.indexOf(idAsNumber);
-        if (courseIdChanges[idAsNumber] && idInOriginalCourseIds < 0) {
-            courseIds.push(idAsNumber);
-        } else if (!courseIdChanges[idAsNumber] && idInOriginalCourseIds >= 0) {
+        const idInOriginalCourseIds = originalCourseIds.indexOf(id);
+        if (courseIdChanges[id] && idInOriginalCourseIds < 0) {
+            courseIds.push(id);
+        } else if (!courseIdChanges[id] && idInOriginalCourseIds >= 0) {
             courseIds.splice(idInOriginalCourseIds, 1);
         }
     });
@@ -42,16 +43,15 @@ class CourseSelection extends React.Component<CourseSelectionProps, CourseSelect
         };
     }
 
-    onCheckBoxChanged(_: React.ChangeEvent<HTMLInputElement>, checked: boolean, id: number) {
+    onCheckBoxChanged(_: React.ChangeEvent<HTMLInputElement>, checked: boolean, id: string) {
         this.state.courseIdChanges[id] = checked;
     }
 
-    renderRegCodeCourseSelection(curriculumForRegCode: number[], allCourses: any, currRegCode: string) {
-        console.log(allCourses);
+    renderRegCodeCourseSelection(curriculumForRegCode: string[], allCourses: CourseType[], currRegCode: string) {
         return (
             <div>
                 {
-                    allCourses.map((course: any): JSX.Element => {
+                    allCourses.map((course: CourseType): JSX.Element => {
                         return (
                             <div style={{ display: "flex", flexDirection: "row" }}>
                                 <div>{course.courseName}</div>
@@ -76,13 +76,18 @@ class CourseSelection extends React.Component<CourseSelectionProps, CourseSelect
     }
 
     render() {
-        if (!this.props.regCode || !this.props.curriculum || !this.props.courses || !this.props.setCurriculumAction) {
+        if (!this.props.regCode
+            || !this.props.curriculum
+            || !this.props.courses
+            || !this.props.setCurriculumAction
+            || !this.props.curriculum[this.props.regCode]
+            || !this.props.curriculum[this.props.regCode].courses) {
             return <Fragment />;
         }
         return (
             <div>
                 <div>Registration Code: {this.props.regCode}</div>
-                {this.renderRegCodeCourseSelection(this.props.curriculum[this.props.regCode].courses, this.props.courses, this.props.regCode)}
+                {this.renderRegCodeCourseSelection(this.props.curriculum[this.props.regCode].courses.map(course => String(course)), this.props.courses, this.props.regCode)}
             </div>
         )
     }
@@ -95,6 +100,6 @@ export default connect(state => {
     }
 }, dispatch => {
     return {
-        setCurriculumAction: (courseIds: number[], regCode: string) => dispatch({ type: SET_CURRICULUM, payload: { courseIds, regCode } })
+        setCurriculumAction: (courseIds: string[], regCode: string) => dispatch({ type: SET_CURRICULUM, payload: { courseIds, regCode } })
     }
 })(CourseSelection);

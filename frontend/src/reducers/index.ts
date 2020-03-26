@@ -1,4 +1,9 @@
 import { LOGIN_SUCCESS, SAVE_COURSES, SAVE_CURRICULUM, SAVE_GRADES } from "../actions/types";
+import { Action } from "redux";
+
+interface ActionWithPayload<T, Y> extends Action<Y> {
+    payload: T
+}
 
 interface State {
     loggedIn: boolean;
@@ -8,7 +13,7 @@ const initialState: State = {
     loggedIn: false
 };
 
-export const reducer = (state: State | undefined, action: any): State => {
+export const reducer = (state: State | undefined, action: ActionWithPayload<any, string>): State => {
     switch (action.type) {
         case LOGIN_SUCCESS:
             return { ...state, ...action.payload };

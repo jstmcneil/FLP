@@ -1,6 +1,7 @@
 import Account from '../models/accountModel.js';
 import AccountController from './accountController.js';
 import EmailController from './emailController.js';
+import { getCurriculumByAccount } from './curriculumController.js';
 import Course from '../models/courseModel.js';
 import Curriculum from '../models/curriculumModel.js';
 import {
@@ -8,6 +9,8 @@ import {
 } from '../util/auth.js';
 import fs from 'fs';
 import path from 'path';
+import difference from 'lodash/difference';
+
 const curriculum = JSON.parse(fs.readFileSync(path.resolve() + '\/curriculum.json'));
 
 async function convertToUsername(arr) {
@@ -293,36 +296,36 @@ exports.getAnswers = async(req, res) => {
 
     const account = await AccountController.getAccountByToken(decoded);
 
-    var quizTaken = false;
-    await Course.find({
+    const courseAttempts = await Course.find({
         accountId: account._id,
-        regCode: req.query.regCode,
         courseId: req.query.courseId
-    }, (err, course) => {
+    }, (err, courses) => {
         if (err) {
             console.error(err);
             return;
         }
-        quizTaken = course.length > 0;
     });
-
-    if (!quizTaken) {
+    const regCodesForCourseAttempts = courseAttempts.map(courseAttempt => courseAttempt.regCode);
+    const studentCurriculum = await getCurriculumByAccount(account);
+    const allRegCodesWithCourse = studentCurriculum.filter(curr => curr.courses.includes(req.query.courseId)).map(curr => curr.regCode);
+    console.log(regCodesForCourseAttempts);
+    console.log(allRegCodesWithCourse);
+    if (difference(allRegCodesWithCourse, regCodesForCourseAttempts).length !== 0) {
         res.send({
-            msg: "Quiz is not taken",
-            success: false
+            success: false,
+            msg: 'There is an outstanding version of the same course in a different registration that you must still take.'
         });
-    } else {
-        var answer = curriculum.courses.find((course) => course.id == req.query.courseId);
-        console.log(answer);
-        answer = answer.quiz.mcQuestions.map(question => {
-            return {
-                questionId: question.questionId,
-                correctAnswerIndex: question.correctAnswerIndex
-            }
-        });
-        res.send({
-            answers: answer,
-            success: true
-        })
-    };
+        return;
+    }
+    var answer = curriculum.courses.find((course) => course.id == req.query.courseId);
+    answer = answer.quiz.mcQuestions.map(question => {
+        return {
+            questionId: question.questionId,
+            correctAnswerIndex: question.correctAnswerIndex
+        }
+    });
+    res.send({
+        answers: answer,
+        success: true
+    });
 }
