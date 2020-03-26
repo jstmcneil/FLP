@@ -308,8 +308,6 @@ exports.getAnswers = async(req, res) => {
     const regCodesForCourseAttempts = courseAttempts.map(courseAttempt => courseAttempt.regCode);
     const studentCurriculum = await getCurriculumByAccount(account);
     const allRegCodesWithCourse = studentCurriculum.filter(curr => curr.courses.includes(req.query.courseId)).map(curr => curr.regCode);
-    console.log(regCodesForCourseAttempts);
-    console.log(allRegCodesWithCourse);
     if (difference(allRegCodesWithCourse, regCodesForCourseAttempts).length !== 0) {
         res.send({
             success: false,

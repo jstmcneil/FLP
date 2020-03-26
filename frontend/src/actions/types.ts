@@ -23,3 +23,6 @@ export const SUBMIT_QUIZ = "SUBMIT_QUIZ";
 
 export const GET_ALL_GRADES = "GET_ALL_GRADES";
 export const SAVE_GRADES = "SAVE_GRADES";
+
+export const GET_ANSWERS = "GET_ANSWERS";
+export const SAVE_ANSWERS = "SAVE_ANSWERS";

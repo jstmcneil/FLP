@@ -1,6 +1,27 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
 import keyBy from "lodash/keyBy";
-import { ATTEMPT_LOGIN, ATTEMPT_REGISTRATION, LOGIN_SUCCESS, LOGIN_UNSUCCESSFUL, SEND_EMAIL_FAILURE, SEND_EMAIL_SUCCESS, ATTEMPT_SEND_EMAIL, LOG_OUT, SETUP_APP, GET_ALL_COURSES, SAVE_COURSES, GET_CURRICULUM, SAVE_CURRICULUM, SET_CURRICULUM, ADD_REG_CODE, SUBMIT_QUIZ, GET_ALL_GRADES, SAVE_GRADES } from "./actions/types";
+import { 
+  ATTEMPT_LOGIN,
+  ATTEMPT_REGISTRATION,
+  LOGIN_SUCCESS,
+  LOGIN_UNSUCCESSFUL,
+  SEND_EMAIL_FAILURE,
+  SEND_EMAIL_SUCCESS,
+  ATTEMPT_SEND_EMAIL,
+  LOG_OUT,
+  SETUP_APP,
+  GET_ALL_COURSES,
+  SAVE_COURSES,
+  GET_CURRICULUM,
+  SAVE_CURRICULUM,
+  SET_CURRICULUM,
+  ADD_REG_CODE,
+  SUBMIT_QUIZ,
+  GET_ALL_GRADES,
+  SAVE_GRADES,
+  SAVE_ANSWERS,
+  GET_ANSWERS
+} from "./actions/types";
 import { AnswerType } from "./model/CourseType";
 
 const BASE_URL = 'http://localhost:8000';
@@ -32,7 +53,6 @@ const fetchGetWrapper = (
 ) => {
   const baseUrlToFetch = baseUrl ? baseUrl : BASE_URL;
   const token = getTokenInCookie();
-  console.log(token);
   let fetchHeaders: Headers = new Headers();
   if (token !== "") {
     fetchHeaders.set("Authorization", `Bearer ${getTokenInCookie()}`);
@@ -42,7 +62,6 @@ const fetchGetWrapper = (
       fetchHeaders.set(headerKey, headers[headerKey]);
     });
   }
-  console.log(fetchHeaders);
   const url = queryArgs
     ? `${baseUrlToFetch}${route}${queryParams(queryArgs)}`
     : `${baseUrlToFetch}${route}`;
@@ -124,6 +143,10 @@ const submitQuiz = (regCode: string, courseId: string, answers: AnswerType[], em
 }
 const getAllGrades = () => {
   return fetchGetWrapper('/getAllGrades');
+}
+
+const getAnswers = (regCode: string, courseId: string) => {
+  return fetchGetWrapper('/getAnswers', { regCode, courseId });
 }
 
 // helper functions
@@ -315,6 +338,20 @@ function* getAllGradesSaga(action: any) {
   }
 }
 
+function* getAnswersSaga(action: any) {
+  if (!action.payload || !action.payload.regCode || !action.payload.courseId) return;
+  const { regCode, courseId } = action.payload;
+  const response = yield call(getAnswers, regCode, courseId);
+  if (response.success) {
+    yield put({
+      type: SAVE_ANSWERS,
+      payload: {
+        answers: response.answers
+      }
+    })
+  }
+}
+
 function* sagaWatcher() {
   yield takeLatest(ATTEMPT_LOGIN, login);
   yield takeLatest(ATTEMPT_REGISTRATION, register);
@@ -327,6 +364,7 @@ function* sagaWatcher() {
   yield takeLatest(ADD_REG_CODE, addRegCodeSaga);
   yield takeLatest(SUBMIT_QUIZ, submitQuizSaga);
   yield takeEvery(GET_ALL_GRADES, getAllGradesSaga);
+  yield takeEvery(GET_ANSWERS, getAnswersSaga);
 }
 
 export default sagaWatcher;
