@@ -17,10 +17,6 @@ interface CourseEmailTextState {
 
 const getEmailSubject = (username: string, courseName: string): string => `${username} - ${courseName}`
 const getEmailBody = (questionName: string, responseToQuestion: string): string => `Student response to ${questionName}:\n\n${responseToQuestion}`;
-// const sendEmail = (recipient: string, emailBody: string) => {
-//     // send email here - for now just alert
-//     alert("email sent to " + recipient + " with body " + emailBody);
-// }
 
 class CourseEmailTextComponent extends React.Component<CourseEmailTextProps, CourseEmailTextState> {
     public constructor(props: CourseEmailTextProps) {

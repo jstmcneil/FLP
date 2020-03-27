@@ -70,7 +70,8 @@ const fetchGetWrapper = (
     mode: 'cors',
     headers: fetchHeaders
   })
-    .then(response => response.json(), reason => reason);
+    .then(response => response.json(), reason => reason)
+    .catch(err => err);
 }
 
 const fetchPostWrapper = (
@@ -97,7 +98,8 @@ const fetchPostWrapper = (
     headers: fetchHeaders,
     body: JSON.stringify(postBody)
   })
-    .then(response => response.json(), reason => reason);
+    .then(response => response.json(), reason => reason)
+    .catch(err => err);
 }
 
 // API calls
@@ -264,6 +266,9 @@ function* getAllCoursesSaga() {
         courses: response.courses
       }
     })
+  } else {
+    alert('Failed to get course information. Refreshing.');
+    document.location.reload();
   }
 }
 
@@ -278,6 +283,9 @@ function* getCurriculumSaga(action: any) {
         curriculum: keyBy(response.curriculum, "regCode")
       }
     })
+  } else {
+    alert('Failed to obtain curriculum. Refreshing page.');
+    document.location.reload();
   }
 }
 
@@ -289,7 +297,7 @@ function* setCurriculumSaga(action: any) {
     alert(`Curriculum for registration code ${action.payload.regCode} set!`);
     document.location.href = '/profile';
   } else {
-    alert(response.msg);
+    alert('Failed to set curriculum.');
   }
 
 }
@@ -302,7 +310,7 @@ function* addRegCodeSaga(action: any) {
     alert(`Registration code ${action.payload.regCode} added!`);
     document.location.href = '/profile';
   } else {
-    alert(response.msg);
+    alert('Failed to add registration code to account.');
   }
 }
 
@@ -321,7 +329,7 @@ function* submitQuizSaga(action: any) {
     alert('Quiz Submitted!');
     document.location.href = '/profile';
   } else {
-    alert(response.msg);
+    alert('Failed to submit quiz.');
   }
 }
 
@@ -335,6 +343,9 @@ function* getAllGradesSaga(action: any) {
         grades: response.grades
       }
     })
+  } else {
+    alert('Failed to obtain grades. Refreshing page.');
+    window.location.reload();
   }
 }
 
