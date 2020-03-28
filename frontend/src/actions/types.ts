@@ -26,3 +26,6 @@ export const SAVE_GRADES = "SAVE_GRADES";
 
 export const GET_ANSWERS = "GET_ANSWERS";
 export const SAVE_ANSWERS = "SAVE_ANSWERS";
+
+export const GET_QUIZ_STATUS = "GET_QUIZ_STATUS";
+export const SAVE_QUIZ_STATUS = "SAVE_QUIZ_STATUS";

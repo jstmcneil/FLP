@@ -1,7 +1,9 @@
 import Account from '../models/accountModel.js';
 import AccountController from './accountController.js';
 import EmailController from './emailController.js';
-import { getCurriculumByAccount } from './curriculumController.js';
+import {
+    getCurriculumByAccount
+} from './curriculumController.js';
 import Course from '../models/courseModel.js';
 import Curriculum from '../models/curriculumModel.js';
 import {
@@ -33,6 +35,49 @@ async function convertToUsername(arr) {
     return mutableArr;
 }
 
+// parameters: regCode, courseId
+exports.getQuizStatus = async (req, res) => {
+    //verify token
+    const decoded = verifyJWTToken(req.headers['authorization']);
+    if (!decoded) {
+        res.send({
+            msg: "Invalid Token",
+            completed: false,
+            success: false
+        });
+        return;
+    }
+
+    const account = await AccountController.getAccountByToken(decoded);
+    console.log(account)
+    var quizTaken = false;
+    await Course.find({
+        accountId: account._id,
+        regCode: req.body.regCode,
+        courseId: req.body.courseId
+    }, (err, course) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        quizTaken = course.length > 0;
+    });
+
+    if (quizTaken) {
+        res.send({
+            msg: req.body.regCode + " " + req.body.courseId,
+            completed: true,
+            success: true
+        });
+    } else {
+        res.send({
+            msg: req.body.regCode + " " + req.body.courseId,
+            completed: false,
+            success: true
+        });
+    }
+}
+
 // parameters: regCode, courseId, answers, emailResponse
 exports.submitQuiz = async (req, res) => {
     //verify token
@@ -46,7 +91,6 @@ exports.submitQuiz = async (req, res) => {
     }
 
     const account = await AccountController.getAccountByToken(decoded);
-
     var quizTaken = false;
     await Course.find({
         accountId: account._id,
@@ -283,7 +327,7 @@ exports.getAllCourses = async (req, res) => {
 }
 
 // parameter: regCode, courseId
-exports.getAnswers = async(req, res) => {
+exports.getAnswers = async (req, res) => {
     //verify token
     const decoded = verifyJWTToken(req.headers['authorization']);
     if (!decoded) {
@@ -295,7 +339,6 @@ exports.getAnswers = async(req, res) => {
     }
 
     const account = await AccountController.getAccountByToken(decoded);
-
     const courseAttempts = await Course.find({
         accountId: account._id,
         courseId: req.query.courseId

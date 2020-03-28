@@ -45,6 +45,12 @@
         "url": "/getCurriculum",
         "requestType": "GET"
     },
+    "completedQuiz": {
+        "url": "/getQuizStatus",
+        "params": ["regCode", "courseId"],
+        "requestType": "POST",
+        "notes": "check if a quiz has already been taken"
+    },
     "submitQuiz": {
         "url": "/submitQuiz",
         "params": ["regCode", "courseId", "answers", "emailResponse"],

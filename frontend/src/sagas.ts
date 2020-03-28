@@ -1,6 +1,6 @@
 import { call, put, takeLatest, takeEvery } from "redux-saga/effects";
 import keyBy from "lodash/keyBy";
-import { 
+import {
   ATTEMPT_LOGIN,
   ATTEMPT_REGISTRATION,
   LOGIN_SUCCESS,
@@ -20,7 +20,9 @@ import {
   GET_ALL_GRADES,
   SAVE_GRADES,
   SAVE_ANSWERS,
-  GET_ANSWERS
+  GET_ANSWERS,
+  GET_QUIZ_STATUS,
+  SAVE_QUIZ_STATUS
 } from "./actions/types";
 import { AnswerType } from "./model/CourseType";
 
@@ -151,6 +153,10 @@ const getAnswers = (regCode: string, courseId: string) => {
   return fetchGetWrapper('/getAnswers', { regCode, courseId });
 }
 
+const getQuizStatus = (regCode: string, courseId: string) => {
+  return fetchPostWrapper('/getQuizStatus', { regCode, courseId });
+}
+
 // helper functions
 
 // TODO: maybe move this away from a string check?
@@ -225,7 +231,6 @@ function* register(action: any) {
   if (isInstructor) {
     response = yield call(registerInstructor, username, password, regCode);
     registrationSuccess = response.success;
-    console.log(response);
   } else {
     response = yield call(registerStudent, username, password, regCode);
     registrationSuccess = response.success;
@@ -363,6 +368,20 @@ function* getAnswersSaga(action: any) {
   }
 }
 
+function* getQuizStatusSaga(action: any) {
+  if (!action.payload || !action.payload.regCode || !action.payload.courseId) return;
+  const { regCode, courseId } = action.payload;
+  const response = yield call(getQuizStatus, regCode, courseId);
+  if (response.success) {
+    yield put({
+      type: SAVE_QUIZ_STATUS,
+      payload: {
+        completed: response
+      }
+    })
+  }
+}
+
 function* sagaWatcher() {
   yield takeLatest(ATTEMPT_LOGIN, login);
   yield takeLatest(ATTEMPT_REGISTRATION, register);
@@ -376,6 +395,7 @@ function* sagaWatcher() {
   yield takeLatest(SUBMIT_QUIZ, submitQuizSaga);
   yield takeEvery(GET_ALL_GRADES, getAllGradesSaga);
   yield takeEvery(GET_ANSWERS, getAnswersSaga);
+  yield takeEvery(GET_QUIZ_STATUS, getQuizStatusSaga);
 }
 
 export default sagaWatcher;

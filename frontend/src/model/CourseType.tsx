@@ -39,3 +39,14 @@ export interface AnswerType {
     questionId: number;
     answerIndex: number;
 }
+
+export interface FinalAnswerType {
+    questionId: number;
+    correctAnswerIndex: number;
+}
+
+export interface QuizStats {
+    msg: string;
+    completed: boolean;
+    success: boolean;
+}

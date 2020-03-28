@@ -5,7 +5,7 @@ import Curriculum from '../controllers/curriculumController.js';
 import Course from '../controllers/courseContoller.js';
 
 export default (app) => {
-    app.route('/').get((req, res)=> {
+    app.route('/').get((req, res) => {
         res.status(400).send({
             status: false,
             response: "Invalid URL"
@@ -28,6 +28,7 @@ export default (app) => {
     app.route('/getCurriculum').get(Curriculum.getCurriculum);
 
     //course
+    app.route('/getQuizStatus').post(Course.getQuizStatus);
     app.route('/submitQuiz').post(Course.submitQuiz);
     app.route('/getCourses').get(Course.getCourses);
     app.route('/getGrades').get(Course.getGrades);
