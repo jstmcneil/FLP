@@ -41,7 +41,6 @@ const Course = (props: CourseProps): JSX.Element => {
     let { path, url } = useRouteMatch();
     if (!props.courses || !props.curriculum || !props.regCodes) return <Fragment />;
     const courses = keyBy(props.courses, "id");
-    console.log(courses);
     return (
         <Switch>
             <Route exact path={path}>

@@ -6,7 +6,7 @@ import { SUBMIT_QUIZ } from '../../actions/types';
 
 interface State {
     questionIndex: number,
-    mcAnswers: {[questionId: number]: number},
+    mcAnswers: { [questionId: number]: number },
     emailResponse?: string,
     questions: (MCQuizType | EmailType)[],
     submitted: boolean
@@ -24,9 +24,9 @@ class Quiz extends React.Component<Props, State> {
         super(props);
         this.state = {
             questionIndex: 0,
-            questions: (this.props.questions.mcQuestions.map(question => { return {...question, type: "MC"} }))
+            questions: (this.props.questions.mcQuestions.map(question => { return { ...question, type: "MC" } }))
                 // @ts-ignore
-                .concat(this.props.questions.emailQuestions.map(question => { return {...question, type: "Email"} })),
+                .concat(this.props.questions.emailQuestions.map(question => { return { ...question, type: "Email" } })),
             mcAnswers: {},
             submitted: false
         };
@@ -38,7 +38,7 @@ class Quiz extends React.Component<Props, State> {
         const answers: AnswerType[] = []
         Object.keys(this.state.mcAnswers).forEach((key) => {
             const keyAsNumber = parseInt(key);
-            answers.push({questionId: keyAsNumber, answerIndex: this.state.mcAnswers[keyAsNumber]});
+            answers.push({ questionId: keyAsNumber, answerIndex: this.state.mcAnswers[keyAsNumber] });
         });
         this.props.submitQuiz(this.props.regCode, this.props.courseId, answers, this.state.emailResponse || "");
     }
@@ -53,7 +53,6 @@ class Quiz extends React.Component<Props, State> {
     renderQuestions() {
         if (!this.props.questions || this.state.questionIndex >= this.state.questions.length) return <div>Error, no questions. Please contact system administrator.</div>
         let button;
-        console.log(this.state);
         if (this.state.questionIndex === this.state.questions.length - 1) {
             button = <button onClick={this.handleSubmitClick}>Submit</button>;
         } else {
@@ -63,16 +62,16 @@ class Quiz extends React.Component<Props, State> {
         let questionBody: JSX.Element;
         if (question.type === "Email") {
             questionBody = <div id="emailTextBoxContainer" className="verticalContainer">
-                                <div>{question.questionContent}</div>
-                                <textarea id="emailBody" onInput={(event) => this.setState({ emailResponse: event.currentTarget.value })}></textarea>
-                            </div>
+                <div>{question.questionContent}</div>
+                <textarea id="emailBody" onInput={(event) => this.setState({ emailResponse: event.currentTarget.value })}></textarea>
+            </div>
         } else if (question.type === "MC") {
             questionBody = <Question
-                                key={this.state.questionIndex}
-                                questionContent={question.questionContent}
-                                answerChoices={question.answerChoices}
-                                answer={(checkedIndex: number) => this.state.mcAnswers[question.questionId] = checkedIndex }
-                            />
+                key={this.state.questionIndex}
+                questionContent={question.questionContent}
+                answerChoices={question.answerChoices}
+                answer={(checkedIndex: number) => this.state.mcAnswers[question.questionId] = checkedIndex}
+            />
         } else {
             return <div></div>;
         }
@@ -97,6 +96,6 @@ class Quiz extends React.Component<Props, State> {
 
 export default connect(null, dispatch => {
     return {
-        submitQuiz: (regCode: string, courseId: string, answers: AnswerType[], emailResponse: string) => dispatch({type: SUBMIT_QUIZ, payload: {regCode, courseId, answers, emailResponse}})
+        submitQuiz: (regCode: string, courseId: string, answers: AnswerType[], emailResponse: string) => dispatch({ type: SUBMIT_QUIZ, payload: { regCode, courseId, answers, emailResponse } })
     }
 })(Quiz);

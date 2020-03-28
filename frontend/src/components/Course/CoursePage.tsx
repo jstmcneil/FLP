@@ -8,6 +8,7 @@ import { loggedInSelector, accountIdSelector, usernameSelector, coursesSelector 
 import { ATTEMPT_SEND_EMAIL } from '../../actions/types';
 import keyBy from 'lodash/keyBy';
 import { Video, CourseType } from '../../model/CourseType';
+import TakeQuiz from './TakeQuiz';
 
 interface PageProps extends RouteComponentProps {
     loggedIn: boolean;
@@ -29,7 +30,7 @@ const CoursePage = (props: PageProps): JSX.Element => {
                 <VideoPlayer videoId={video.id} />
             ))}
             <div>Quiz</div>
-            <Quiz questions={course.quiz} regCode={regCode} courseId={course.id} />
+            <TakeQuiz regCode={regCode} courseId={course.id} />
         </div>
     )
 }
@@ -43,7 +44,7 @@ export default connect(
     },
     dispatch => {
         return {
-            
+
         }
     }
 )(CoursePage);
