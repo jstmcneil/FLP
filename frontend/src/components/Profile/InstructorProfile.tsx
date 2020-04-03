@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { regCodesSelector, instructorGradesSelector } from '../../selectors';
 import CourseSelection from './CourseSelection';
 import { GradeInstructorView } from '../../model/GradeInstructorView';
+import { CSVLink } from "react-csv";
 
 interface InstructorProps {
     grades: GradeInstructorView[];
@@ -26,6 +27,12 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
         if (!this.props.regCodes || !this.props.grades) return <Fragment />;
         const grade = this.props.grades.filter(item => item != null);
         const count = grade.length;
+        const headers = [
+            { label: "Course ID", key: "courseId" },
+            { label: "Student Name", key: "username" },
+            { label: "MC Grade", key: "mcGrade" },
+            { label: "Email Response", key: "emailResponse" },
+        ];
         return (
             <div className="report">
                 <h1>Instructor Name: XYZ</h1>
@@ -67,6 +74,9 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                         );
                     })
                 }
+                <CSVLink data={this.props.grades} headers={headers} filename={"FLP_class_grades.csv"}>
+                    Download Grades
+                </CSVLink>
                 <LogOutButton />
             </div>
         );
