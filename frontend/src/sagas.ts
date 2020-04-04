@@ -5,9 +5,6 @@ import {
   ATTEMPT_REGISTRATION,
   LOGIN_SUCCESS,
   LOGIN_UNSUCCESSFUL,
-  SEND_EMAIL_FAILURE,
-  SEND_EMAIL_SUCCESS,
-  ATTEMPT_SEND_EMAIL,
   LOG_OUT,
   SETUP_APP,
   GET_ALL_COURSES,
@@ -25,6 +22,7 @@ import {
   SAVE_QUIZ_STATUS
 } from "./actions/types";
 import { AnswerType } from "./model/CourseType";
+
 
 const BASE_URL = 'http://localhost:8000';
 const queryParams = (args: { [index: string]: string }): string => {
@@ -47,9 +45,13 @@ const getTokenInCookie = () => {
   return documentCookieStringAfterTokenKey.substring(0, endDelimiter);
 }
 
+
+type NetworkErrorCallback = (error: any) => void;
+
 const fetchGetWrapper = (
   route: string,
   queryArgs?: { [index: string]: string },
+  networkErrorCallback?: NetworkErrorCallback,
   baseUrl?: string,
   headers?: { [index: string]: string }
 ) => {
@@ -73,14 +75,15 @@ const fetchGetWrapper = (
     headers: fetchHeaders
   })
     .then(response => response.json(), reason => reason)
-    .catch(err => err);
+    .catch(err => networkErrorCallback && networkErrorCallback(err));
 }
 
 const fetchPostWrapper = (
   route: string,
   postBody: object,
+  networkErrorCallback?: NetworkErrorCallback,
   baseUrl?: string,
-  headers?: { [index: string]: string }
+  headers?: { [index: string]: string },
 ) => {
   const baseUrlToFetch = baseUrl ? baseUrl : BASE_URL;
   const token = getTokenInCookie();
@@ -101,56 +104,55 @@ const fetchPostWrapper = (
     body: JSON.stringify(postBody)
   })
     .then(response => response.json(), reason => reason)
-    .catch(err => err);
+    .catch(err => {
+      networkErrorCallback && networkErrorCallback(err);
+      console.error(err);
+    });
 }
 
 // API calls
 
-const getAccount = () => {
-  return fetchGetWrapper('/getAccount');
+const getAccount = (networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchGetWrapper('/getAccount', undefined, networkErrorCallback);
 }
 
-const loginPerson = (username: string, password: string) => {
-  return fetchPostWrapper('/login', { username, password });
+const loginPerson = (username: string, password: string, networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchPostWrapper('/login', { username, password }, networkErrorCallback);
 }
 
 // consulted the mdn docs very heavy initially for background on fetch for this
-const registerInstructor = (username: string, password: string, regCode: number) => {
-  return fetchPostWrapper('/instructorRegister', { username, password, regCode });
+const registerInstructor = (username: string, password: string, regCode: number, networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchPostWrapper('/instructorRegister', { username, password, regCode }, networkErrorCallback);
 }
-const registerStudent = (username: string, password: string, regCode: string) => {
-  return fetchPostWrapper('/studentRegister', { username, password, regCode });
-}
-
-const sendEmailResponse = (accountId: string, emailSubject: string, emailBody: string) => {
-  return fetchPostWrapper('/sendEmail', { accountId, emailSubject, emailBody, isBodyHtml: "false" });
+const registerStudent = (username: string, password: string, regCode: string, networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchPostWrapper('/studentRegister', { username, password, regCode }, networkErrorCallback);
 }
 
-const getAllCourses = () => {
-  return fetchGetWrapper('/getAllCourses');
+const getAllCourses = (networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchGetWrapper('/getAllCourses', undefined, networkErrorCallback);
 }
 
-const getCurriculum = () => {
-  return fetchGetWrapper('/getCurriculum');
+const getCurriculum = (networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchGetWrapper('/getCurriculum', undefined, networkErrorCallback);
 }
 
-const setCurriculum = (regCode: string, courseIds: string[]) => {
-  return fetchPostWrapper('/setCurriculum', { regCode, courses: courseIds });
+const setCurriculum = (regCode: string, courseIds: string[], networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchPostWrapper('/setCurriculum', { regCode, courses: courseIds }, networkErrorCallback);
 }
 
-const addRegCode = (regCode: string) => {
-  return fetchPostWrapper('/addRegCode', { regCode });
+const addRegCode = (regCode: string, networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchPostWrapper('/addRegCode', { regCode }, networkErrorCallback);
 }
 
-const submitQuiz = (regCode: string, courseId: string, answers: AnswerType[], emailResponse: string) => {
-  return fetchPostWrapper('/submitQuiz', { regCode, courseId, answers, emailResponse });
+const submitQuiz = (regCode: string, courseId: string, answers: AnswerType[], emailResponse: string, networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchPostWrapper('/submitQuiz', { regCode, courseId, answers, emailResponse }, networkErrorCallback);
 }
-const getAllGrades = () => {
-  return fetchGetWrapper('/getAllGrades');
+const getAllGrades = (networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchGetWrapper('/getAllGrades', undefined, networkErrorCallback);
 }
 
-const getAnswers = (regCode: string, courseId: string) => {
-  return fetchGetWrapper('/getAnswers', { regCode, courseId });
+const getAnswers = (regCode: string, courseId: string, networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchGetWrapper('/getAnswers', { regCode, courseId }, networkErrorCallback);
 }
 
 const getQuizStatus = (regCode: string, courseId: string) => {
@@ -163,11 +165,10 @@ const getQuizStatus = (regCode: string, courseId: string) => {
 const isTokenValid = (response: any): void => {
   if (response.msg && response.msg === "Invalid Token") {
     alert('Session has expired. Please login again.');
-    document.location.href = '/profile'
+    document.location.href = '/profile';
+    storeTokenInCookie('');
   }
 }
-
-
 
 // saga watchers
 
@@ -189,9 +190,7 @@ function* login(action: any) {
     yield put({ type: GET_CURRICULUM });
     yield put({ type: GET_ALL_GRADES });
   } else {
-    yield put({
-      type: LOGIN_UNSUCCESSFUL
-    });
+    alert(response.msg);
   }
 
 }
@@ -228,11 +227,14 @@ function* register(action: any) {
   const { username, password, isInstructor, regCode } = action.payload;
   let registrationSuccess = false;
   let response: any = { msg: 'Unsuccessful Registration.' };
+  let errorCallback: NetworkErrorCallback = (error) => {
+    alert('Error contacting server on registration. Please try again.')
+  }
   if (isInstructor) {
-    response = yield call(registerInstructor, username, password, regCode);
+    response = yield call(registerInstructor, username, password, regCode, errorCallback);
     registrationSuccess = response.success;
   } else {
-    response = yield call(registerStudent, username, password, regCode);
+    response = yield call(registerStudent, username, password, regCode, errorCallback);
     registrationSuccess = response.success;
   }
   if (registrationSuccess) {
@@ -242,28 +244,13 @@ function* register(action: any) {
   }
 }
 
-function* sendEmail(action: any) {
-  if (!action.payload) return;
-  const { accountId, emailSubject, emailBody } = action.payload;
-  const response = yield call(sendEmailResponse, accountId, emailSubject, emailBody);
-  isTokenValid(response);
-  const success = response ? response.success : false;
-  if (success) {
-    yield put({
-      type: SEND_EMAIL_SUCCESS
-    });
-    alert('Response submitted and send to instructor!');
-  } else {
-    yield put({
-      type: SEND_EMAIL_FAILURE
-    })
-    alert('Response failed to send to instructor. Please contact instructor.');
-  }
-}
-
 function* getAllCoursesSaga() {
   const response = yield call(getAllCourses);
   isTokenValid(response);
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to get course information. Refreshing.');
+    document.location.reload();
+  }
   if (response.success) {
     yield put({
       type: SAVE_COURSES,
@@ -272,8 +259,7 @@ function* getAllCoursesSaga() {
       }
     })
   } else {
-    alert('Failed to get course information. Refreshing.');
-    document.location.reload();
+    errorCallback(null);
   }
 }
 
@@ -281,6 +267,10 @@ function* getAllCoursesSaga() {
 function* getCurriculumSaga(action: any) {
   const response = yield call(getCurriculum);
   isTokenValid(response);
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to get course information. Refreshing.');
+    document.location.reload();
+  }
   if (response.success) {
     yield put({
       type: SAVE_CURRICULUM,
@@ -289,33 +279,38 @@ function* getCurriculumSaga(action: any) {
       }
     })
   } else {
-    alert('Failed to obtain curriculum. Refreshing page.');
-    document.location.reload();
+    errorCallback(null);
   }
 }
 
 function* setCurriculumSaga(action: any) {
   if (!action.payload) return;
-  const response = yield call(setCurriculum, action.payload.regCode, action.payload.courseIds);
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to successfully connect to server on curriculum set attempt.');
+  }
+  const response = yield call(setCurriculum, action.payload.regCode, action.payload.courseIds, errorCallback);
   isTokenValid(response);
   if (response.success) {
     alert(`Curriculum for registration code ${action.payload.regCode} set!`);
     document.location.href = '/profile';
   } else {
-    alert('Failed to set curriculum.');
+    alert(response.msg);
   }
 
 }
 
 function* addRegCodeSaga(action: any) {
   if (!action.payload || !action.payload.regCode || action.payload.regCode === "") return;
-  const response = yield call(addRegCode, action.payload.regCode);
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to successfully connect to server on add registration code to account.');
+  }
+  const response = yield call(addRegCode, action.payload.regCode, errorCallback);
   isTokenValid(response);
   if (response.success) {
     alert(`Registration code ${action.payload.regCode} added!`);
     document.location.href = '/profile';
   } else {
-    alert('Failed to add registration code to account.');
+    alert(response.msg);
   }
 }
 
@@ -328,18 +323,25 @@ function* submitQuizSaga(action: any) {
     return;
   }
   const { regCode, courseId, emailResponse, answers } = action.payload;
-  const response = yield call(submitQuiz, regCode, String(courseId), answers, emailResponse);
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to successfully connect to server on quiz submission.');
+  }
+  const response = yield call(submitQuiz, regCode, String(courseId), answers, emailResponse, errorCallback);
   isTokenValid(response);
   if (response.success) {
     alert('Quiz Submitted!');
     document.location.href = '/profile';
   } else {
-    alert('Failed to submit quiz.');
+    alert(response.msg);
   }
 }
 
 function* getAllGradesSaga(action: any) {
-  const response = yield call(getAllGrades);
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to successfully connect to server to obtain grades.');
+    window.location.reload();
+  }
+  const response = yield call(getAllGrades, errorCallback);
   isTokenValid(response);
   if (response.success) {
     yield put({
@@ -349,7 +351,7 @@ function* getAllGradesSaga(action: any) {
       }
     })
   } else {
-    alert('Failed to obtain grades. Refreshing page.');
+    alert(response.msg);
     window.location.reload();
   }
 }
@@ -357,7 +359,10 @@ function* getAllGradesSaga(action: any) {
 function* getAnswersSaga(action: any) {
   if (!action.payload || !action.payload.regCode || !action.payload.courseId) return;
   const { regCode, courseId } = action.payload;
-  const response = yield call(getAnswers, regCode, courseId);
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to successfully connect to server to obtain grades.');
+  }
+  const response = yield call(getAnswers, regCode, courseId, errorCallback);
   if (response.success) {
     yield put({
       type: SAVE_ANSWERS,
@@ -365,6 +370,8 @@ function* getAnswersSaga(action: any) {
         answers: response.answers
       }
     })
+  } else {
+    alert(response.msg)
   }
 }
 
@@ -385,7 +392,6 @@ function* getQuizStatusSaga(action: any) {
 function* sagaWatcher() {
   yield takeLatest(ATTEMPT_LOGIN, login);
   yield takeLatest(ATTEMPT_REGISTRATION, register);
-  yield takeLatest(ATTEMPT_SEND_EMAIL, sendEmail);
   yield takeLatest(LOG_OUT, logOut);
   yield takeLatest(SETUP_APP, setupApp);
   yield takeLatest(GET_ALL_COURSES, getAllCoursesSaga);
