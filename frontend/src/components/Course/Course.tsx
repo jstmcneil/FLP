@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { courseSelector, regCodesSelector, curriculumSelector } from '../../selectors/index';
 import keyBy from 'lodash/keyBy';
 import { CurriculumType } from '../../model/CurriculumType';
+import Review from '../Review/Review';
 
 interface ClassProps {
     id: string;
@@ -57,6 +58,7 @@ const Course = (props: CourseProps): JSX.Element => {
                                         return (<Class courseName={course.courseName} id={course.id} path={path} regCode={key} />)
                                     })
                                 }
+                            <Review />
                             </div>
                         ))
                     }
