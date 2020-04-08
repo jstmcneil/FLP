@@ -205,7 +205,6 @@ exports.getGrades = async (req, res) => {
         });
         return;
     }
-
     const account = await AccountController.getAccountByToken(decoded);
     const courses = (await Curriculum.findOne({
         regCode: req.query.regCode
@@ -260,7 +259,6 @@ exports.getAllGrades = async (req, res) => {
     const account = await AccountController.getAccountByToken(decoded);
     var grades = [];
     var query = {};
-
     if (!account.isInstructor) {
         query.accountId = account._id;
     }

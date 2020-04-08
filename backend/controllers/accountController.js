@@ -246,13 +246,19 @@ exports.addRegCode = async (req, res) => {
     });
 }
 
+const map = {};
+
 const getAccountByToken = async (decoded) => {
     var account;
-    await Account.findById(decoded.accountId, (err, acc) => {
+    if (map[decoded.accountId]) {
+        return map[decoded.accountId];
+    }
+    await Account.findOne({ _id: decoded.accountId }, (err, acc) => {
         if (err) {
             console.error(err);
             return;
         }
+        map[decoded.accountId] = acc;
         account = acc;
     });
     return account;

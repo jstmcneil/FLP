@@ -342,6 +342,7 @@ function* getAllGradesSaga(action: any) {
     window.location.reload();
   }
   const response = yield call(getAllGrades, errorCallback);
+  console.log(response);
   isTokenValid(response);
   if (response.success) {
     yield put({
