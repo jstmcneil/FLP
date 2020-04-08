@@ -284,7 +284,9 @@ exports.getAllGrades = async (req, res) => {
                 mcGrade: 1,
                 emailResponse: 1
             });
-            grades.push(grade);
+            if (grade) {
+                grades.push(grade);
+            }
         }
     }
     if (account.isInstructor) {
