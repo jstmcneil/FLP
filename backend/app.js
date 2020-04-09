@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import routes from './routes/index.js';
+import EmailController from './controllers/emailController.js';
 
 const app = express();
 app.use(cookieParser());
@@ -10,13 +11,11 @@ app.use(cookieParser());
 /**
 * Connect to the database
 */
-
 mongoose.connect('mongodb://localhost:27017/FLP-DB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 /**
 * Middleware
 */
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -43,9 +42,11 @@ app.use((err, req, res, next) => {
 });
 
 /**
-    * Register the routes
-    */
-
+* Register the routes
+*/
 routes(app);
+
+// send email digest periodically
+EmailController.scheduleEmailDigest();
 
 export default app;

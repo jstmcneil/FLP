@@ -124,7 +124,7 @@ exports.submitQuiz = async (req, res) => {
     });
 
 
-    if (!await EmailController.sendEMail(req.body.regCode, req.body.emailResponse)) {
+    if (!await EmailController.saveResponse(account._id, req.body.regCode, req.body.courseId, req.body.emailResponse)) {
         res.send({
             msg: 'Sumbit quiz failed',
             success: false
