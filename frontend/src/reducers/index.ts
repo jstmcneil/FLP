@@ -1,4 +1,4 @@
-import { LOGIN_SUCCESS, SAVE_COURSES, SAVE_CURRICULUM, SAVE_GRADES, SAVE_QUIZ_STATUS, SAVE_ANSWERS } from "../actions/types";
+import { LOGIN_SUCCESS, SAVE_COURSES, SAVE_CURRICULUM, SAVE_GRADES, SAVE_QUIZ_STATUS, SAVE_ANSWERS, SAVE_REVIEWS } from "../actions/types";
 import { Action } from "redux";
 
 interface ActionWithPayload<T, Y> extends Action<Y> {
@@ -26,6 +26,8 @@ export const reducer = (state: State | undefined, action: ActionWithPayload<any,
         case SAVE_ANSWERS:
             return { ...state, ...action.payload };
         case SAVE_QUIZ_STATUS:
+            return { ...state, ...action.payload };
+        case SAVE_REVIEWS:
             return { ...state, ...action.payload };
         default:
             return state ? state : initialState;
