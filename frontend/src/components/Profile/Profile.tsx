@@ -28,7 +28,11 @@ class Profile extends React.Component<ProfileProps> {
         return (
             // @ts-ignore
             <div style={{ "display": "flex", "flex-direction": "column" }}>
-                {!this.props.loggedIn && <Login /> }
+                <div style={{textAlign: "center"}}>
+                    <div style={{display: "inline-block"}}>
+                        {!this.props.loggedIn && <Login /> }
+                    </div> 
+                </div>
                 {!this.props.loggedIn && <Register /> }
                 {this.renderProfile(this.props.loggedIn, this.props.isInstructor)}
             </div>

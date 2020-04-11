@@ -2,6 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { ATTEMPT_LOGIN } from '../../actions/types';
 import { loggedInSelector } from '../../selectors';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import { Button } from '@material-ui/core';
 interface LoginProps {
     loginAction: Function;
     loggedIn: boolean;
@@ -19,20 +22,22 @@ class Login extends React.Component<LoginProps, LoginState> {
     render() {
         if (!this.props.loggedIn) {
             const loginAction = this.props.loginAction;
-        return (
-            <div>
-                <div>Login</div>
-                <div>
-                    <div>Email</div>
-                    <input type="text" onInput={(event) => this.setState({ username: event.currentTarget.value })}></input>
+            return (
+                <div className="verticalContainer" style={{ textAlign: "center" }}>
+                    <Typography variant="h5">Login</Typography>
+                    <div style={{ display: "inline-block", textAlign: "center" }}>
+                        <div style={{display: "inline-block"}}>
+                            <div className="labelInputGrid" style={{ marginTop: "10px" }}>
+                                <div className="labelInputGridLabel"><Typography variant="body1">Email:</Typography></div>
+                                <div className="labelInputGridInput"><TextField id="outlined-basic" variant="outlined" onChange={(event) => {this.setState({ username: event.currentTarget.value })}}/></div>
+                                <div className="labelInputGridLabel"><Typography variant="body1">Password:</Typography></div>
+                                <div className="labelInputGridInput"><TextField id="outlined-basic" variant="outlined" onChange={(event) => this.setState({ password: event.currentTarget.value })} type="password"/></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{marginTop: "10px"}}><button onClick={() => loginAction(this.state.username, this.state.password)}>Submit</button></div>
                 </div>
-                <div>
-                    <div>Password</div>
-                    <input type="password" onInput={(event) => this.setState({ password: event.currentTarget.value })}></input>
-                </div>
-                <button onClick={() => loginAction(this.state.username, this.state.password)}>Submit</button>
-            </div>
-        );
+            );
         }
         return (<div>Hello There!</div>);
     }
@@ -46,7 +51,7 @@ export default connect(
     },
     dispatch => {
         return {
-            loginAction: (username: string, password: string) => dispatch({type: ATTEMPT_LOGIN, payload: { username, password }})
+            loginAction: (username: string, password: string) => dispatch({ type: ATTEMPT_LOGIN, payload: { username, password } })
         }
     },
 )(Login);

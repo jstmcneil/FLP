@@ -62,7 +62,6 @@ class StudentProfile extends React.Component<StudentProps, StudentState> {
               <div className="space"></div>
             </div>
           ))}
-        <LogOutButton />
       </div>
     );
   }

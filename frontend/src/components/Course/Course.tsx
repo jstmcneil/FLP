@@ -11,7 +11,7 @@ import {
 import CoursePage from './CoursePage';
 import { CourseType } from '../../model/CourseType';
 import { connect } from 'react-redux';
-import { courseSelector, regCodesSelector, curriculumSelector } from '../../selectors/index';
+import { courseSelector, regCodesSelector, curriculumSelector, isInstructorSelector, loggedInSelector } from '../../selectors/index';
 import keyBy from 'lodash/keyBy';
 import { CurriculumType } from '../../model/CurriculumType';
 
@@ -26,6 +26,8 @@ interface CourseProps extends RouteComponentProps {
     courses: CourseType[];
     regCodes: string[];
     curriculum: CurriculumType;
+    isInstructor: boolean;
+    loggedIn: boolean;
 }
 
 const Class = (props: ClassProps): JSX.Element => {
@@ -40,6 +42,7 @@ const Class = (props: ClassProps): JSX.Element => {
 const Course = (props: CourseProps): JSX.Element => {
     let { path, url } = useRouteMatch();
     if (!props.courses || !props.curriculum || !props.regCodes) return <Fragment />;
+    if (props.loggedIn && props.isInstructor) return <div></div>;
     const courses = keyBy(props.courses, "id");
     return (
         <Switch>
@@ -73,6 +76,8 @@ export default connect(
             courses: courseSelector(state),
             regCodes: regCodesSelector(state),
             curriculum: curriculumSelector(state),
+            isInstructor: isInstructorSelector(state),
+            loggedIn: loggedInSelector(state)
         }
     }
 )(Course);

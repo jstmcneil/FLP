@@ -77,7 +77,6 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                 <CSVLink data={this.props.grades} headers={headers} filename={"FLP_class_grades.csv"}>
                     Download Grades
                 </CSVLink>
-                <LogOutButton />
             </div>
         );
     }

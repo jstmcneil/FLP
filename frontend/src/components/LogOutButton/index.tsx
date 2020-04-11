@@ -7,7 +7,7 @@ interface LogOutProps {
 }
 
 const LogOutButton = (props: LogOutProps) => {
-    return <button id ="logoff" onClick={() => props.logOutAction()}>Log Out</button>;
+    return <button id ="logoff" onClick={() => props.logOutAction()} style={{backgroundColor: "white"}}>Log Out</button>;
 };
 
 export default connect(null, 

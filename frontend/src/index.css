@@ -40,6 +40,24 @@ li {
   font-size: 30px;
   background-color: #73C2FB;
   padding: 10px;
+  min-width: fit-content;
+  display: flex;
+  flex-direction: row;
+}
+
+.headerIconLinkContainer {
+  margin-right: 3em;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.logOutButtonContainer {
+  margin-right: 0.5em;
+  display: flex;
+  flex-grow: 100;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .title {
@@ -52,15 +70,6 @@ li {
   float: left;
   padding: 10px;
   font-size: 20px;
-}
-
-#flp,
-#courseIcon,
-#reviewIcon,
-#profileIcon {
-  float: left;
-  text-align: left;
-  width: 25%;
 }
 
 .class {
@@ -92,6 +101,7 @@ button {
   width: 80px;
   height: 40px;
   background-color: #73C2FB;
+  border-radius: 10px;
 }
 
 .space {
@@ -143,4 +153,32 @@ label {
 
 #logoff {
   margin: 10px;
+}
+.iconStyle {
+  font-size: 30;
+  margin-top: 10;
+  margin-right: 10;
+}
+
+.labelInputGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 10px;
+}
+
+.labelInputGrid > div {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.labelInputGridLabel {
+  display: flex;
+  margin-block-start: "auto";
+  margin-block-end: "auto";
+  justify-content: flex-end;
+  margin-right: 2px;
+}
+
+.labelInputGridInput {
+  min-width: 100px;
 }

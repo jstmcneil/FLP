@@ -16,6 +16,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import { connect } from 'react-redux';
 import { SETUP_APP } from '../../actions/types';
 import { loggedInSelector, isInstructorSelector } from '../../selectors';
+import LogOutButton from '../LogOutButton';
 
 interface HeaderProps extends React.Props<Header> {
     setUpAction: Function;
@@ -32,9 +33,22 @@ class Header extends React.Component<HeaderProps, {}> {
         return (
             <Router>
                 <div className="header">
-                    <div id="flp"><MonetizationOnIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/">FLP</Link></div>
-                    { this.props.loggedIn && !this.props.isInstructor && <div id="courseIcon"><BookIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/course">Course</Link></div>}
-                    <div id="profileIcon"><AccountBoxIcon style={{ fontSize: 30, marginTop: 10, marginRight: 10 }} /><Link to="/profile">Profile</Link></div>
+                        <div className="horizontalContainer headerIconLinkContainer">
+                            <div className="iconStyle"><MonetizationOnIcon  /></div>
+                            <div><Link to="/">FLP</Link></div>
+                        </div>
+
+                        {this.props.loggedIn && !this.props.isInstructor &&
+                            (<div className="horizontalContainer headerIconLinkContainer">
+                                <div className="iconStyle"><BookIcon  /></div>
+                                <div><Link to="/course">Course</Link></div>
+                            </div>)
+                        }
+                        <div className="horizontalContainer headerIconLinkContainer">
+                            <div className="iconStyle"><AccountBoxIcon /></div>
+                            <div><Link to="/profile">Profile</Link></div>
+                        </div>
+                        {this.props.loggedIn && <div className="logOutButtonContainer"><LogOutButton /></div>}
                 </div>
                 <Switch>
                     <Route exact path="/" component={Home} />
@@ -58,4 +72,4 @@ export default connect(
         return {
             setUpAction: () => dispatch({ type: SETUP_APP })
         }
-})(Header);
+    })(Header);
