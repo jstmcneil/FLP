@@ -42,7 +42,6 @@ class Register extends React.Component<RegistrationProps, RegistrationState> {
                                 <div className="labelInputGridInput"><TextField id="outlined-basic" variant="outlined" onChange={(event) => this.setState({ regCode: event.currentTarget.value })} /></div>
                                 
                             </div>
-                            {/* <div><Typography variant="body1" style={{ marginBlockStart: "auto", marginBlockEnd: "auto" }}>Registering as Instructor?</Typography></div> */}
                             <div>
                                 <FormControlLabel 
                                     control={<Checkbox onChange={(event) => this.setState({ isInstructor: event.currentTarget.checked })}/>}
@@ -53,23 +52,6 @@ class Register extends React.Component<RegistrationProps, RegistrationState> {
                         </div>
                         <div><button onClick={() => registerAction(this.state.username, this.state.password, this.state.regCode, this.state.isInstructor)}>Submit</button></div>
                     </div>
-                    {/* <div>Register</div>
-                    <div>
-                        <div>Email</div>
-                        <input type="text" onInput={(event) => this.setState({ username: event.currentTarget.value })}></input>
-                    </div>
-                    <div>
-                        <div>Password</div>
-                        <input type="password" onInput={(event) => this.setState({ password: event.currentTarget.value })}></input>
-                    </div>
-                    <div>
-                        <div>Registration Code</div>
-                        <input type="text" onInput={(event) => this.setState({ regCode: event.currentTarget.value })}></input>
-                    </div>
-                    <div>
-                        <div>Registering As An Instructor?</div>
-                        <div><Checkbox onClick={(event => { this.setState({ isInstructor: event.currentTarget.checked }) })} /></div>
-                    </div> */}
                 </div>
             );
         }

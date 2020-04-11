@@ -31,9 +31,9 @@ class Profile extends React.Component<ProfileProps> {
                 <div style={{textAlign: "center"}}>
                     <div style={{display: "inline-block"}}>
                         {!this.props.loggedIn && <Login /> }
+                        {!this.props.loggedIn && <Register /> }
                     </div> 
                 </div>
-                {!this.props.loggedIn && <Register /> }
                 {this.renderProfile(this.props.loggedIn, this.props.isInstructor)}
             </div>
         );

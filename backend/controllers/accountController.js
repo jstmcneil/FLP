@@ -209,6 +209,8 @@ exports.getAccount = async (req, res) => {
     });
 }
 
+const map = {};
+
 // parameter: regCode
 exports.addRegCode = async (req, res) => {
     //verify token
@@ -220,7 +222,7 @@ exports.addRegCode = async (req, res) => {
         });
         return;
     }
-    const account = await getAccountByToken(decoded);
+    let account = await getAccountByToken(decoded);
     await Account.updateOne({
         _id: account._id
     }, {
@@ -239,14 +241,15 @@ exports.addRegCode = async (req, res) => {
             if (err) console.error(err)
         });
     }
-
+    //update cache of account
+    account.regCode = [...account.regCode, req.body.regCode];
+    map[account._id] = account;
     res.send({
         msg: null,
         success: true
     });
 }
 
-const map = {};
 
 const getAccountByToken = async (decoded) => {
     var account;
