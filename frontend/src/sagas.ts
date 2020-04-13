@@ -19,7 +19,9 @@ import {
   SAVE_ANSWERS,
   GET_ANSWERS,
   GET_QUIZ_STATUS,
-  SAVE_QUIZ_STATUS
+  SAVE_QUIZ_STATUS,
+  GET_REVIEWS,
+  SAVE_REVIEWS
 } from "./actions/types";
 import { AnswerType } from "./model/CourseType";
 
@@ -157,6 +159,10 @@ const getAnswers = (regCode: string, courseId: string, networkErrorCallback?: Ne
 
 const getQuizStatus = (regCode: string, courseId: string) => {
   return fetchPostWrapper('/getQuizStatus', { regCode, courseId });
+}
+
+const getReviews = (regCode: string) => {
+  return fetchGetWrapper('/getReviews', { regCode });
 }
 
 // helper functions
@@ -397,6 +403,21 @@ function* getQuizStatusSaga(action: any) {
   }
 }
 
+function* getReviewsSaga(action: any) {
+  if (!action.payload || !action.payload.regCode) return;
+  const { regCode } = action.payload;
+  const response = yield call(getReviews, regCode);
+  console.log(response);
+  if (response.success) {
+    yield put({
+      type: SAVE_REVIEWS,
+      payload: {
+        reviews: response.reviews
+      }
+    })
+  }
+}
+
 function* sagaWatcher() {
   yield takeLatest(ATTEMPT_LOGIN, login);
   yield takeLatest(ATTEMPT_REGISTRATION, register);
@@ -410,6 +431,7 @@ function* sagaWatcher() {
   yield takeEvery(GET_ALL_GRADES, getAllGradesSaga);
   yield takeEvery(GET_ANSWERS, getAnswersSaga);
   yield takeEvery(GET_QUIZ_STATUS, getQuizStatusSaga);
+  yield takeEvery(GET_REVIEWS, getReviewsSaga);
 }
 
 export default sagaWatcher;

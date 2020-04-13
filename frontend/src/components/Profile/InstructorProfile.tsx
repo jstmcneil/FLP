@@ -8,14 +8,17 @@ import { TableHead } from '@material-ui/core';
 import LogOutButton from '../LogOutButton';
 import RegCodeSelection from './RegCodeSelection';
 import { connect } from 'react-redux';
-import { regCodesSelector, instructorGradesSelector } from '../../selectors';
+import { regCodesSelector, instructorGradesSelector, curriculumSelector } from '../../selectors';
 import CourseSelection from './CourseSelection';
 import { GradeInstructorView } from '../../model/GradeInstructorView';
 import { CSVLink } from "react-csv";
+import { CurriculumType } from '../../model/CurriculumType';
+import { ReviewType } from '../../model/ReviewType';
 
 interface InstructorProps {
     grades: GradeInstructorView[];
     regCodes: string[];
+    curriculum: CurriculumType;
 }
 
 
@@ -86,5 +89,6 @@ export default connect(state => {
     return {
         regCodes: regCodesSelector(state),
         grades: instructorGradesSelector(state),
+        curriculum: curriculumSelector(state)
     };
 })(InstructorProfile);

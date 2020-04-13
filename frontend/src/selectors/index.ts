@@ -13,3 +13,4 @@ export const gradesSelector = (state: any): Grade[] => state.grades;
 export const instructorGradesSelector = (state: any): GradeInstructorView[] => state.grades;
 export const quizCompletionSelector = (state: any): any => state.completed;
 export const answerSelector = (state: any): any => state.answers;
+export const reviewSelector = (state: any): any => state.reviews;

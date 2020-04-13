@@ -29,3 +29,6 @@ export const SAVE_ANSWERS = "SAVE_ANSWERS";
 
 export const GET_QUIZ_STATUS = "GET_QUIZ_STATUS";
 export const SAVE_QUIZ_STATUS = "SAVE_QUIZ_STATUS";
+
+export const GET_REVIEWS = "GET_REVIEWS";
+export const SAVE_REVIEWS = "SAVE_REVIEWS";
