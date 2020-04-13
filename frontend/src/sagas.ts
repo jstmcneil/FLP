@@ -371,8 +371,15 @@ function* getAnswersSaga(action: any) {
         answers: response.answers
       }
     })
+  } else if (response.reason) {
+    yield put({
+      type: SAVE_ANSWERS,
+      payload: {
+        answers: response.reason
+      }
+    })
   } else {
-    alert(response.msg)
+    alert(response.msg);
   }
 }
 

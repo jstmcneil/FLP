@@ -349,11 +349,20 @@ exports.getAnswers = async (req, res) => {
         }
     });
     const regCodesForCourseAttempts = courseAttempts.map(courseAttempt => courseAttempt.regCode);
+    if (!regCodesForCourseAttempts.includes(req.query.regCode)) {
+        res.send({
+            success: false,
+            reason: 'course_not_taken',
+            msg: 'This course still has not been taken.'
+        });
+        return;
+    }
     const studentCurriculum = await getCurriculumByAccount(account);
     const allRegCodesWithCourse = studentCurriculum.filter(curr => curr.courses.includes(req.query.courseId)).map(curr => curr.regCode);
     if (difference(allRegCodesWithCourse, regCodesForCourseAttempts).length !== 0) {
         res.send({
             success: false,
+            reason: 'outstanding_version',
             msg: 'There is an outstanding version of the same course in a different registration that you must still take.'
         });
         return;

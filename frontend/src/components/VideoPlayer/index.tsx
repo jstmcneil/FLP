@@ -3,15 +3,19 @@ import React from 'react';
 import YouTube from 'react-youtube';
 
 interface VideoPlayerProps {
-    videoId?: string
+    videoId?: string;
+    width?: number;
 }
 
-const VideoPlayer = ({ videoId }: VideoPlayerProps): JSX.Element => {
+const VideoPlayer = ({ videoId, width }: VideoPlayerProps): JSX.Element => {
     if (!videoId || videoId === "") {
         return <div>Error, no video to play.</div>
     }
+    if (width && width > 600) {
+        width = 600;
+    }
     return (
-        <YouTube videoId={videoId} />
+        <YouTube videoId={videoId} opts={width ? {width, height: 2.5 * width / 4}: {}}/>
     )
 } 
 

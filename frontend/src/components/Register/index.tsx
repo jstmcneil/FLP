@@ -28,7 +28,6 @@ class Register extends React.Component<RegistrationProps, RegistrationState> {
         if (!this.props.loggedIn) {
             const registerAction = this.props.registerAction;
             return (
-
                 <div className="verticalContainer" style={{ textAlign: "center" }}>
                     <Typography variant="h5">Register</Typography>
                     <div style={{ display: "inline-block", textAlign: "center" }}>

@@ -1,60 +1,59 @@
 import React from 'react';
 import { AnswerType } from '../../model/CourseType';
 import Checkbox from '@material-ui/core/Checkbox';
-import { FormControlLabel, FormControl } from '@material-ui/core';
+import { FormControlLabel, FormControl, RadioGroup, Radio } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
 interface QuestionProps {
   key: number;
   questionContent: string;
   answerChoices: string[];
   answer: (value: number) => void;
+  selectedAnswer: number;
+  disabled?: boolean;
 }
 
 interface QuestionState {
-  answered: boolean;
-  checked: boolean[];
+  // checked: boolean[];
+  currentAnswer: number;
 }
 
 class Question extends React.Component<QuestionProps, QuestionState> {
   constructor(props: QuestionProps) {
     super(props);
     this.state = {
-      answered: false,
-      checked: [false, false, false, false],
+      // checked: [false, false, false, false],
+      currentAnswer: this.props.selectedAnswer
     };
-    this.getSelection = this.getSelection.bind(this);
     this.handleOnClick = this.handleOnClick.bind(this);
   }
 
-  getSelection = (value: number) => {
-    console.log(value);
-  }
-
   handleOnClick(i: number) {
-    const myClonedArray = [...this.state.checked];
-    myClonedArray[i] = !this.state.checked[i];
-    this.setState(prevState => ({
-      checked: myClonedArray
-    }));
+    // const myClonedArray = [...this.state.checked];
+    // myClonedArray[i] = !this.state.checked[i];
+    // this.setState(prevState => ({
+    //   checked: myClonedArray
+    // }));
     this.props.answer(i);
+    this.setState({ currentAnswer: i });
+    console.log(i, this.props.answerChoices[i]);
   }
 
   render() {
     return (
-      <div className="element">
-        <h2 className="question">{this.props.questionContent}</h2>
+      <div>
+        <Typography variant="h5">{this.props.questionContent}</Typography>
         <FormControl>
-          {this.props.answerChoices.map((key, i) => (
-            <FormControlLabel
-              control={<Checkbox
-                key={i}
+          <RadioGroup onChange={(event) => this.handleOnClick(Number(event.target.value))} value={this.state.currentAnswer}>
+            {this.props.answerChoices.map((key, i) => (
+              <FormControlLabel
+                disabled={this.props.disabled}
+                control={<Radio />}
                 value={i}
-                checked={this.state.checked[i] || false}
-                onChange={() => this.handleOnClick(i)}
-              />}
-              label={key}
-            />
-          ))}
+                label={<Typography variant="body1">{key}</Typography>}
+              />)
+          )}
+          </RadioGroup>
         </FormControl>
       </div>
     );

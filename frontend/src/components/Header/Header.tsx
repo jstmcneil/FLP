@@ -70,6 +70,6 @@ export default connect(
     },
     dispatch => {
         return {
-            setUpAction: () => dispatch({ type: SETUP_APP })
+            setUpAction: () => dispatch({ type: SETUP_APP }),
         }
     })(Header);
