@@ -118,7 +118,6 @@ const CoursePage = (props: PageProps): JSX.Element => {
                                         <TakeQuiz regCode={regCode} courseId={course.id} />
                                     </Paper>
                                 </div>
-                                <h1>{url}/review</h1>
                                 <Review_Button courseName={course.courseName} regCode={regCode} id={courseId}/>
                             </div>
                         )

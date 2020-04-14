@@ -43,7 +43,9 @@ class Review extends React.Component<Props, State> {
             <div className="title"><h2>Please leave your review below: </h2></div>
             <form onSubmit={this.handleSubmit}>
                 <label>
-                    <input type="text" value={this.state.response} onChange={this.onChange} />
+                    <div>
+                        <input type="text" value={this.state.response} onChange={this.onChange} />
+                    </div>
                 </label>
                 <input type="submit" value="Submit" />
             </form>
