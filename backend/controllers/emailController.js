@@ -24,7 +24,7 @@ async function sendDigest() {
         service: 'gmail',
         auth: {
             user: 'flpemail.noreply@gmail.com',
-            pass: 'TbTCfQu5SY1X'
+            pass: '!TbTCfQu5SY1X'
         }
     });
 
