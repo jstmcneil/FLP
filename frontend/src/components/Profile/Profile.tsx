@@ -5,6 +5,7 @@ import StudentProfile from './StudentProfile';
 import InstructorProfile from './InstructorProfile';
 import { connect } from 'react-redux';
 import { loggedInSelector, isInstructorSelector } from '../../selectors';
+import { Typography } from '@material-ui/core';
 
 
 interface ProfileProps {
@@ -19,9 +20,9 @@ class Profile extends React.Component<ProfileProps> {
             return <Fragment />;
         }
         if (isInstructor) {
-            return <Fragment><div className="title">My Profile</div><InstructorProfile /></Fragment>;
+            return <Fragment><Typography variant="h2">My Profile</Typography><InstructorProfile /></Fragment>;
         }
-        return <Fragment><div className="title">My Profile</div><StudentProfile /></Fragment>
+        return <Fragment><Typography variant="h2">My Profile</Typography><StudentProfile /></Fragment>
     }
 
     render() {

@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Checkbox } from '@material-ui/core';
+import { Checkbox, Paper } from '@material-ui/core';
 import { curriculumSelector, coursesSelector } from '../../../selectors';
 import { SET_CURRICULUM } from '../../../actions/types';
 import { connect } from 'react-redux';
@@ -50,27 +50,33 @@ class CourseSelection extends React.Component<CourseSelectionProps, CourseSelect
     renderRegCodeCourseSelection(curriculumForRegCode: string[], allCourses: CourseType[], currRegCode: string) {
         return (
             <div>
-                {
-                    allCourses.map((course: CourseType): JSX.Element => {
-                        return (
-                            <div style={{ display: "flex", flexDirection: "row" }}>
-                                <div>{course.courseName}</div>
-                                <Checkbox
-                                    id={`checkbox-${course.id}-${course.courseName}-${currRegCode}`}
-                                    onChange={(event, checked) => this.onCheckBoxChanged(event, checked, course.id)}
-                                    defaultChecked={curriculumForRegCode.includes(course.id)}
-                                />
-                            </div>
-                        )
-                    })
-                }
-                <button onClick={() =>
-                    this.props.setCurriculumAction(
-                        applyCheckboxChanges(curriculumForRegCode,
-                            this.state.courseIdChanges),
-                        currRegCode)}>
-                    Set Course Selection
-            </button>
+                
+                    <Paper style={{ margin: "10px", padding: "10px" }}>
+                        <div>Select courses for enrollees to see:</div>
+                        <div>
+                            {
+                                allCourses.map((course: CourseType): JSX.Element => {
+                                    return (
+                                        <div style={{ display: "block", marginLeft: "auto", marginRight: "auto", width: "fit-content" }}>
+                                            <div className="horizontalContainer">
+                                                <div style={{ marginTop: "auto", marginBottom: "auto" }}>{course.courseName}</div>
+                                                <Checkbox
+                                                    id={`checkbox-${course.id}-${course.courseName}-${currRegCode}`}
+                                                    onChange={(event, checked) => this.onCheckBoxChanged(event, checked, course.id)}
+                                                    defaultChecked={curriculumForRegCode.includes(course.id)}
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                            <button onClick={() =>
+                                this.props.setCurriculumAction(
+                                    applyCheckboxChanges(curriculumForRegCode,
+                                        this.state.courseIdChanges),
+                                    currRegCode)}>Set Course Selection</button>
+                        </div>
+                    </Paper>
             </div>
         );
     }
@@ -86,7 +92,6 @@ class CourseSelection extends React.Component<CourseSelectionProps, CourseSelect
         }
         return (
             <div>
-                <div>Registration Code: {this.props.regCode}</div>
                 {this.renderRegCodeCourseSelection(this.props.curriculum[this.props.regCode].courses.map(course => String(course)), this.props.courses, this.props.regCode)}
             </div>
         )

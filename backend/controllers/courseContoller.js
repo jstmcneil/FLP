@@ -14,6 +14,7 @@ import path from 'path';
 import difference from 'lodash/difference';
 
 const curriculum = JSON.parse(fs.readFileSync(path.resolve() + '\/curriculum.json'));
+var map = {};
 
 async function convertToUsername(arr) {
     var mutableArr = [];
@@ -21,6 +22,11 @@ async function convertToUsername(arr) {
         mutableArr.push(JSON.parse(JSON.stringify(arr[i])));
         if (mutableArr[i] == null) continue;
         let username;
+        if (map[mutableArr[i].accountId]) {
+            mutableArr[i].username = map[mutableArr[i].accountId];
+            delete mutableArr[i].accountId;
+            continue;
+        }
         await Account.findById(mutableArr[i].accountId, (err, acc) => {
             if (err) {
                 console.error(err);
@@ -28,7 +34,7 @@ async function convertToUsername(arr) {
             }
             username = acc.username;
         });
-
+        map[mutableArr[i].accountId] = username;
         mutableArr[i].username = username;
         delete mutableArr[i].accountId;
     }

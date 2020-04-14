@@ -4,7 +4,7 @@ import {
   ATTEMPT_LOGIN,
   ATTEMPT_REGISTRATION,
   LOGIN_SUCCESS,
-  LOGIN_UNSUCCESSFUL,
+  SETUP_LOGIN_UNSUCCESSFUL,
   LOG_OUT,
   SETUP_APP,
   GET_ALL_COURSES,
@@ -189,6 +189,7 @@ function* login(action: any) {
         loggedIn: response.success,
         regCodes: response.regCode,
         accountId: response.accountId,
+        username: action.payload.username
       }
     });
     storeTokenInCookie(response.token);
@@ -212,13 +213,18 @@ function* setupApp() {
           isInstructor: account.isInstructor,
           loggedIn: true,
           regCodes: account.regCode,
-          accountId: account.accountId
+          accountId: account.accountId,
+          username: account.username
         }
       });
       yield put({ type: GET_ALL_COURSES });
       yield put({ type: GET_CURRICULUM });
       yield put({ type: GET_ALL_GRADES });
     }
+  } else {
+    yield put({
+      type: SETUP_LOGIN_UNSUCCESSFUL
+    })
   }
 }
 
