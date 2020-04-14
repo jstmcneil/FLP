@@ -168,8 +168,8 @@ const getQuizStatus = (regCode: string, courseId: string) => {
   return fetchPostWrapper('/getQuizStatus', { regCode, courseId });
 }
 
-const getReviews = (regCode: string) => {
-  return fetchGetWrapper('/getReviews', { regCode });
+const getReviews = (regCode: string, courseId: string) => {
+  return fetchGetWrapper('/getReviews', { regCode, courseId });
 }
 
 // helper functions
@@ -378,7 +378,6 @@ function* getAllGradesSaga(action: any) {
     window.location.reload();
   }
   const response = yield call(getAllGrades, errorCallback);
-  console.log(response);
   isTokenValid(response);
   if (response.success) {
     yield put({
@@ -434,10 +433,9 @@ function* getQuizStatusSaga(action: any) {
 }
 
 function* getReviewsSaga(action: any) {
-  if (!action.payload || !action.payload.regCode) return;
-  const { regCode } = action.payload;
-  const response = yield call(getReviews, regCode);
-  console.log(response);
+  if (!action.payload || !action.payload.regCode|| !action.payload.courseId) return;
+  const { regCode, courseId } = action.payload;
+  const response = yield call(getReviews, regCode, courseId);
   if (response.success) {
     yield put({
       type: SAVE_REVIEWS,

@@ -1,7 +1,9 @@
 import Review from '../models/reviewModel.js';
 import Account from '../models/accountModel.js';
 import AccountController from './accountController.js';
-import { verifyJWTToken } from '../util/auth.js';
+import {
+    verifyJWTToken
+} from '../util/auth.js';
 
 async function convertToUsername(arr) {
     var mutableArr = [];
@@ -36,7 +38,13 @@ exports.createReview = async (req, res) => {
 
     const account = await AccountController.getAccountByToken(decoded);
 
-    const existingReview = await Review.findOne({accountId: account._id, regCode: req.body.regCode, courseId: req.body.courseId}, {review: 1});
+    const existingReview = await Review.findOne({
+        accountId: account._id,
+        regCode: req.body.regCode,
+        courseId: req.body.courseId
+    }, {
+        review: 1
+    });
 
     if (existingReview) {
         res.send({
@@ -50,10 +58,12 @@ exports.createReview = async (req, res) => {
         accountId: account._id,
         regCode: req.body.regCode,
         courseId: req.body.courseId,
-        review: req.body.review
+        review: req.body.response
     });
 
-    review.save(err => {if (err) console.error(err)});
+    review.save(err => {
+        if (err) console.error(err)
+    });
 
     res.send({
         review: review,
