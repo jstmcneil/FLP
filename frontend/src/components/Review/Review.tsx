@@ -36,7 +36,7 @@ class Review extends React.Component<Props, State> {
     handleSubmit() {
         this.props.createReview(this.props.regCode, this.props.courseId, this.state.response || "")
     }
-
+    
     render() {
         return (
         <div className="verticalContainer">

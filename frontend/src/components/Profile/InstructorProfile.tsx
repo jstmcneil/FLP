@@ -1,10 +1,5 @@
 import React, { Fragment } from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
-import { TableHead, Paper, Typography } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableRow, TableHead, Paper, Typography, Chip, styled } from '@material-ui/core';
 import LogOutButton from '../LogOutButton';
 import RegCodeSelection from './RegCodeSelection';
 import { connect } from 'react-redux';
@@ -18,6 +13,9 @@ import { CourseType } from '../../model/CourseType';
 import set from 'lodash/set';
 import get from 'lodash/get';
 import { getEmailQuestion } from './StudentProfile';
+import { reviewSelector } from '../../selectors/index';
+import dispatch from '../Review/Review';
+import { GET_REVIEWS } from '../../actions/types';
 
 
 interface InstructorProps {
@@ -25,11 +23,14 @@ interface InstructorProps {
     regCodes: string[];
     courses: CourseType[];
     username: string;
+    reviews: ReviewType[];
+    getReviews: Function;
 }
 
 
 interface InstructorState {
 }
+
 
 class InstructorProfile extends React.Component<InstructorProps, InstructorState> {
     render() {
@@ -50,7 +51,7 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
             gradeByRegCodeByCourses[grade.regCode][grade.courseId].push(grade);
 
         })
-        console.log(gradeByRegCodeByCourses);
+
         return (
             <div className="report">
                 <Typography variant="h6">Instructor Name: {this.props.username}</Typography>
@@ -67,12 +68,12 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                                         {Object.keys(gradeByRegCodeByCourses[regCode]).map((courseId): JSX.Element => {
                                             const course = this.props.courses.find(course => course.id === courseId);
                                             const grades = get(gradeByRegCodeByCourses, [regCode, courseId], []);
-                                            const emailQuestion = ((course?.quiz.emailQuestions.length || 0) > 0)
-                                                ? (course?.quiz.emailQuestions[0].questionContent || "")
+                                            const emailQuestion = ((course ?.quiz.emailQuestions.length || 0) > 0)
+                                                ? (course ?.quiz.emailQuestions[0].questionContent || "")
                                                 : "";
                                             return (
                                                 <Paper style={{ margin: "10px", padding: "10px" }}>
-                                                    <Typography variant="h5">{course?.courseName || ""}</Typography>
+                                                    <Typography variant="h5">{course ?.courseName || ""}</Typography>
                                                     <Table style={{ width: 500, textAlign: "center" }}>
                                                         <TableHead>
                                                             <TableRow>
@@ -96,14 +97,24 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                                                         </TableBody>
                                                     </Table>
                                                     <CSVLink
-                                                        data={grades} 
+                                                        data={grades}
                                                         headers={headers.map(
-                                                            header => header.label === "Email Response" && emailQuestion !== "" ? 
-                                                            {...header, label: emailQuestion} : 
-                                                            header)}
-                                                        filename={`FLP_class_grades_${regCode}_${course?.courseName || ""}.csv`}>
+                                                            header => header.label === "Email Response" && emailQuestion !== "" ?
+                                                                { ...header, label: emailQuestion } :
+                                                                header)}
+                                                        filename={`FLP_class_grades_${regCode}_${course ?.courseName || ""}.csv`}>
                                                         Download Grades
                                                     </CSVLink>
+                                                    <div></div>
+                                                    <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews(regCode, courseId)}>View Student Reviews</button>
+                                                    <div></div>
+                                                    {
+                                                        (this.props.reviews) && this.props.reviews.map((re: ReviewType) => (
+                                                            <div style={{ display: 'inline-block', justifyContent: 'center', flexWrap: 'wrap', padding: '5px' }}>
+                                                                {(re.regCode == regCode && re.courseId == courseId) ? <Chip label={re.review} color="secondary" /> : <div></div>}
+                                                            </div>
+                                                        ))
+                                                    }
                                                 </Paper>
                                             )
                                         })}
@@ -114,7 +125,7 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                     })
                 }
                 <CSVLink data={this.props.grades.map(grade => {
-                    return {...grade, emailResponse: getEmailQuestion(this.props.courses, grade)}
+                    return { ...grade, emailResponse: getEmailQuestion(this.props.courses, grade) }
                 })} headers={headers} filename={"FLP_class_grades.csv"}>
                     Download All Grades
                 </CSVLink>
@@ -128,6 +139,11 @@ export default connect(state => {
         regCodes: regCodesSelector(state),
         grades: instructorGradesSelector(state),
         courses: courseSelector(state),
-        username: usernameSelector(state)
+        username: usernameSelector(state),
+        reviews: reviewSelector(state),
     };
+}, dispatch => {
+    return {
+        getReviews: (regCode: string, courseId: string) => dispatch({ type: GET_REVIEWS, payload: { regCode, courseId } })
+    }
 })(InstructorProfile);
