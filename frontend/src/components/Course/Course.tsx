@@ -22,6 +22,7 @@ import { Paper } from '@material-ui/core'
 // @ts-ignore
 import randomColor from "randomcolor";
 import AutoSizer from 'react-virtualized-auto-sizer';
+import Review from '../Review/Review'
 
 interface ClassProps {
     id: string;
@@ -81,6 +82,33 @@ const Class = (props: ClassProps): JSX.Element => {
     );
 }
 
+interface ReviewProps {
+    id: string;
+    regCode: string;
+    courseName: string;
+    path: string;
+}
+
+const Review_Button = (props: ReviewProps): JSX.Element => {
+    return (
+        <Link to={{
+            pathname: `${props.path}/review/${props.regCode}/${props.id}`,
+        }}>
+            <div style={{
+                display: "grid",
+                border: "1px solid black",
+                marginRight: "10px",
+                paddingLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+                borderRadius: "10px",
+            }}>
+                <h3> {props.courseName} </h3>
+            </div>
+        </Link>
+    );
+}
+
 const gradeExists = (grades: Grade[], regCode: string, courseId: string) => {
     console.log(grades);
     console.log(regCode, courseId, grades.filter(grade => grade.regCode === regCode && grade.courseId === courseId));
@@ -117,8 +145,9 @@ const Course = (props: CourseProps): JSX.Element => {
                                                             (props.curriculum[key] && props.curriculum[key].courses.length > 0) ?
                                                                 <div className="horizontalContainer" style={{ flexWrap: "wrap" }}>
                                                                     {props.curriculum[key] && props.curriculum[key].courses.map((c: number) => {
-                                                                        const course: CourseType = courses[String(c)];
-                                                                        return (<Class courseName={course.courseName} id={course.id} path={path} regCode={key} classFinished={gradeExists(props.grades, key, course.id)} />)
+                                                                            const course: CourseType = courses[String(c)];
+                                                                            return ( <div>
+                                                                            <Class courseName={course.courseName} id={course.id} path={path} regCode={key} classFinished={gradeExists(props.grades, key, course.id)} /> </div>)
                                                                     })}
                                                                 </div> :
                                                                 <Typography variant="body1">No courses found for registration code {key}.</Typography>
@@ -134,7 +163,6 @@ const Course = (props: CourseProps): JSX.Element => {
                         )
                     }}
                 </AutoSizer>
-
             </Route>
             <Route path={`${path}/:regCode/:courseId`} render={(props) => <CoursePage {...props} />} />
         </Switch>

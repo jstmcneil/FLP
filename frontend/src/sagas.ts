@@ -21,7 +21,8 @@ import {
   GET_QUIZ_STATUS,
   SAVE_QUIZ_STATUS,
   GET_REVIEWS,
-  SAVE_REVIEWS
+  SAVE_REVIEWS,
+  CREATE_REVIEW,
 } from "./actions/types";
 import { AnswerType } from "./model/CourseType";
 
@@ -144,6 +145,10 @@ const setCurriculum = (regCode: string, courseIds: string[], networkErrorCallbac
 
 const addRegCode = (regCode: string, networkErrorCallback?: NetworkErrorCallback) => {
   return fetchPostWrapper('/addRegCode', { regCode }, networkErrorCallback);
+}
+
+const submitReview = (regCode: string, courseId: string, response: string, networkErrorCallback?: NetworkErrorCallback) => {
+  return fetchPostWrapper('/createReview', { regCode, courseId, response }, networkErrorCallback);
 }
 
 const submitQuiz = (regCode: string, courseId: string, answers: AnswerType[], emailResponse: string, networkErrorCallback?: NetworkErrorCallback) => {
@@ -320,6 +325,21 @@ function* addRegCodeSaga(action: any) {
   }
 }
 
+function* submitReviewSaga(action: any) {
+  if (!action.payload || !action.payload.regCode || action.payload.regCode === "" || action.payload.courseId === "" || action.payload.response === "") return;
+  let errorCallback: NetworkErrorCallback = (_) => {
+    alert('Failed to successfully connect to server on submit review.');
+  }
+  const response = yield call(submitReview, action.payload.regCode, action.payload.courseId, action.payload.response, errorCallback);
+  isTokenValid(response);
+  if (response.success) {
+    alert(`Review Added!`);
+    document.location.href = '/profile';
+  } else {
+    alert(response.msg);
+  }
+}
+
 function* submitQuizSaga(action: any) {
   if (!action.payload
     || !action.payload.regCode
@@ -341,6 +361,8 @@ function* submitQuizSaga(action: any) {
     alert(response.msg);
   }
 }
+
+
 
 function* getAllGradesSaga(action: any) {
   let errorCallback: NetworkErrorCallback = (_) => {
@@ -419,6 +441,7 @@ function* getReviewsSaga(action: any) {
 }
 
 function* sagaWatcher() {
+  yield takeEvery(CREATE_REVIEW, submitReviewSaga);
   yield takeLatest(ATTEMPT_LOGIN, login);
   yield takeLatest(ATTEMPT_REGISTRATION, register);
   yield takeLatest(LOG_OUT, logOut);

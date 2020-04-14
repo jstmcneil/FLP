@@ -13,6 +13,42 @@ import { Typography, isWidthDown } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { Grade } from '../../model/Grade';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { useLocation } from 'react-router-dom'
+import {
+    Link,
+    Route,
+    Switch,
+    useRouteMatch
+} from 'react-router-dom';
+import Review from '../Review/Review'
+
+interface ReviewProps {
+    id: string;
+    regCode: string;
+    courseName: string;
+}
+
+const Review_Button = (props: ReviewProps): JSX.Element => {
+    let { path, url } = useRouteMatch();
+    return (
+        <Link to={{
+            pathname: `${url}/review`,
+        }}>
+            <div style={{
+                display: "grid",
+                border: "1px solid black",
+                marginRight: "10px",
+                paddingLeft: "10px",
+                marginBottom: "10px",
+                marginTop: "10px",
+                borderRadius: "10px",
+            }}>
+                <h3> Click here to review {props.courseName}! </h3>
+            </div>
+        </Link>
+    );
+}
+
 
 interface PageProps extends RouteComponentProps {
     loggedIn: boolean;
@@ -26,6 +62,7 @@ const hasQuizBeenTaken = (grades: Grade[], courseId: string, regCode: string): b
     grades.filter(grade => grade.courseId === courseId && grade.regCode === regCode).length > 0;
 
 const CoursePage = (props: PageProps): JSX.Element => {
+    let { path, url } = useRouteMatch();
     const { courseId, regCode } = useParams();
     const [calledViewAnswers, setViewAnswers] = useState(false);
     if (!props.loggedIn || !props.courses || !props.grades || regCode === undefined || courseId === undefined) {
@@ -47,44 +84,50 @@ const CoursePage = (props: PageProps): JSX.Element => {
         document.location.href='/course';
     }
     return (
-        <AutoSizer>
-            {({ width }) => {
-                return (
-                    <div className="verticalContainer" style={{ margin: "10px", width: width }}>
-                        <Typography variant="h2">Course {course.id}</Typography>
-                        <div style={{ marginBottom: "10px" }}>
-                            <Paper elevation={3} style={{ padding: "10px" }}>
-                                <Typography variant="h3">Summary of Information</Typography>
-                                <div style={{ textAlign: "left" }}>
-                                    <Typography variant="body1" style={{ overflowWrap: "break-word", margin: "10px" }}>{course.summaryText}</Typography>
-                                </div>
-                            </Paper>
-                        </div>
-                        <div style={{ marginBottom: "10px" }}>
-                            <Paper elevation={3} style={{ padding: "10px", width: "inherit" }}>
-                                <Typography variant="h3">Videos</Typography>
-                                <div style={{ overflowY: "scroll", width: "inherit" }}>
-                                    {course.summaryVideo.map((video: Video) => (
-                                        <div style={{ marginTop: "10px", marginBottom: "10px", width: "inherit" }}>
-                                            <VideoPlayer videoId={video.id} width={width - 20}/>
+        <Switch>
+            <Route exact path={`${url}/review`} render={(props) => <Review regCode={regCode} courseId={courseId} />} />
+            <Route exact path={path}>
+                <AutoSizer>
+                    {({ width }) => {
+                        return (
+                            <div className="verticalContainer" style={{ margin: "10px", width: width }}>
+                                <Typography variant="h2">Course {course.id}</Typography>
+                                <div style={{ marginBottom: "10px" }}>
+                                    <Paper elevation={3} style={{ padding: "10px" }}>
+                                        <Typography variant="h3">Summary of Information</Typography>
+                                        <div style={{ textAlign: "left" }}>
+                                            <Typography variant="body1" style={{ overflowWrap: "break-word", margin: "10px" }}>{course.summaryText}</Typography>
                                         </div>
-                                    ))}
+                                    </Paper>
                                 </div>
-                            </Paper>
-                        </div>
-                        <div style={{ marginBottom: "10px" }}>
-                            <Paper elevation={3} style={{ padding: "10px" }}>
-                                <Typography variant="h3">Quiz</Typography>
-                                <TakeQuiz regCode={regCode} courseId={course.id} />
-                            </Paper>
-                        </div>
+                                <div style={{ marginBottom: "10px" }}>
+                                    <Paper elevation={3} style={{ padding: "10px", width: "inherit" }}>
+                                        <Typography variant="h3">Videos</Typography>
+                                        <div style={{ overflowY: "scroll", width: "inherit" }}>
+                                            {course.summaryVideo.map((video: Video) => (
+                                                <div style={{ marginTop: "10px", marginBottom: "10px", width: "inherit" }}>
+                                                    <VideoPlayer videoId={video.id} width={width - 20}/>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Paper>
+                                </div>
+                                <div style={{ marginBottom: "10px" }}>
+                                    <Paper elevation={3} style={{ padding: "1   0px" }}>
+                                        <Typography variant="h3">Quiz</Typography>
+                                        <TakeQuiz regCode={regCode} courseId={course.id} />
+                                    </Paper>
+                                </div>
+                                <h1>{url}/review</h1>
+                                <Review_Button courseName={course.courseName} regCode={regCode} id={courseId}/>
+                            </div>
+                        )
+                    }
 
-                    </div>
-                )
-            }
-
-            }
-        </AutoSizer>
+                    }
+                </AutoSizer>
+            </Route>
+        </Switch>
     )
 }
 
