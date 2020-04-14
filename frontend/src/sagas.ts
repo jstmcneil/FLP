@@ -28,6 +28,8 @@ import { AnswerType } from "./model/CourseType";
 
 
 const BASE_URL = 'http://localhost:8000';
+//for deployment
+//const BASE_URL = 'http://flp-backend.herokuapp.com';
 const queryParams = (args: { [index: string]: string }): string => {
   return `?${Object.keys(args).map(key => `${key}=${args[key]}`).join('&')}`;
 }
