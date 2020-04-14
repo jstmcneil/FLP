@@ -203,7 +203,8 @@ exports.getAccount = async (req, res) => {
         msg: null,
         account: {
             regCode: account.regCode,
-            isInstructor: account.isInstructor
+            isInstructor: account.isInstructor,
+            username: account.username
         },
         success: true
     });

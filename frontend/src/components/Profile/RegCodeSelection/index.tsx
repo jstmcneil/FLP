@@ -7,6 +7,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { Typography, Paper } from '@material-ui/core';
 
 interface RegCodeSelectionProps {
     addRegCodeAction: Function;
@@ -24,34 +25,44 @@ class RegCodeSelection extends React.Component<RegCodeSelectionProps, RegCodeSel
             newRegCode: ""
         };
     }
-    
+
     render() {
         if (!this.props.regCodes) {
             return <Fragment />;
         }
         return (
-            <div>
-                <div className="verticalContainer">  
-                        <div>Registration Codes</div>
-                        <div style={{margin: "auto"}}>
-                            <Table style={{ textAlign: "center", maxWidth: 100 }}>
-                                <TableBody>
-                                    {this.props.regCodes.map(regCode => (
-                                        <TableRow>
-                                            <TableCell component="div" scope="row">
-                                                {regCode}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+            <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+                <Typography variant="h3">Your Enrollments</Typography>
+                <Paper style={{ backgroundColor: "#73C2FB", margin: "10px", padding: "10px" }}>
+                    <Paper elevation={3} style={{ margin: "10px", padding: "10px", }}>
+                        <div className="verticalContainer">
+                            <div style={{ margin: "auto" }}>
+                                <Table style={{ textAlign: "center", maxWidth: 100 }}>
+                                    <TableBody>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell component="div">
+                                                    {<Typography variant="h6">Registration Codes</Typography>}
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        {this.props.regCodes.map(regCode => (
+                                            <TableRow>
+                                                <TableCell component="div" scope="row">
+                                                    {<Typography variant="body1">{regCode}</Typography>}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div style={{ padding: "10px", margin: "auto" }}>
+                                <input type="text" onInput={(event) => this.setState({ newRegCode: event.currentTarget.value })}></input>
+                                <button style={{ width: "auto" }} onClick={() => this.props.addRegCodeAction(this.state.newRegCode)}>Add Registration Code</button>
+                            </div>
                         </div>
-
-                        <div style={{padding: "10px", margin: "auto"}}>
-                            <input type="text" onInput={(event) => this.setState({ newRegCode: event.currentTarget.value })}></input>
-                            <button style={{width: "auto"}} onClick={() => this.props.addRegCodeAction(this.state.newRegCode)}>Add Registration Code</button>
-                        </div>
-                </div>  
+                    </Paper>
+                </Paper>
             </div>
         )
     }
@@ -62,9 +73,9 @@ export default connect(state => {
         regCodes: regCodesSelector(state),
         isInstructor: isInstructorSelector(state)
     }
-}, 
-    dispatch => { 
+},
+    dispatch => {
         return {
-            addRegCodeAction: (regCode: string) => dispatch({type: ADD_REG_CODE, payload: { regCode }}) 
+            addRegCodeAction: (regCode: string) => dispatch({ type: ADD_REG_CODE, payload: { regCode } })
         }
     })(RegCodeSelection);
