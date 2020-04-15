@@ -13,7 +13,7 @@ app.use(cookieParser());
 */
 mongoose.connect('mongodb://localhost:27017/FLP-DB', { useNewUrlParser: true, useUnifiedTopology: true });
 //for deployment
-//mongoose.connect('mongodb://flp:!TbTCfQu5SY1X@ds121730.mlab.com:21730/heroku_wc2p0qcz', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb+srv://flp:!TbTCfQu5SY1X@flp-db-os1xd.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 /**
 * Middleware
