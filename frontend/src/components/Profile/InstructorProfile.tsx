@@ -56,6 +56,7 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
             <div className="report">
                 <Typography variant="h6">Instructor Name: {this.props.username}</Typography>
                 <RegCodeSelection />
+                <div className="space"></div>
                 <Typography variant="h3">Enrollments</Typography>
                 {this.props.regCodes && this.props.grades
                     && this.props.regCodes.map(regCode => {
@@ -105,16 +106,6 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                                                         filename={`FLP_class_grades_${regCode}_${course ?.courseName || ""}.csv`}>
                                                         Download Grades
                                                     </CSVLink>
-                                                    <div></div>
-                                                    <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews(regCode, courseId)}>View Student Reviews</button>
-                                                    <div></div>
-                                                    {
-                                                        (this.props.reviews) && this.props.reviews.map((re: ReviewType) => (
-                                                            <div style={{ display: 'inline-block', justifyContent: 'center', flexWrap: 'wrap', padding: '5px' }}>
-                                                                {(re.regCode == regCode && re.courseId == courseId) ? <Chip label={re.review} color="secondary" /> : <div></div>}
-                                                            </div>
-                                                        ))
-                                                    }
                                                 </Paper>
                                             )
                                         })}
@@ -129,6 +120,37 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                 })} headers={headers} filename={"FLP_class_grades.csv"}>
                     Download All Grades
                 </CSVLink>
+                <div className="space"></div>
+                <Typography variant="h3">Student Reviews</Typography>
+                {this.props.regCodes && this.props.regCodes.map(regCode => {
+                    return (
+                        <div>
+                            <Paper style={{ padding: "15px", margin: "10px", backgroundColor: "#73C2FB" }}>
+                                <Typography variant="h4">{regCode}</Typography>
+                                <div>
+                                    {Object.keys(gradeByRegCodeByCourses[regCode]).map((courseId): JSX.Element => {
+                                        const course = this.props.courses.find(course => course.id === courseId);
+                                        return (
+                                            <Paper style={{ margin: "10px", padding: "10px" }}>
+                                                <div></div>
+                                                <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews(regCode, courseId)}>{"View Student Reviews: " + course ?.courseName || ""}</button>
+                                                <div></div>
+                                                {
+                                                    (this.props.reviews) && this.props.reviews.map((re: ReviewType) => (
+                                                        <div style={{ display: 'inline-block', justifyContent: 'center', flexWrap: 'wrap', padding: '5px' }}>
+                                                            {(re.regCode == regCode && re.courseId == courseId) ? <Chip label={re.review} color="secondary" /> : <div></div>}
+                                                        </div>
+                                                    ))
+                                                }
+                                            </Paper>
+                                        )
+                                    })}
+                                </div>
+                            </Paper>
+                        </div>
+                    );
+                })
+                }
             </div >
         );
     }

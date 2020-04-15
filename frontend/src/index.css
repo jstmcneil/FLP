@@ -50,6 +50,7 @@ li {
   margin-top: auto;
   margin-bottom: auto;
 }
+
 .logOutButtonContainer {
   margin-right: 0.5em;
   display: flex;
@@ -106,7 +107,7 @@ button {
 }
 
 .space {
-  padding: 50px;
+  padding: 30px;
 }
 
 label {
@@ -155,6 +156,7 @@ label {
 #logoff {
   margin: 10px;
 }
+
 .iconStyle {
   font-size: 30;
   margin-top: 10;
@@ -167,7 +169,7 @@ label {
   row-gap: 10px;
 }
 
-.labelInputGrid > div {
+.labelInputGrid>div {
   margin-top: auto;
   margin-bottom: auto;
 }
