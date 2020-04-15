@@ -87,8 +87,11 @@ exports.getReviews = async (req, res) => {
     const account = await AccountController.getAccountByToken(decoded);
 
     var query = {
-        regCode: req.query.regCode,
         courseId: req.query.courseId
+    }
+
+    if (req.query.regCode != "*") {
+        query.regCode = req.query.regCode
     }
 
     if (!account.isInstructor) {
