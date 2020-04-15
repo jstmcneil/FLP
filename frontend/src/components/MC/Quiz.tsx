@@ -4,6 +4,7 @@ import { QuizType, AnswerType, QuestionType, MCQuizType, EmailType } from '../..
 import { connect } from 'react-redux';
 import { SUBMIT_QUIZ } from '../../actions/types';
 import { Typography } from '@material-ui/core';
+import VideoPlayer from '../VideoPlayer';
 
 interface State {
     questionIndex: number,
@@ -103,7 +104,8 @@ class Quiz extends React.Component<Props, State> {
             let questionBody: JSX.Element;
             if (question.type === "Email") {
                 questionBody = <div id="emailTextBoxContainer" className="verticalContainer">
-                    <div>{question.questionContent}</div>
+                    {question.videoId && question.videoType === "youtube" && <VideoPlayer videoId={question.videoId} width={400}/>}
+                    <Typography variant="h5">{question.questionContent}</Typography>
                     <textarea id="emailBody" onInput={(event) => this.setState({ emailResponse: event.currentTarget.value })}>{this.state.emailResponse || ""}</textarea>
                 </div>
             } else if (question.type === "MC") {
@@ -130,6 +132,7 @@ class Quiz extends React.Component<Props, State> {
         if (question.type === "Email") {
             return (
                 <div>
+                    {question.videoId && question.videoType === "youtube" && <VideoPlayer videoId={question.videoId} width={400}/>}
                     <Typography variant="h5">{question.questionContent}</Typography>
                     <Typography variant="h6">Note: There is no default answer to this question.</Typography>
                     {button}
