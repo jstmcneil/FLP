@@ -45,13 +45,13 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
         ];
         const gradeByRegCodeByCourses: any = {};
         grade.forEach(grade => {
-            if (!get(gradeByRegCodeByCourses, [grade.regCode, grade.courseId], undefined)) {
-                set(gradeByRegCodeByCourses, [grade.regCode, grade.courseId], []);
+            if (grade != null && grade != undefined) {
+                if (!get(gradeByRegCodeByCourses, [grade.regCode, grade.courseId], undefined)) {
+                    set(gradeByRegCodeByCourses, [grade.regCode, grade.courseId], []);
+                }
+                gradeByRegCodeByCourses[grade.regCode][grade.courseId].push(grade);
             }
-            gradeByRegCodeByCourses[grade.regCode][grade.courseId].push(grade);
-
-        })
-
+        });
         return (
             <div className="report">
                 <Typography variant="h6">Instructor Name: {this.props.username}</Typography>
@@ -66,7 +66,7 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                                     <Typography variant="h4">{regCode}</Typography>
                                     <CourseSelection regCode={regCode} />
                                     <div>
-                                        {Object.keys(gradeByRegCodeByCourses[regCode]).map((courseId): JSX.Element => {
+                                        {Object.keys(gradeByRegCodeByCourses).length > 0 && Object.keys(gradeByRegCodeByCourses[regCode]).length > 0 && Object.keys(gradeByRegCodeByCourses[regCode]).map((courseId): JSX.Element => {
                                             const course = this.props.courses.find(course => course.id === courseId);
                                             const grades = get(gradeByRegCodeByCourses, [regCode, courseId], []);
                                             const emailQuestion = ((course ?.quiz.emailQuestions.length || 0) > 0)
@@ -122,36 +122,29 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                 </CSVLink>
                 <div className="space"></div>
                 <Typography variant="h3">Student Reviews</Typography>
-                {this.props.regCodes && this.props.regCodes.map(regCode => {
-                    return (
+                <div>
+                    <Paper style={{ padding: "15px", margin: "10px", backgroundColor: "#73C2FB" }}>
                         <div>
-                            <Paper style={{ padding: "15px", margin: "10px", backgroundColor: "#73C2FB" }}>
-                                <Typography variant="h4">{regCode}</Typography>
-                                <div>
-                                    {Object.keys(gradeByRegCodeByCourses[regCode]).map((courseId): JSX.Element => {
-                                        const course = this.props.courses.find(course => course.id === courseId);
-                                        return (
-                                            <Paper style={{ margin: "10px", padding: "10px" }}>
-                                                <Typography variant="h5">{course ?.courseName || ""}</Typography>
-                                                <div></div>
-                                                <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews(regCode, courseId)}>View Student Reviews</button>
-                                                <div></div>
-                                                {
-                                                    (this.props.reviews) && this.props.reviews.map((re: ReviewType) => (
-                                                        <div style={{ display: 'inline-block', justifyContent: 'center', flexWrap: 'wrap', padding: '5px' }}>
-                                                            {(re.regCode == regCode && re.courseId == courseId) ? <Chip label={re.review} color="secondary" /> : <div></div>}
-                                                        </div>
-                                                    ))
-                                                }
-                                            </Paper>
-                                        )
-                                    })}
-                                </div>
-                            </Paper>
+                            {this.props.courses && this.props.courses.map((course: CourseType) => {
+                                return (
+                                    <Paper style={{ margin: "10px", padding: "10px" }}>
+                                        <Typography variant="h5">{course ?.courseName || ""}</Typography>
+                                        <div></div>
+                                        <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews("*", course.id)}>View Student Reviews</button>
+                                        <div></div>
+                                        {
+                                            (this.props.reviews) && this.props.reviews.map((re: ReviewType) => (
+                                                <div style={{ display: 'inline-block', justifyContent: 'center', flexWrap: 'wrap', padding: '5px' }}>
+                                                    {(re.courseId == course.id) ? <Chip label={re.review} color="secondary" /> : <div></div>}
+                                                </div>
+                                            ))
+                                        }
+                                    </Paper>
+                                )
+                            })}
                         </div>
-                    );
-                })
-                }
+                    </Paper>
+                </div>
             </div >
         );
     }

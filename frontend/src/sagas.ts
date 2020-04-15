@@ -433,7 +433,7 @@ function* getQuizStatusSaga(action: any) {
 }
 
 function* getReviewsSaga(action: any) {
-  if (!action.payload || !action.payload.regCode|| !action.payload.courseId) return;
+  if (!action.payload || !action.payload.regCode || !action.payload.courseId) return;
   const { regCode, courseId } = action.payload;
   const response = yield call(getReviews, regCode, courseId);
   if (response.success) {
