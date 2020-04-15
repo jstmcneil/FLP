@@ -132,8 +132,9 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                                         const course = this.props.courses.find(course => course.id === courseId);
                                         return (
                                             <Paper style={{ margin: "10px", padding: "10px" }}>
+                                                <Typography variant="h5">{course ?.courseName || ""}</Typography>
                                                 <div></div>
-                                                <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews(regCode, courseId)}>{"View Student Reviews: " + course ?.courseName || ""}</button>
+                                                <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews(regCode, courseId)}>View Student Reviews</button>
                                                 <div></div>
                                                 {
                                                     (this.props.reviews) && this.props.reviews.map((re: ReviewType) => (
