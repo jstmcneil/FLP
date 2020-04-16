@@ -139,7 +139,7 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                                                         return (
                                                             ((re.courseId == course.id) &&
                                                                 <TableRow>
-                                                                    <TableCell component="th" scope="row">
+                                                                    <TableCell component="td" scope="row">
                                                                         {re.review}
                                                                     </TableCell>
                                                                 </TableRow>)
