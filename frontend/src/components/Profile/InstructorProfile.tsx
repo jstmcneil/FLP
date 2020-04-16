@@ -129,16 +129,25 @@ class InstructorProfile extends React.Component<InstructorProps, InstructorState
                                 return (
                                     <Paper style={{ margin: "10px", padding: "10px" }}>
                                         <Typography variant="h5">{course ?.courseName || ""}</Typography>
-                                        <div></div>
-                                        <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews("*", course.id)}>View Student Reviews</button>
-                                        <div></div>
-                                        {
-                                            (this.props.reviews) && this.props.reviews.map((re: ReviewType) => (
-                                                <div style={{ display: 'inline-block', justifyContent: 'center', flexWrap: 'wrap', padding: '5px' }}>
-                                                    {(re.courseId == course.id) ? <Chip label={re.review} color="secondary" /> : <div></div>}
-                                                </div>
-                                            ))
-                                        }
+                                        <Table style={{ width: 500, textAlign: "center" }}>
+                                            <TableHead>
+                                                <button style={{ width: "auto", margin: '20px' }} onClick={() => this.props.getReviews("*", course.id)}>View Student Reviews</button>
+                                            </TableHead>
+                                            <TableBody>
+                                                {
+                                                    (this.props.reviews) && this.props.reviews.map((re: ReviewType) => {
+                                                        return (
+                                                            ((re.courseId == course.id) &&
+                                                                <TableRow>
+                                                                    <TableCell component="th" scope="row">
+                                                                        {re.review}
+                                                                    </TableCell>
+                                                                </TableRow>)
+                                                        )
+                                                    })
+                                                }
+                                            </TableBody>
+                                        </Table>
                                     </Paper>
                                 )
                             })}
