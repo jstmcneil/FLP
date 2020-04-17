@@ -84,7 +84,6 @@ const InstructorProfile = (props: InstructorProps) => {
             gradeByRegCodeByCourses[grade.regCode][grade.courseId].push(grade);
         }
     });
-
     const courseIdsSet = new Set<string>();
     grade.map(g => g.courseId).forEach(courseId => {
         if (!reviewForCourseExists(props.reviews, courseId)) {
@@ -105,7 +104,7 @@ const InstructorProfile = (props: InstructorProps) => {
                                 <Typography variant="h4">{regCode}</Typography>
                                 <CourseSelection regCode={regCode} />
                                 <div>
-                                    {Object.keys(gradeByRegCodeByCourses).length > 0 && Object.keys(gradeByRegCodeByCourses[regCode]).length > 0 && Object.keys(gradeByRegCodeByCourses[regCode]).map((courseId): JSX.Element => {
+                                    {Object.keys(gradeByRegCodeByCourses).length > 0 && gradeByRegCodeByCourses[regCode] && Object.keys(gradeByRegCodeByCourses[regCode]).length > 0 && Object.keys(gradeByRegCodeByCourses[regCode]).map((courseId): JSX.Element => {
                                         const course = props.courses.find(course => course.id === courseId);
                                         const grades = get(gradeByRegCodeByCourses, [regCode, courseId], []);
                                         const emailQuestion = ((course?.quiz.emailQuestions.length || 0) > 0)
