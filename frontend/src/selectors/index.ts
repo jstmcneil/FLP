@@ -1,6 +1,7 @@
 import { CourseType } from '../model/CourseType';
 import { Grade } from '../model/Grade';
 import { GradeInstructorView } from '../model/GradeInstructorView';
+import { ReviewState } from '../reducers';
 export const loggedInSelector = (state: any): boolean => state.loggedIn;
 export const accountIdSelector = (state: any): string => state.accountId;
 export const isInstructorSelector = (state: any): boolean => state.isInstructor;
@@ -13,4 +14,4 @@ export const gradesSelector = (state: any): Grade[] => state.grades;
 export const instructorGradesSelector = (state: any): GradeInstructorView[] => state.grades;
 export const quizCompletionSelector = (state: any): any => state.completed;
 export const answerSelector = (state: any): any => state.answers;
-export const reviewSelector = (state: any): any => state.reviews;
+export const reviewSelector = (state: any): ReviewState => state.reviews;

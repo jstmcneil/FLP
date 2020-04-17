@@ -90,7 +90,7 @@ exports.getReviews = async (req, res) => {
         courseId: req.query.courseId
     }
 
-    if (req.query.regCode != "*") {
+    if (req.query.regCode !== "*") {
         query.regCode = req.query.regCode
     }
 
@@ -98,14 +98,11 @@ exports.getReviews = async (req, res) => {
         query.accountId = account._id;
     }
 
-    var reviews = [];
-
-    await Review.find(query, (err, revs) => {
+    var reviews = await Review.find(query, (err, revs) => {
         if (err) {
             console.error(err);
             return;
         }
-        reviews = revs;
     });
 
     if (account.isInstructor) {

@@ -1,16 +1,21 @@
 import { LOGIN_SUCCESS, SAVE_COURSES, SAVE_CURRICULUM, SAVE_GRADES, SAVE_QUIZ_STATUS, SAVE_ANSWERS, SAVE_REVIEWS } from "../actions/types";
 import { Action } from "redux";
+import { ReviewType } from "../model/ReviewType";
 
 interface ActionWithPayload<T, Y> extends Action<Y> {
     payload: T
 }
 
+export type ReviewState = { [index: string]: {[index: string]: ReviewType[] | string} };
+
 interface State {
     loggedIn: boolean;
+    reviews: ReviewState;
 }
 
 const initialState: State = {
-    loggedIn: false
+    loggedIn: false,
+    reviews: {}
 };
 
 export const reducer = (state: State | undefined, action: ActionWithPayload<any, string>): State => {
@@ -28,7 +33,9 @@ export const reducer = (state: State | undefined, action: ActionWithPayload<any,
         case SAVE_QUIZ_STATUS:
             return { ...state, ...action.payload };
         case SAVE_REVIEWS:
-            return { ...state, ...action.payload };
+            const reviews = state ? { ...state.reviews} : {};
+            reviews[action.payload["regCode"]] = {...reviews[action.payload["regCode"]], [action.payload["courseId"]]: action.payload["reviews"]}
+            return { ...state, loggedIn: state?.loggedIn || false, reviews};
         default:
             return state ? state : initialState;
     }

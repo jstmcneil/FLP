@@ -432,6 +432,7 @@ function* getQuizStatusSaga(action: any) {
   }
 }
 
+// reviews indexed by 
 function* getReviewsSaga(action: any) {
   if (!action.payload || !action.payload.regCode || !action.payload.courseId) return;
   const { regCode, courseId } = action.payload;
@@ -440,7 +441,18 @@ function* getReviewsSaga(action: any) {
     yield put({
       type: SAVE_REVIEWS,
       payload: {
-        reviews: response.reviews
+          reviews: response.reviews,
+          regCode,
+          courseId
+      }
+    })
+  } else {
+    yield put({
+      type: SAVE_REVIEWS,
+      payload: {
+        reviews: "reviews_error",
+        regCode,
+        courseId
       }
     })
   }
@@ -460,7 +472,7 @@ function* sagaWatcher() {
   yield takeEvery(GET_ALL_GRADES, getAllGradesSaga);
   yield takeEvery(GET_ANSWERS, getAnswersSaga);
   yield takeEvery(GET_QUIZ_STATUS, getQuizStatusSaga);
-  yield takeEvery(GET_REVIEWS, getReviewsSaga);
+  yield takeLatest(GET_REVIEWS, getReviewsSaga);
 }
 
 export default sagaWatcher;
