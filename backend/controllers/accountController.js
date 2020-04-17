@@ -1,5 +1,6 @@
 import Account from '../models/accountModel.js';
 import Curriculum from '../models/curriculumModel.js';
+import bcrypt from 'bcrypt';
 import {
     generateJWTToken,
     verifyJWTToken
@@ -57,7 +58,7 @@ exports.login = async (req, res) => {
     }
     
     console.log(acc);
-    if (acc && acc.password == req.body.password) {
+    if (acc && bcrypt.compareSync(req.body.password, acc.password)) {
         loginSuccess = true;
         regCode = acc.regCode;
         isInstructor = acc.isInstructor;
@@ -108,11 +109,11 @@ exports.studentRegister = async (req, res) => {
         });
         return;
     }
-
+    const hashedPassword = bcrypt.hashSync(req.body.password, 8)
     //create and save new account
     const acc = new Account({
         username: req.body.username,
-        password: req.body.password,
+        password: hashedPassword,
         regCode: [req.body.regCode],
         isInstructor: false
     });
@@ -159,11 +160,12 @@ exports.instructorRegister = async (req, res) => {
         });
         return;
     }
+    const hashedPassword = bcrypt.hashSync(req.body.password, 8)
 
     //create and save new account
     const acc = new Account({
         username: req.body.username,
-        password: req.body.password,
+        password: hashedPassword,
         regCode: [req.body.regCode],
         isInstructor: true
     });
@@ -229,6 +231,33 @@ exports.addRegCode = async (req, res) => {
         return;
     }
     let account = await getAccountByToken(decoded);
+    try {
+        var acc = await Account.findOne({ regCode: req.body.regCode, isInstructor: true }).exec()
+        // check if regCode is attached to another instructor, then can't use it
+        if (account.isInstructor && acc) {
+            res.send({
+                msg: "This registration code is taken by another instructor. Please try again",
+                success: false
+            });
+            return;
+        }
+        // check if regCode has an instructor if account is student. If it doesn't, cant use it.
+        if (!account.isInstructor && !acc) {
+            res.send({
+                msg: "This registration code has no instructor. Please try again.",
+                success: false
+            })
+            return;
+        }
+    } catch(e) {
+        console.err(e);
+        res.send({
+            msg: "Error. Could not check if regCode belongs to another instructor",
+            success: false
+        })
+        return;
+    }
+    
     await Account.updateOne({
         _id: account._id
     }, {

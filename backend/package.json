@@ -12,13 +12,14 @@
   },
   "license": "MIT",
   "dependencies": {
+    "babel-cli": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "bcrypt": "^4.0.1",
     "cookie-parser": "1.4.4",
     "express": "4.17.1",
     "jsonwebtoken": "8.5.1",
     "mongoose": "5.8.9",
     "nodemailer": "6.4.2",
-    "babel-cli": "6.26.0",
-    "babel-preset-env": "1.7.0",
     "nodemon": "2.0.2"
   }
 }
