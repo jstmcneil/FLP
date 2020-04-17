@@ -38,6 +38,7 @@ async function convertToUsername(arr) {
         mutableArr[i].username = username;
         delete mutableArr[i].accountId;
     }
+    console.log(map);
     return mutableArr;
 }
 
@@ -124,7 +125,8 @@ exports.submitQuiz = async (req, res) => {
     var correctCount = 0.0;
 
     answers.forEach(ans => {
-        if (ans.answerIndex === quiz.mcQuestions[ans.questionId].correctAnswerIndex) {
+        const question = quiz.mcQuestions.find(question => question.questionId === ans.questionId);
+        if (question && ans.answerIndex === question.correctAnswerIndex) {
             correctCount++;
         }
     });
@@ -283,7 +285,7 @@ exports.getAllGrades = async (req, res) => {
         query.regCode = code;
         for (const id of courses) {
             query.courseId = id;
-            const grade = await Course.findOne(query, {
+            const grade = await Course.find(query, {
                 accountId: 1,
                 regCode: 1,
                 courseId: 1,
@@ -291,10 +293,13 @@ exports.getAllGrades = async (req, res) => {
                 emailResponse: 1
             });
             if (grade) {
-                grades.push(grade);
+                for (let i = 0; i < grade.length; i++) {
+                    grades.push(grade[i]);
+                }
             }
         }
     }
+    console.log(grades);
     if (account.isInstructor) {
         grades = await convertToUsername(grades);
     }

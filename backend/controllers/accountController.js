@@ -46,18 +46,23 @@ exports.login = async (req, res) => {
         regCode = null,
         isInstructor = false,
         accountId = null;
-
-    await Account.find({
-        'username': req.body.username
-    }, (err, acc) => {
-        if (acc.length != 0 && acc[0].password == req.body.password) {
-            loginSuccess = true;
-            regCode = acc[0].regCode;
-            isInstructor = acc[0].isInstructor;
-            accountId = acc[0]._id;
-        }
-    }).catch((err) => console.error(err));
-
+    var acc;
+    console.log(req);
+    try {
+        acc = await Account.findOne({
+                'username': req.body.username
+            }).exec();
+    } catch(e) {
+        console.err(e);
+    }
+    
+    console.log(acc);
+    if (acc && acc.password == req.body.password) {
+        loginSuccess = true;
+        regCode = acc.regCode;
+        isInstructor = acc.isInstructor;
+        accountId = acc._id;
+    }
     if (loginSuccess) {
         res.send({
             msg: null,
