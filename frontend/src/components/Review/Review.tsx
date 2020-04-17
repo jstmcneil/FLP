@@ -15,7 +15,7 @@ import {
 import { Typography } from '@material-ui/core';
 import { ReviewType } from '../../model/ReviewType';
 import { ReviewState } from '../../reducers/index';
-import { reviewSelector } from '../../selectors';
+import { reviewSelector, curriculumSelector } from '../../selectors';
 import get from 'lodash/get';
 
 interface State {
