@@ -257,13 +257,12 @@ const getAccountByToken = async (decoded) => {
     if (map[decoded.accountId]) {
         return map[decoded.accountId];
     }
-    account = await Account.findOne({ _id: decoded.accountId }, (err, acc) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        map[decoded.accountId] = acc;
-    });
+    try {
+        account = await Account.findOne({ _id: decoded.accountId }).exec();
+    } catch (e) {
+        console.error(e);
+    }
+    
     return account;
 }
 

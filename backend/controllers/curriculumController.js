@@ -14,7 +14,7 @@ async function getCurriculumByAccount(account) {
             regCode: code
         }, {
             courses: 1
-        });
+        }).exec();
         if (cur != null) {
             curriculum.push({
                 regCode: code,

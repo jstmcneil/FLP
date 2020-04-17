@@ -116,7 +116,7 @@ const InstructorProfile = (props: InstructorProps) => {
                                                 <Table style={{ width: 500, textAlign: "center" }}>
                                                     <TableHead>
                                                         <TableRow>
-                                                            <TableCell align="right">Student Name</TableCell>
+                                                            <TableCell align="right">Student</TableCell>
                                                             <TableCell align="right">MC Grade</TableCell>
                                                             {emailQuestion !== "" && <TableCell align="right">{emailQuestion}</TableCell>}
                                                         </TableRow>
