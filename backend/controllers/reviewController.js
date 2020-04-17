@@ -93,7 +93,7 @@ exports.getReviews = async (req, res) => {
     if (req.query.regCode !== "*") {
         query.regCode = req.query.regCode
     } else {
-        query.$in = account.regCode
+        query.regCode = account.regCode
     }
 
     if (!account.isInstructor) {
