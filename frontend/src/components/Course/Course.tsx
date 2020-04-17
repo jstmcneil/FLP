@@ -144,7 +144,7 @@ const Course = (props: CourseProps): JSX.Element => {
                                                         {
                                                             (props.curriculum[key] && props.curriculum[key].courses.length > 0) ?
                                                                 <div className="horizontalContainer" style={{ flexWrap: "wrap" }}>
-                                                                    {props.curriculum[key] && props.curriculum[key].courses.map((c: number) => {
+                                                                    {props.curriculum[key] && props.curriculum[key].courses.map((c) => {
                                                                             const course: CourseType = courses[String(c)];
                                                                             return ( <div>
                                                                             <Class courseName={course.courseName} id={course.id} path={path} regCode={key} classFinished={gradeExists(props.grades, key, course.id)} /> </div>)

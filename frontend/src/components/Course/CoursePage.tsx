@@ -4,7 +4,7 @@ import CourseEmailTextComponent from '../EmailTextBox';
 import { useParams, RouteComponentProps } from 'react-router-dom';
 import VideoPlayer from '../VideoPlayer';
 import { connect } from 'react-redux';
-import { loggedInSelector, accountIdSelector, usernameSelector, coursesSelector, gradesSelector, answerSelector } from '../../selectors';
+import { loggedInSelector, accountIdSelector, usernameSelector, coursesSelector, gradesSelector, answerSelector, curriculumSelector } from '../../selectors';
 import { GET_ANSWERS } from '../../actions/types';
 import keyBy from 'lodash/keyBy';
 import { Video, CourseType } from '../../model/CourseType';
@@ -21,6 +21,8 @@ import {
     useRouteMatch
 } from 'react-router-dom';
 import Review from '../Review/Review'
+import get from 'lodash/get';
+import { CurriculumType } from '../../model/CurriculumType';
 
 interface ReviewProps {
     id: string;
@@ -53,6 +55,7 @@ const Review_Button = (props: ReviewProps): JSX.Element => {
 interface PageProps extends RouteComponentProps {
     loggedIn: boolean;
     courses: CourseType[];
+    curriculum: CurriculumType;
     grades: Grade[];
     answers: any;
     viewAnswerAction: Function;
@@ -65,11 +68,17 @@ const CoursePage = (props: PageProps): JSX.Element => {
     let { path, url } = useRouteMatch();
     const { courseId, regCode } = useParams();
     const [calledViewAnswers, setViewAnswers] = useState(false);
-    if (!props.loggedIn || !props.courses || !props.grades || regCode === undefined || courseId === undefined) {
+    if (!props.loggedIn || !props.courses || !props.grades || !props.curriculum || regCode === undefined || courseId === undefined) {
         return <Typography variant="body1">
             You are not able to access this material. Please make sure to login to access courses, and refresh if login is still valid.
         </Typography>
     }
+    if (!get(props.curriculum, [regCode, "courses"], [] as string[]).find(course => course === courseId)) {
+        return <Typography variant="body1">
+            You do not have access to this material. Please make sure you are in a valid enrollment.
+        </Typography>
+    }
+
     if (!calledViewAnswers) {
         props.viewAnswerAction(regCode, courseId);
         setViewAnswers(true);
@@ -136,7 +145,8 @@ export default connect(
             answers: answerSelector(state),
             grades: gradesSelector(state),
             courses: coursesSelector(state),
-            loggedIn: loggedInSelector(state)
+            loggedIn: loggedInSelector(state),
+            curriculum: curriculumSelector(state)
         }
     },
     dispatch => {

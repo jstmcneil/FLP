@@ -1,6 +1,6 @@
 export interface Curriculum {
     regCode: string,
-    courses: number[]
+    courses: string[]
 };
 
 export interface CurriculumType {
