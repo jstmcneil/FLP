@@ -71,7 +71,7 @@ const CoursePage = (props: PageProps): JSX.Element => {
         </Typography>
     }
     if (!calledViewAnswers) {
-        props.viewAnswerAction(regCode,courseId);
+        props.viewAnswerAction(regCode, courseId);
         setViewAnswers(true);
     }
     const courses = keyBy(props.courses, "id");
@@ -79,9 +79,9 @@ const CoursePage = (props: PageProps): JSX.Element => {
     const quizTaken = hasQuizBeenTaken(props.grades, courseId, regCode);
     if (quizTaken && props.answers === "outstanding_version") {
         alert('There is an outstanding instance of this course'
-            +  'to be taken in a different registration code. Please '
+            + 'to be taken in a different registration code. Please '
             + 'take that before trying to view answers.');
-        document.location.href='/course';
+        document.location.href = '/course';
     }
     return (
         <Switch>
@@ -106,7 +106,7 @@ const CoursePage = (props: PageProps): JSX.Element => {
                                         <div style={{ overflowY: "scroll", width: "inherit" }}>
                                             {course.summaryVideo.map((video: Video) => (
                                                 <div style={{ marginTop: "10px", marginBottom: "10px", width: "inherit" }}>
-                                                    <VideoPlayer videoId={video.id} width={width - 20}/>
+                                                    <VideoPlayer videoId={video.id} width={width - 20} />
                                                 </div>
                                             ))}
                                         </div>
@@ -118,7 +118,7 @@ const CoursePage = (props: PageProps): JSX.Element => {
                                         <TakeQuiz regCode={regCode} courseId={course.id} />
                                     </Paper>
                                 </div>
-                                <Review_Button courseName={course.courseName} regCode={regCode} id={courseId}/>
+                                {props.answers && props.answers !== "course_not_taken" && <Review_Button courseName={course.courseName} regCode={regCode} id={courseId} />}
                             </div>
                         )
                     }
