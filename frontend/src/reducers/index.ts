@@ -34,7 +34,11 @@ export const reducer = (state: State | undefined, action: ActionWithPayload<any,
             return { ...state, ...action.payload };
         case SAVE_REVIEWS:
             const reviews = state ? { ...state.reviews} : {};
+            console.log(action);
+            console.log("before", reviews);
             reviews[action.payload["regCode"]] = {...reviews[action.payload["regCode"]], [action.payload["courseId"]]: action.payload["reviews"]}
+            console.log("after", reviews);
+            console.log(state);
             return { ...state, loggedIn: state?.loggedIn || false, reviews};
         default:
             return state ? state : initialState;

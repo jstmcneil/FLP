@@ -437,13 +437,14 @@ function* getReviewsSaga(action: any) {
   if (!action.payload || !action.payload.regCode || !action.payload.courseId) return;
   const { regCode, courseId } = action.payload;
   const response = yield call(getReviews, regCode, courseId);
+  console.log("saga", regCode, courseId)
   if (response.success) {
     yield put({
       type: SAVE_REVIEWS,
       payload: {
           reviews: response.reviews,
-          regCode,
-          courseId
+          regCode: regCode,
+          courseId: courseId
       }
     })
   } else {
@@ -451,8 +452,8 @@ function* getReviewsSaga(action: any) {
       type: SAVE_REVIEWS,
       payload: {
         reviews: "reviews_error",
-        regCode,
-        courseId
+        regCode: regCode,
+        courseId: courseId
       }
     })
   }

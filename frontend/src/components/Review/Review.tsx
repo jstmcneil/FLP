@@ -15,12 +15,13 @@ import {
 import { Typography } from '@material-ui/core';
 import { ReviewType } from '../../model/ReviewType';
 import { ReviewState } from '../../reducers/index';
-import { reviewSelector } from '../../selectors';
+import { reviewSelector, curriculumSelector } from '../../selectors';
 import get from 'lodash/get';
 
 interface State {
     submitted: boolean,
     response?: string;
+    calledForReviews: boolean;
 }
 
 interface Props {
@@ -33,8 +34,8 @@ interface Props {
 
 class Review extends React.Component<Props, State> {
     constructor(props: any) {
-        super(props)
-        this.state = { submitted: false, response: ' ' }
+        super(props);
+        this.state = { submitted: false, response: ' ', calledForReviews: false}
         this.handleSubmit = this.handleSubmit.bind(this)
     }
 
@@ -46,16 +47,17 @@ class Review extends React.Component<Props, State> {
 
     render() {
         const reviews = get(this.props.reviews, [this.props.regCode, this.props.courseId], undefined);
-        if (!reviews) {
+        if (!reviews && !this.state.calledForReviews) {
             this.props.getReviews(this.props.regCode, this.props.courseId);
+            this.setState({calledForReviews: true})
             return <Fragment />;
         }
-        if (typeof reviews !== "string" && reviews.length !== 0) {
+        if (reviews && typeof reviews !== "string" && reviews.length !== 0) {
             return <Typography variant="body1">You cannot submit a review for a given course in a given registration more than once.</Typography>
         }
         const errorFetchingReview = (
             <div>
-                {typeof reviews === "string" && 
+                {reviews && typeof reviews === "string" && 
                     <Typography variant="body1">
                         We failed to fetch reviews. You may not be able to submit this 
                         review for this course in this registration if you have before.
@@ -66,6 +68,7 @@ class Review extends React.Component<Props, State> {
 
         return (
             <div className="verticalContainer">
+                {errorFetchingReview}
                 <div className="title"><Typography variant="h2">Please leave your review below: </Typography></div>
                 <form onSubmit={this.handleSubmit}>
                     <label>
