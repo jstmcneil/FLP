@@ -19,6 +19,10 @@ function getCourseName(courseId) {
     return curriculum.courses.find((course) => course.id === courseId).courseName;
 }
 
+function getCourseQuestion(courseId) {
+    return curriculum.courses.find((course) => course.id === courseId).quiz.emailQuestions[0].questionContent;
+}
+
 async function sendDigest() {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -60,7 +64,7 @@ async function sendDigest() {
         for (const res of digest.responses) {
             if (res.courseId !== currentCourseId) {
                 currentCourseId = res.courseId;
-                emailBody += divider + '<h1><u>' + getCourseName(res.courseId) + '</u></h1><br/>';
+                emailBody += divider + '<h1><u>' + getCourseName(res.courseId) + '</u></h1><br/>' + '<h3>' + getCourseQuestion(res.courseId) + "</h3><br/>";
             }
             emailBody += generateHtml(res.username, res.response);
         }
@@ -68,7 +72,7 @@ async function sendDigest() {
         var option = {
             from: 'flpemail.noreply@gmail.com',
             to: digest.email,
-            subject: 'FLP Email Response Digest',
+            subject: 'FLP Email Response Digest for ' + digest.responses[0].regCode,
             html: emailBody
         };
 
@@ -117,6 +121,7 @@ exports.scheduleEmailDigest = () => {
     if (millis < 0) {
         millis += 24 * 60 * 60 * 1000;
     }
+    console.log('sending next digest email in ' + millis / 1000 / 60 / 60.0 + ' hrs');
     setTimeout(async () => {
         // send emails at that time
         sendDigest();
