@@ -2,87 +2,180 @@
     "courses": [
         {
             "id": "123",
-            "courseName": "Course 1",
-            "summaryText": "course 1 summary",
+            "courseName": "Budgeting",
+            "summaryText": "A budget simply tracks your income and your expenses each month and informs a plan for how to spend your money. Think about how money and purchases make you feel—it’s actually more than feelings, it’s science. Budgeting is simply dividing up your income into buckets and then accounting for what’s in the bucket.",
             "summaryVideo": [
                 {
                     "type": "youtube",
-                    "id": "20aZdIiW7ik"
+                    "id": "NRQHuKeowhQ"
                 },
                 {
                     "type": "youtube",
-                    "id": "FMvppuS_ehg"
+                    "id": "HQzoZfc3GwQ"
                 }
             ],
             "quiz": {
                 "mcQuestions": [
                     {
                         "questionId": 0,
-                        "questionContent": "1 + 1 = ?",
+                        "questionContent": "What is the first step to budgeting?",
                         "answerChoices": [
-                            "2",
-                            "3",
-                            "999",
-                            "-1"
+                            "Finding out how much you bring in on a monthly basis",
+                            "Figuring out what expenses are essential",
+                            "Figuring out what to spend your extra cash on",
+                            "Thinking about how much you should be saving"
                         ],
                         "correctAnswerIndex": 0,
-                        "videoId": null
+                        "videoId": "NRQHuKeowhQ"
                     },
                     {
                         "questionId": 1,
-                        "questionContent": "3 * 3 = ?",
+                        "questionContent": "What is the 50/30/20 rule?",
                         "answerChoices": [
-                            "1",
-                            "3",
-                            "9",
-                            "0"
+                            "Save 50%, spend 30%, put 20% towards bills",
+                            "Spend 50% towards needs, 30% on wants, 20% on saving",
+                            "Spend 50% on wants, 30% on saving, 20% on needs",
+                            "Spend 50% the first month, 30% the second, and 20% the third"
                         ],
                         "correctAnswerIndex": 2,
                         "videoType": "youtube",
-                        "videoId": "20aZdIiW7ik"
+                        "videoId": "HQzoZfc3GwQ"
+                    },
+                    {
+                        "questionId": 2,
+                        "questionContent": "What are examples of essential needs?",
+                        "answerChoices": [
+                            "Food, water & housing",
+                            "A new video game",
+                            "Student loans"
+                        ],
+                        "correctAnswerIndex": 0,
+                        "videoType": "youtube",
+                        "videoId": "HQzoZfc3GwQ"
+                    },
+                    {
+                        "questionId": 3,
+                        "questionContent": "Why is the 50/30/20 rule useful?",
+                        "answerChoices": [
+                            "It allows for structured spending",
+                            "It provides an avenue for immediate gratification",
+                            "It allows for room to spend on debt",
+                            "All of the above"
+                        ],
+                        "correctAnswerIndex": 3,
+                        "videoType": "youtube",
+                        "videoId": "HQzoZfc3GwQ"
+                    },
+                    {
+                        "questionId": 4,
+                        "questionContent": "Should you maintain the same budget?",
+                        "answerChoices": [
+                            "Yes, disipline is important.",
+                            "No, your budget should evolve to meet your situation"
+                        ],
+                        "correctAnswerIndex": 1,
+                        "videoType": "youtube",
+                        "videoId": "NRQHuKeowhQ"
                     }
                 ],
                 "emailQuestions": [
                     {
-                        "questionContent": "what is your favorite color?",
-                        "videoType": null,
-                        "videoId": null
+                        "questionContent": "Explain the concept of delayed gratification and how it relates to budgeting.",
+                        "videoType": "youtube",
+                        "videoId": "JYUhHQ2siLk"
                     }
                 ]
             }
         },
         {
             "id": "456",
-            "courseName": "Course 2",
-            "summaryText": "course 2 summary",
+            "courseName": "Retirement Accounts",
+            "summaryText": "What are the differences between retirment accounts? Should you invest pre-tax (traditional 401-k) or post-tax (Roth)? Find out the answer to both of these questions in this course! Saving for retirment from a young age is practically the easiest way to become a millionaire by the time you retire! All you need is time and the basic knowledge found in these videos.",
             "summaryVideo": [
                 {
                     "type": "youtube",
-                    "id": "wd16ZC_evTE"
+                    "id": "B7NPBFZ1LB4"
+                },
+                {
+                    "type": "youtube",
+                    "id": "0qMJZuPZjGk"
+                },
+                {
+                    "type": "youtube",
+                    "id": "58PnxTUbrn0"
                 }
             ],
             "quiz": {
                 "mcQuestions": [
                     {
                         "questionId": 0,
-                        "questionContent": "3 * 333 = ?",
+                        "questionContent": "What is a benifit of a Roth IRA?",
                         "answerChoices": [
-                            "2",
-                            "3",
-                            "999",
-                            "-1"
+                            "No taxes on money put in",
+                            "Withdrawls in retirment are tax-free",
+                            "Deductions can be phased out",
+                            "If deductible, contributions reduce taxable income"
                         ],
-                        "correctAnswerIndex": 2,
-                        "videoId": null
+                        "correctAnswerIndex": 1,
+                        "videoId": "58PnxTUbrn0"
                     },
                     {
                         "questionId": 1,
-                        "questionContent": "3 * 1 = ?",
+                        "questionContent": "What is different about a 401k vs a normal IRA?",
                         "answerChoices": [
-                            "1",
-                            "3",
-                            "9",
-                            "0"
+                            "",
+                            "You can put unlimited money into them annually",
+                            "They are employer sponsered plans",
+                            "They are invested in a seperate market"
+                        ],
+                        "correctAnswerIndex": 1,
+                        "videoType": "youtube",
+                        "videoId": "20aZdIiW7ik"
+                    },
+                    {
+                        "questionId": 2,
+                        "questionContent": "What is different about a 401k vs a normal IRA?",
+                        "answerChoices": [
+                            "You can put unlimited money into them annually",
+                            "They are employer sponsered plans",
+                            "They are invested in a seperate market"
+                        ],
+                        "correctAnswerIndex": 1,
+                        "videoType": "youtube",
+                        "videoId": "20aZdIiW7ik"
+                    },
+                    {
+                        "questionId": 3,
+                        "questionContent": "If you take money out of a 401(k) or traditional IRA account before the age of 59½ you can be penalized for early withdrawal.",
+                        "answerChoices": [
+                            "True",
+                            "False"
+                        ],
+                        "correctAnswerIndex": 0,
+                        "videoType": "youtube",
+                        "videoId": "20aZdIiW7ik"
+                    },
+                    {
+                        "questionId": 4,
+                        "questionContent": "When choosing investments in your retirement account such as stocks, bonds and mutual funds, what should you consider?",
+                        "answerChoices": [
+                            "Your age",
+                            "Your expected retirment age",
+                            "All of the above",
+                            "Your risk tolerence"
+                        ],
+                        "correctAnswerIndex": 2,
+                        "videoType": "youtube",
+                        "videoId": "20aZdIiW7ik"
+                    },
+                    {
+                        "questionId": 5,
+                        "questionContent": "While 401(k)s are opened through an employer, IRAs are opened through which of the following:",
+                        "answerChoices": [
+                            "Banks & Credit unions",
+                            "All of the above",
+                            "Life insurance companies",
+                            "Brokerage houses"
                         ],
                         "correctAnswerIndex": 1,
                         "videoType": "youtube",
@@ -91,9 +184,9 @@
                 ],
                 "emailQuestions": [
                     {
-                        "questionContent": "what is your favorite food?",
-                        "videoType": null,
-                        "videoId": null
+                        "questionContent": "Compare and contrast a Roth IRA and a Traditional IRA.",
+                        "videoType": "youtube",
+                        "videoId": "58PnxTUbrn0"
                     }
                 ]
             }
