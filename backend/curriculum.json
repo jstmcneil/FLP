@@ -25,8 +25,7 @@
                             "Figuring out what to spend your extra cash on",
                             "Thinking about how much you should be saving"
                         ],
-                        "correctAnswerIndex": 0,
-                        "videoId": "NRQHuKeowhQ"
+                        "correctAnswerIndex": 0
                     },
                     {
                         "questionId": 1,
@@ -37,9 +36,7 @@
                             "Spend 50% on wants, 30% on saving, 20% on needs",
                             "Spend 50% the first month, 30% the second, and 20% the third"
                         ],
-                        "correctAnswerIndex": 2,
-                        "videoType": "youtube",
-                        "videoId": "HQzoZfc3GwQ"
+                        "correctAnswerIndex": 1
                     },
                     {
                         "questionId": 2,
@@ -49,9 +46,7 @@
                             "A new video game",
                             "Student loans"
                         ],
-                        "correctAnswerIndex": 0,
-                        "videoType": "youtube",
-                        "videoId": "HQzoZfc3GwQ"
+                        "correctAnswerIndex": 0
                     },
                     {
                         "questionId": 3,
@@ -62,9 +57,7 @@
                             "It allows for room to spend on debt",
                             "All of the above"
                         ],
-                        "correctAnswerIndex": 3,
-                        "videoType": "youtube",
-                        "videoId": "HQzoZfc3GwQ"
+                        "correctAnswerIndex": 3
                     },
                     {
                         "questionId": 4,
@@ -73,9 +66,7 @@
                             "Yes, disipline is important.",
                             "No, your budget should evolve to meet your situation"
                         ],
-                        "correctAnswerIndex": 1,
-                        "videoType": "youtube",
-                        "videoId": "NRQHuKeowhQ"
+                        "correctAnswerIndex": 1
                     }
                 ],
                 "emailQuestions": [
@@ -109,77 +100,55 @@
                 "mcQuestions": [
                     {
                         "questionId": 0,
-                        "questionContent": "What is a benifit of a Roth IRA?",
+                        "questionContent": "What is a benefit of a Roth IRA?",
                         "answerChoices": [
                             "No taxes on money put in",
-                            "Withdrawls in retirment are tax-free",
+                            "Withdrawals in retirement are tax-free",
                             "Deductions can be phased out",
                             "If deductible, contributions reduce taxable income"
                         ],
-                        "correctAnswerIndex": 1,
-                        "videoId": "58PnxTUbrn0"
+                        "correctAnswerIndex": 1
                     },
                     {
                         "questionId": 1,
                         "questionContent": "What is different about a 401k vs a normal IRA?",
                         "answerChoices": [
-                            "",
                             "You can put unlimited money into them annually",
-                            "They are employer sponsered plans",
-                            "They are invested in a seperate market"
+                            "They are employer sponsored plans",
+                            "They are invested in a separate market"
                         ],
-                        "correctAnswerIndex": 1,
-                        "videoType": "youtube",
-                        "videoId": "20aZdIiW7ik"
+                        "correctAnswerIndex": 1
                     },
                     {
                         "questionId": 2,
-                        "questionContent": "What is different about a 401k vs a normal IRA?",
-                        "answerChoices": [
-                            "You can put unlimited money into them annually",
-                            "They are employer sponsered plans",
-                            "They are invested in a seperate market"
-                        ],
-                        "correctAnswerIndex": 1,
-                        "videoType": "youtube",
-                        "videoId": "20aZdIiW7ik"
-                    },
-                    {
-                        "questionId": 3,
                         "questionContent": "If you take money out of a 401(k) or traditional IRA account before the age of 59½ you can be penalized for early withdrawal.",
                         "answerChoices": [
                             "True",
                             "False"
                         ],
-                        "correctAnswerIndex": 0,
-                        "videoType": "youtube",
-                        "videoId": "20aZdIiW7ik"
+                        "correctAnswerIndex": 0
                     },
                     {
-                        "questionId": 4,
+                        "questionId": 3,
                         "questionContent": "When choosing investments in your retirement account such as stocks, bonds and mutual funds, what should you consider?",
                         "answerChoices": [
                             "Your age",
-                            "Your expected retirment age",
-                            "All of the above",
-                            "Your risk tolerence"
+                            "Your expected retirement age",
+                            "Your risk tolerence",
+                            "All of the above"
                         ],
-                        "correctAnswerIndex": 2,
-                        "videoType": "youtube",
-                        "videoId": "20aZdIiW7ik"
+                        "correctAnswerIndex": 3
                     },
                     {
                         "questionId": 5,
                         "questionContent": "While 401(k)s are opened through an employer, IRAs are opened through which of the following:",
                         "answerChoices": [
                             "Banks & Credit unions",
-                            "All of the above",
                             "Life insurance companies",
-                            "Brokerage houses"
+                            "Brokerage houses",
+                            "All of the above"
                         ],
-                        "correctAnswerIndex": 1,
-                        "videoType": "youtube",
-                        "videoId": "20aZdIiW7ik"
+                        "correctAnswerIndex": 0
                     }
                 ],
                 "emailQuestions": [

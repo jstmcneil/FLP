@@ -36,6 +36,7 @@ class Quiz extends React.Component<Props, State> {
             mcAnswers: {},
             submitted: false
         };
+        this.props.questions.mcQuestions.forEach(question => this.state.mcAnswers[question.questionId] = 0);
         this.backQuestion = this.backQuestion.bind(this);
         this.nextQuestion = this.nextQuestion.bind(this);
         this.handleSubmitClick = this.handleSubmitClick.bind(this);
