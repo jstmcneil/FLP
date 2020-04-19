@@ -1,6 +1,4 @@
 # Financial Learning Curriculum
-#
-#
 > Release Notes
   - #### What’s New
     This is version 1.0.0 for Georgia Tech Financial Learning Curriculum online quiz platform. The goal of this platform is to provide students with review materials for the course and real-life practice experience when they encounter financial related issues. The application allows both students and instructors to register for their personal accounts on the platform with registration codes. With their accounts, students are able to view course materials, try out the quiz for each course, and provide reviews and feedback for the course. On the other hand, instructors can select practice materials for students, view students’ quiz grades as well as saving them as csv files, and view student reviews for the course.
