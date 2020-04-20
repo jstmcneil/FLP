@@ -1,7 +1,23 @@
 # Financial Learning Curriculum
 > Release Notes
   - #### What’s New
-    This is version 1.0.0 for Georgia Tech Financial Learning Curriculum online quiz platform. The goal of this platform is to provide students with review materials for the course and real-life practice experience when they encounter financial related issues. The application allows both students and instructors to register for their personal accounts on the platform with registration codes. With their accounts, students are able to view course materials, try out the quiz for each course, and provide reviews and feedback for the course. On the other hand, instructors can select practice materials for students, view students’ quiz grades as well as saving them as csv files, and view student reviews for the course.
+    * This is version 1.0.0 for Georgia Tech Financial Learning Curriculum online quiz platform. The goal of this platform is to provide students with review materials for the course and closer to real-life practice experience when they encounter financial related issues. 
+
+    - Features:
+        * Kahoot code style registration codes in order to link a student with an instructor and the instructors courses. 
+        * Students can:
+            * View course materials
+            * Take a quiz for each course, which includes:
+                * A multiple choice questionnaire
+                * An open ended question that is recorded and sent to professors in a daily digest
+            * Provide reviews and feedback for the course after finishing a quiz
+            * Review multiple choice answers and course materials on quizzes
+        * Instructors can:
+            * Assign courses to registration codes
+            * View quiz grades and open ended responses of students enrolled in a registration code they own
+            * Export grades as CSV files
+            * View student reviews by course
+
 
   - #### Recent Bug Fixes
     * Clean up unnecessary fields in curriculum.json file 
@@ -13,6 +29,10 @@
   - #### Known Bugs
     * Initial login sometimes fails even with correct credentials
     * The student username in grades table sometimes show blank
+    * Does not work on Firefox (only works on Chrome and Safari)
+    * Email feature is not guaranteed on free server (if server shuts down due to inactivity)
+    * No HTTPS support
+
 
 > Install Guide
 
@@ -49,5 +69,14 @@
     * If there is something wrong with your database. Run `brew services restart mongodb-community` to restart the database before you start the backend.
     * You can install Chrome extension Redux Devtools to troubleshoot the react state.(https://chrome.google.com/webstore/detail/redux-devtools)
     * You can use Robo 3T or equivalent interfaces to keep track of database states for development. (https://robomongo.org) 
+    * Editing the curriculum.json in the backend to have real courses, as communicated with our client
+        * This JSON takes the structure of: ![image info](./frontend/public/json.png)
+    * Add student names as part of student account information
+    * Integration to Canvas
+    * Support instructor MP4 video uploads and LinkedIn Learning videos for courses
+    * Request Gatech OIT server for official deployment
+    * Migrate to HTTPS
+
+
 
 
