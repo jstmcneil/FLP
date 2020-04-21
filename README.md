@@ -27,7 +27,7 @@
     * Show review button only after students have completed a course
 
   - #### Known Bugs
-    * Initial login sometimes fails even with correct credentials
+    * Initial login occasionally fails even with correct credentials (should only happen the first time you ever login with the introduction of the account cache)
     * The student username in grades table sometimes show blank
     * Does not work on Firefox (only works on Chrome and Safari)
     * Email feature is not guaranteed on free server (if server shuts down due to inactivity)
@@ -59,15 +59,16 @@
 
 - #### Run instructions
     1. Open a new command line window and go to the backend folder (`cd FLP/backend`)
-    2. In backend folder, start mongoDB by running `brew services start mongodb-community`
+    2. In backend folder, start mongoDB by running `brew services start mongodb-community` if installed through Homebrew. Otherwise, start mongoDB by consulting the specific installation guide used in the "Prerequisites" step
     3. Then in the backend folder, run `npm start` to start the backend. (You should see “Listening on port 8000” on console)
     4. Open a new command line window and go to the frontend folder (`cd FLP/frontend`)
     5. In frontend folder run `npm start`
     6. Open chrome (or browser of your choice) go to “http://localhost:3000” to view application
 
 - #### Troubleshooting
-    * If there is something wrong with your database. Run `brew services restart mongodb-community` to restart the database before you start the backend.
+    * If there is something wrong with your database and you installed via Homebrew, Run `brew services restart mongodb-community` to restart the database before you start the backend.
     * You can install Chrome extension Redux Devtools to troubleshoot the react state.(https://chrome.google.com/webstore/detail/redux-devtools)
+    * You can monitor the React DOM with the installation of Chrome React Developer Tools (https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
     * You can use Robo 3T or equivalent interfaces to keep track of database states for development. (https://robomongo.org) 
     * Editing the curriculum.json in the backend to have real courses, as communicated with our client
         * This JSON takes the structure of: ![image info](./frontend/public/json.png)
