@@ -70,8 +70,28 @@
     * You can install Chrome extension Redux Devtools to troubleshoot the react state.(https://chrome.google.com/webstore/detail/redux-devtools)
     * You can monitor the React DOM with the installation of Chrome React Developer Tools (https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
     * You can use Robo 3T or equivalent interfaces to keep track of database states for development. (https://robomongo.org) 
-    * Editing the curriculum.json in the backend to have real courses, as communicated with our client
-        * This JSON takes the structure of: ![image info](./frontend/public/json.png)
+    * Editing the curriculum.json in the backend to have real courses, as communicated with our client. We currently have an example, working configuration of the curriculum.json as an example.
+        * The curriculum JSON is just a top level object that holds one attribute: `courses`. This `courses` attribute holds an array of course JSONs, representing all of the courses possible in the application.
+        * A course JSON takes the structure of (indicating types within the parentheses):
+            * `id` : A unique identifier for the course (`string`)
+            * `courseName`: Name of the course (`string`)
+            * `summaryText`: Body of text providing the course information (`string`)
+            * `summaryVideo`: An array of video objects to render (`Array[object]`), that look like:
+                * `type`: The source of the video. Right now, the only supported value is `"youtube"`
+                (`string`)
+                * `videoId`: The unique video identifier. For youtube videos, that is what comes in the url after v= when viewing a video. For example, for this youtube video https://www.youtube.com/watch?v=jNQXAC9IVRw, the videoId is jNQXAC9IVRw
+                (`string`)
+            * `quiz`: the quiz (`object`)for this course, containing: 
+                *  `mcQuestions`: An array of multiple choice questions (`Array[object]`). Each item looks like:
+                    * `questionId`: ID of question. Each question ID in this array must be different from every other question ID in this array (`number`) 
+                    * `questionContent`: The question text to ask (`string`),
+                    * `answerChoices`: An array of strings, where each string represents a possible answer (`Array[string]`)
+                    * `correctAnswerIndex`: the correct answer's zero indexed index within `answerChoices` (`number`)
+                * `emailQuestions`: This is stored as an array, but it must be an array of length 1 at most, since we built this to only handle one email question. This is unfortunately a product of a pivot to only handle one email question, as we discussed with our client. (`Array[object]` but only length 1!)
+                    * `questionContent`: The question text to ask (`string`),
+                    * `videoId`: Part 1/2 of showing a video embedded within an email question. This is to be filled out using the same rules that are used for the `summaryVideo`'s `videoId`, as it is a unique video identifier. It is optional, but if specified, the `videoType` must be specified. Only YouTube IDs are currently supported (`string`)
+                    * `videoType`:  Part 2/2 of showing a video embedded within an email question. This is to be filled out using the same rules that are used for the `summaryVideo`'s `videoType`, as it specifies the source of the video. It is optional, but if specified, the `videoId` must be specified. Only the type `"youtube"` is currently supported(`string`)
+        * An example course JSON looks like: ![image info](./frontend/public/json.png)
     * Add student names as part of student account information
     * Integration to Canvas
     * Support instructor MP4 video uploads and LinkedIn Learning videos for courses
