@@ -100,7 +100,7 @@ const CoursePage = (props: PageProps): JSX.Element => {
                     {({ width }) => {
                         return (
                             <div className="verticalContainer" style={{ margin: "10px", width: width }}>
-                                <Typography variant="h2">Course {course.id}</Typography>
+                                <Typography variant="h2">{course.courseName}</Typography>
                                 <div style={{ marginBottom: "10px" }}>
                                     <Paper elevation={3} style={{ padding: "10px" }}>
                                         <Typography variant="h3">Summary of Information</Typography>

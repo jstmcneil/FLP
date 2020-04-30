@@ -176,7 +176,7 @@ exports.getCourses = async (req, res) => {
         regCode: req.query.regCode
     }, {
         courses: 1
-    })).courses;
+    }).exec()).courses;
 
     if (courseId.length === 0) {
         res.send({
@@ -218,7 +218,7 @@ exports.getGrades = async (req, res) => {
         regCode: req.query.regCode
     }, {
         courses: 1
-    })).courses;
+    }).exec()).courses;
 
     var grades = [];
     var query = {
@@ -237,7 +237,7 @@ exports.getGrades = async (req, res) => {
             courseId: 1,
             mcGrade: 1,
             emailResponse: 1
-        });
+        }).exec();
         grades.push(courseInfo);
     }
 
@@ -276,7 +276,7 @@ exports.getAllGrades = async (req, res) => {
             regCode: code
         }, {
             courses: 1
-        }));
+        }).exec());
         if (findCourse == null) {
             console.log("Did not find courses for regCode: " + code);
             continue;
@@ -291,7 +291,7 @@ exports.getAllGrades = async (req, res) => {
                 courseId: 1,
                 mcGrade: 1,
                 emailResponse: 1
-            });
+            }).exec();
             if (grade) {
                 for (let i = 0; i < grade.length; i++) {
                     grades.push(grade[i]);

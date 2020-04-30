@@ -44,7 +44,7 @@ exports.createReview = async (req, res) => {
         courseId: req.body.courseId
     }, {
         review: 1
-    });
+    }).exec();
 
     if (existingReview) {
         res.send({

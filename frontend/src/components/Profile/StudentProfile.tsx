@@ -65,7 +65,7 @@ class StudentProfile extends React.Component<StudentProps, StudentState> {
                         dict[key].map((obj: Grade) => (
                           <TableRow key={obj.courseId}>
                             <TableCell component="th" scope="row">
-                              {obj.courseId}
+                              {this.props.courses.find(course => course.id === obj.courseId)?.courseName}
                             </TableCell>
                             <TableCell align="right">{obj.mcGrade}</TableCell>
                             <TableCell align="right">{getEmailQuestion(this.props.courses, obj)}</TableCell>

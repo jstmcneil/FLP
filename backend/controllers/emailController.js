@@ -37,7 +37,7 @@ async function sendDigest() {
 
     // get emails
     for (let i = 0; i < responses.length; i++) {
-        responses[i].email = (await Account.findOne({regCode: responses[i].regCode, isInstructor: true}, {username: 1})).username
+        responses[i].email = (await Account.findOne({regCode: responses[i].regCode, isInstructor: true}, {username: 1}).exec()).username
     }
 
     // get unique emails
@@ -50,7 +50,7 @@ async function sendDigest() {
 
     // categorize response to their associated emails
     for (let i = 0; i < responses.length; i++) {
-        responses[i].username = (await Account.findById(responses[i].accountId)).username;
+        responses[i].username = (await Account.findById(responses[i].accountId).exec()).username;
         var digest = digests.find(dig => dig.email === responses[i].email);
         digest.responses.push(responses[i]);
     }
